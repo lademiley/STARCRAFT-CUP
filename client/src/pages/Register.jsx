@@ -19,8 +19,10 @@ export default function Register() {
     // players
     players: [emptyPlayer(), emptyPlayer(), emptyPlayer()],
   })
-  const [error,   setError]   = useState('')
-  const [loading, setLoading] = useState(false)
+  const [error,      setError]      = useState('')
+  const [loading,    setLoading]    = useState(false)
+  const [showPayment, setShowPayment] = useState(false)
+  const [payMethod,   setPayMethod]   = useState('bank')
   const { setUser } = useAuth()
   const navigate = useNavigate()
 
@@ -57,17 +59,23 @@ export default function Register() {
 
   const back = () => { setStep(s => s - 1); setError('') }
 
-  // ── Team registration submit ─────────────────────────────────
-  const handleTeamSubmit = async e => {
-    if (e) e.preventDefault()
+  // ── Step 3: intercept submit → show payment modal ────────────
+  const handleFormSubmit = e => {
+    e.preventDefault()
+    if (step < 3) return
     setError('')
-
     const filledPlayers = form.players.filter(p => p.name.trim())
     if (filledPlayers.length < 11) {
       setError('Please add at least 11 players to complete your squad.')
       return
     }
+    setShowPayment(true)
+  }
 
+  // ── Actual API call — triggered from payment modal ────────────
+  const handleTeamSubmit = async () => {
+    setError('')
+    const filledPlayers = form.players.filter(p => p.name.trim())
     setLoading(true)
     try {
       const res = await fetch('/api/teams/register', {
@@ -164,7 +172,7 @@ export default function Register() {
 
           {/* ══════════════ TEAM REGISTRATION ══════════════ */}
           {mode === 'team' && (
-            <form onSubmit={handleTeamSubmit} noValidate>
+            <form onSubmit={handleFormSubmit} noValidate>
 
               {/* Progress bar */}
               <div style={{ display: 'flex', gap: 0, marginBottom: 32 }}>
@@ -315,12 +323,125 @@ export default function Register() {
                     Continue →
                   </button>
                 ) : (
-                  <button type="submit" className="btn btn-primary" style={{ flex: 2, justifyContent: 'center' }} disabled={loading}>
-                    {loading ? 'Submitting…' : 'Submit Registration 🚀'}
+                  <button type="submit" className="btn btn-primary" style={{ flex: 2, justifyContent: 'center' }}>
+                    Proceed to Payment 💳
                   </button>
                 )}
               </div>
             </form>
+          )}
+
+          {/* ══════════════ PAYMENT MODAL ══════════════ */}
+          {showPayment && (
+            <div style={ps.overlay} onClick={() => !loading && setShowPayment(false)}>
+              <div style={ps.modal} onClick={e => e.stopPropagation()}>
+
+                {/* Header */}
+                <div style={ps.header}>
+                  <div style={{ fontSize: '2rem', marginBottom: 8 }}>💳</div>
+                  <h3 style={ps.title}>Complete Payment</h3>
+                  <p style={ps.sub}>Choose your preferred payment method to finalise registration</p>
+                </div>
+
+                {/* Amount */}
+                <div style={ps.amountBox}>
+                  <div style={ps.amountLabel}>Registration Fee</div>
+                  <div style={ps.amount}>₦25,000</div>
+                  <div style={ps.amountTeam}>{form.teamName}</div>
+                </div>
+
+                {/* Method tabs */}
+                <div style={ps.methodTabs}>
+                  {[['bank','🏦 Bank Transfer'],['ussd','📱 USSD'],['online','💻 Online Payment']].map(([m, l]) => (
+                    <button key={m} type="button" onClick={() => setPayMethod(m)}
+                      style={{ ...ps.methodTab, ...(payMethod === m ? ps.methodTabActive : {}) }}>
+                      {l}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Bank Transfer details */}
+                {payMethod === 'bank' && (
+                  <div style={ps.detailsBox}>
+                    <div style={ps.detailsTitle}>Bank Transfer Details</div>
+                    {[
+                      ['Bank Name',       'Zenith Bank Plc'],
+                      ['Account Name',    'StarCraft Cup 2026 Committee'],
+                      ['Account Number',  '2034567890'],
+                      ['Amount',          '₦25,000'],
+                      ['Payment Ref',     `REG-${form.teamName.replace(/\s+/g,'').toUpperCase().slice(0,6)}`],
+                    ].map(([k, v]) => (
+                      <div key={k} style={ps.detailRow}>
+                        <span style={ps.detailKey}>{k}</span>
+                        <span style={ps.detailVal}>{v}</span>
+                      </div>
+                    ))}
+                    <div style={ps.note}>
+                      ⚠️ Use your team name or reference as payment narration. Send your bank receipt to <strong>payments@starcraftcup.ng</strong> after transfer.
+                    </div>
+                  </div>
+                )}
+
+                {/* USSD */}
+                {payMethod === 'ussd' && (
+                  <div style={ps.detailsBox}>
+                    <div style={ps.detailsTitle}>USSD Quick Payment</div>
+                    {[
+                      ['GTBank',     '*737*2034567890*25000#'],
+                      ['Access Bank','*901*2034567890*25000#'],
+                      ['First Bank', '*894*2034567890*25000#'],
+                      ['UBA',        '*919*2034567890*25000#'],
+                      ['Zenith Bank','*966*2034567890*25000#'],
+                    ].map(([bank, code]) => (
+                      <div key={bank} style={ps.detailRow}>
+                        <span style={ps.detailKey}>{bank}</span>
+                        <span style={{ ...ps.detailVal, fontFamily: 'monospace', fontSize: '0.9rem', color: '#D4AF37', letterSpacing: 0.5 }}>{code}</span>
+                      </div>
+                    ))}
+                    <div style={ps.note}>
+                      Dial the code for your bank. After payment, email your transaction ID to <strong>payments@starcraftcup.ng</strong>.
+                    </div>
+                  </div>
+                )}
+
+                {/* Online */}
+                {payMethod === 'online' && (
+                  <div style={ps.detailsBox}>
+                    <div style={ps.detailsTitle}>Online / Card Payment</div>
+                    <div style={{ textAlign: 'center', padding: '16px 0', color: 'rgba(255,255,255,0.55)', fontSize: '0.85rem', lineHeight: 1.7 }}>
+                      <div style={{ fontSize: '2rem', marginBottom: 10 }}>🔒</div>
+                      Online card payment will be enabled once your registration is reviewed and approved. You will receive a secure payment link via email.
+                    </div>
+                    <div style={ps.note}>
+                      Meanwhile, use <strong>Bank Transfer</strong> or <strong>USSD</strong> to make payment now and complete your registration.
+                    </div>
+                  </div>
+                )}
+
+                {/* Error */}
+                {error && (
+                  <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', color: '#f87171', fontSize: '0.83rem', marginBottom: 12 }}>
+                    {error}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                  <button type="button" onClick={() => setShowPayment(false)} disabled={loading}
+                    style={ps.cancelBtn}>
+                    ← Back
+                  </button>
+                  <button type="button" onClick={handleTeamSubmit} disabled={loading}
+                    style={{ ...ps.confirmBtn, opacity: loading ? 0.65 : 1 }}>
+                    {loading ? 'Submitting…' : '✅ I Have Paid — Submit Registration'}
+                  </button>
+                </div>
+
+                <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', textAlign: 'center', marginTop: 14 }}>
+                  Your registration will be reviewed within 48 hours of payment confirmation.
+                </p>
+              </div>
+            </div>
           )}
 
           {/* ══════════════ FAN REGISTRATION ══════════════ */}
@@ -375,4 +496,111 @@ export default function Register() {
       `}</style>
     </div>
   )
+}
+
+// ─── Payment modal styles ────────────────────────────────────────
+const ps = {
+  overlay: {
+    position: 'fixed', inset: 0, zIndex: 1000,
+    background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    padding: '20px 16px',
+  },
+  modal: {
+    background: 'linear-gradient(160deg,#15050a 0%,#1a0d16 100%)',
+    border: '1px solid rgba(212,175,55,0.25)',
+    borderRadius: 20, padding: '32px 28px',
+    width: '100%', maxWidth: 520,
+    maxHeight: '90vh', overflowY: 'auto',
+    boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+  },
+  header: { textAlign: 'center', marginBottom: 20 },
+  title: {
+    fontFamily: "'Cinzel', serif", fontSize: '1.3rem',
+    fontWeight: 900, color: '#D4AF37', marginBottom: 6,
+  },
+  sub: { fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', margin: 0 },
+  amountBox: {
+    background: 'rgba(212,175,55,0.07)',
+    border: '1px solid rgba(212,175,55,0.2)',
+    borderRadius: 12, padding: '16px 20px',
+    textAlign: 'center', marginBottom: 20,
+  },
+  amountLabel: {
+    fontSize: '0.68rem', fontWeight: 700, letterSpacing: 1.5,
+    color: 'rgba(212,175,55,0.6)', textTransform: 'uppercase', marginBottom: 6,
+  },
+  amount: {
+    fontFamily: "'Cinzel', serif", fontSize: '2rem',
+    fontWeight: 900, color: '#D4AF37', lineHeight: 1,
+  },
+  amountTeam: {
+    fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)',
+    marginTop: 6, fontStyle: 'italic',
+  },
+  methodTabs: {
+    display: 'flex', gap: 6, marginBottom: 16,
+    background: 'rgba(255,255,255,0.04)',
+    borderRadius: 10, padding: 4,
+  },
+  methodTab: {
+    flex: 1, padding: '8px 4px',
+    background: 'transparent', border: 'none',
+    borderRadius: 8, cursor: 'pointer',
+    fontFamily: "'Montserrat', sans-serif",
+    fontSize: '0.72rem', fontWeight: 700,
+    color: 'rgba(255,255,255,0.4)',
+    transition: 'all 200ms',
+  },
+  methodTabActive: {
+    background: 'rgba(212,175,55,0.15)',
+    color: '#D4AF37',
+    border: '1px solid rgba(212,175,55,0.25)',
+  },
+  detailsBox: {
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.07)',
+    borderRadius: 12, padding: '16px 18px',
+    marginBottom: 16,
+  },
+  detailsTitle: {
+    fontSize: '0.68rem', fontWeight: 800, letterSpacing: 1.2,
+    color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase',
+    marginBottom: 12,
+  },
+  detailRow: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '8px 0',
+    borderBottom: '1px solid rgba(255,255,255,0.05)',
+  },
+  detailKey: { fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' },
+  detailVal: { fontSize: '0.82rem', fontWeight: 700, color: '#fff' },
+  note: {
+    marginTop: 12,
+    padding: '10px 12px',
+    background: 'rgba(245,158,11,0.07)',
+    border: '1px solid rgba(245,158,11,0.2)',
+    borderRadius: 8,
+    fontSize: '0.78rem',
+    color: 'rgba(255,255,255,0.55)',
+    lineHeight: 1.6,
+  },
+  cancelBtn: {
+    flex: '0 0 auto', padding: '11px 20px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 10, color: 'rgba(255,255,255,0.7)',
+    fontFamily: "'Montserrat', sans-serif",
+    fontSize: '0.8rem', fontWeight: 700,
+    cursor: 'pointer',
+  },
+  confirmBtn: {
+    flex: 1, padding: '12px 16px',
+    background: 'linear-gradient(135deg,#22C55E,#15803D)',
+    border: 'none', borderRadius: 10,
+    color: '#fff',
+    fontFamily: "'Montserrat', sans-serif",
+    fontSize: '0.82rem', fontWeight: 800,
+    cursor: 'pointer', transition: 'opacity 200ms',
+  },
 }
