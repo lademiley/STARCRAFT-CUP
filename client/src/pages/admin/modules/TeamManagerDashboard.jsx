@@ -1,21 +1,9 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField } from './shared'
 
-const teams = [
-  { id: 11, name: 'Ikpoba-Okha FC',    coach: 'Austin Oghuvwu',   group: 'C', played: 4, won: 4, draw: 0, lost: 0, gf: 12, ga: 2,  points: 12 },
-  { id: 16, name: 'Owan East FC',      coach: 'Richard Ebore',     group: 'D', played: 4, won: 3, draw: 1, lost: 0, gf: 11, ga: 3,  points: 10 },
-  { id: 1,  name: 'Akoko-Edo Panthers',coach: 'Gabriel Alagbe',    group: 'A', played: 4, won: 3, draw: 1, lost: 0, gf: 10, ga: 3,  points: 10 },
-  { id: 7,  name: 'Etsako Central FC', coach: 'Sunday Omotosho',   group: 'B', played: 4, won: 2, draw: 2, lost: 0, gf: 8,  ga: 3,  points: 8  },
-  { id: 17, name: 'Owan West United',  coach: 'Samuel Oriaifo',    group: 'D', played: 4, won: 2, draw: 2, lost: 0, gf: 7,  ga: 4,  points: 8  },
-]
+const teams = []
 
-const messages = [
-  { id: 1, from: 'Austin Oghuvwu',   team: 'Ikpoba-Okha FC',    subject: 'QF strip colour confirmation', date: '2026-12-13', read: false },
-  { id: 2, from: 'Gabriel Alagbe',   team: 'Akoko-Edo Panthers',subject: 'Player injury update — Obi',   date: '2026-12-12', read: true  },
-  { id: 3, from: 'Richard Ebore',    team: 'Owan East FC',       subject: 'Bus transport request for QF', date: '2026-12-12', read: false },
-  { id: 4, from: 'Samuel Oriaifo',   team: 'Owan West United',   subject: 'Dressing room access query',   date: '2026-12-11', read: true  },
-  { id: 5, from: 'Sunday Omotosho',  team: 'Etsako Central FC',  subject: 'Referee assignment question',  date: '2026-12-10', read: true  },
-]
+const messages = []
 
 export default function TeamManagerDashboard() {
   const [msgs, setMsgs]   = useState(messages)

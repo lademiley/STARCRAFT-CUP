@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initArticles = [
-  { id: 1,  title: 'StarCraft Cup 2026 Opens in Grand Style at Ugbowo Campus', category: 'Tournament', status: 'Published', date: '2026-12-01', author: 'Adaeze Uwaifo', views: 3420 },
-  { id: 2,  title: 'Akoko-Edo Panthers Edge Esan South 3–0 in Group Stage Opener', category: 'Match Report', status: 'Published', date: '2026-12-02', author: 'Emeka Okonkwo', views: 2180 },
-  { id: 3,  title: 'Chukwuemeka Obi Bags Hat-trick on Tournament Debut',          category: 'Player Feature', status: 'Published', date: '2026-12-03', author: 'Victor Ihejirika', views: 4750 },
-  { id: 4,  title: 'Ikpoba-Okha FC Remain Perfect After Four Group Games',        category: 'Match Report', status: 'Published', date: '2026-12-06', author: 'Adaeze Uwaifo', views: 1890 },
-  { id: 5,  title: 'Quarter-Final Preview: Panthers vs Etsako Central',           category: 'Preview',      status: 'Published', date: '2026-12-12', author: 'Emeka Okonkwo', views: 2670 },
-  { id: 6,  title: 'Road to the Final: All QF Fixtures & Predictions',            category: 'Analysis',     status: 'Published', date: '2026-12-13', author: 'Victor Ihejirika', views: 3100 },
-  { id: 7,  title: 'Tournament Director Message: Celebrating Our Communities',    category: 'Official',     status: 'Draft',      date: '2026-12-14', author: 'Admin', views: 0 },
-  { id: 8,  title: 'Golden Boot Race: Five Players Within Two Goals of Leader',   category: 'Analysis',     status: 'Draft',      date: '2026-12-14', author: 'Adaeze Uwaifo', views: 0 },
-]
+const initArticles = []
 
 const catColors = { 'Match Report': '#3B82F6', Preview: '#F59E0B', Analysis: '#8B5CF6', 'Player Feature': '#22C55E', Tournament: '#D4AF37', Official: '#EC4899' }
 const blank = { title: '', category: 'Match Report', status: 'Draft', date: '', author: 'Admin', content: '', views: 0 }

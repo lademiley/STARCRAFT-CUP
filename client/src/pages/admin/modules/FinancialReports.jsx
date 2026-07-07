@@ -1,31 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { c, StatCard, SectionCard, Badge } from './shared'
 
-const revenue = [
-  { category: 'Sponsorships',  amount: 85000000, pct: 62, color: '#D4AF37' },
-  { category: 'Ticket Sales',  amount: 28000000, pct: 20, color: '#3B82F6' },
-  { category: 'Merchandise',   amount: 12000000, pct: 9,  color: '#22C55E' },
-  { category: 'Media Rights',  amount: 8000000,  pct: 6,  color: '#EC4899' },
-  { category: 'Gate Receipts', amount: 4000000,  pct: 3,  color: '#F59E0B' },
-]
+const revenue = []
 
-const expenses = [
-  { category: 'Venue Costs',    amount: 18000000, pct: 30, color: '#EF4444' },
-  { category: 'Player Prizes',  amount: 15000000, pct: 25, color: '#F97316' },
-  { category: 'Operations',     amount: 12000000, pct: 20, color: '#8B5CF6' },
-  { category: 'Marketing',      amount: 8000000,  pct: 13, color: '#14B8A6' },
-  { category: 'Staff & Security',amount: 7200000, pct: 12, color: '#6366F1' },
-]
+const expenses = []
 
-const transactions = [
-  { id: 1, date: '2026-12-13', desc: 'Ticket sales — QF day batch',        type: 'Income',  amount: 4200000,  status: 'Confirmed' },
-  { id: 2, date: '2026-12-11', desc: 'Access Bank sponsorship Q4',          type: 'Income',  amount: 7500000,  status: 'Confirmed' },
-  { id: 3, date: '2026-12-10', desc: 'Stadium hire — Ugbowo (Group stage)', type: 'Expense', amount: -3500000, status: 'Paid' },
-  { id: 4, date: '2026-12-09', desc: 'Merchandise sales (Week 2)',          type: 'Income',  amount: 2100000,  status: 'Confirmed' },
-  { id: 5, date: '2026-12-07', desc: 'Security staff — Weeks 1 & 2',       type: 'Expense', amount: -1800000, status: 'Paid' },
-  { id: 6, date: '2026-12-05', desc: 'MTN Nigeria sponsorship installment', type: 'Income',  amount: 4000000,  status: 'Confirmed' },
-  { id: 7, date: '2026-12-03', desc: 'Medical supplies & first aid',        type: 'Expense', amount: -620000,  status: 'Paid' },
-]
+const transactions = []
 
 const fmt = n => `₦${(Math.abs(n) / 1000000).toFixed(1)}M`
 const totalRevenue  = revenue.reduce((s, r) => s + r.amount, 0)

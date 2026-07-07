@@ -1,30 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { c, StatCard, SectionCard, Badge } from './shared'
 
-const topScorers = [
-  { name: 'Chukwuemeka Obi',   team: 'Akoko-Edo Panthers', goals: 8, assists: 3, rating: 9.1 },
-  { name: 'David Akhigbe',     team: 'Oredo City FC',       goals: 6, assists: 4, rating: 8.0 },
-  { name: 'Felix Agbonlahor',  team: 'Esan Central FC',     goals: 4, assists: 3, rating: 7.9 },
-  { name: 'Victor Ehigie',     team: 'Egor United',         goals: 4, assists: 6, rating: 8.7 },
-  { name: 'John Uwaifo',       team: 'Esan West Rangers',   goals: 5, assists: 1, rating: 7.2 },
-]
+const topScorers = []
 
-const activity = [
-  { time: '5 min ago',  event: 'Match result updated',    detail: 'Ikpoba-Okha FC 3–0 Ovia South United', type: 'match' },
-  { time: '22 min ago', event: 'New fan registered',      detail: 'adaobi.chukwu@gmail.com',              type: 'user' },
-  { time: '1 hr ago',   event: 'Ticket order submitted',  detail: 'VIP × 2 — QF Match 1',                type: 'finance' },
-  { time: '3 hrs ago',  event: 'Article published',       detail: 'QF Preview: Panthers vs Esan West',   type: 'content' },
-  { time: '5 hrs ago',  event: 'Volunteer approved',      detail: 'Adaeze Okonkwo — Media Team',         type: 'people' },
-  { time: '1 day ago',  event: 'Fixture updated',         detail: 'SF venue confirmed — Ugbowo Bowl',    type: 'match' },
-  { time: '1 day ago',  event: 'Sponsor payment received','detail': 'Access Bank — Platinum Tier',       type: 'finance' },
-]
+const activity = []
 
 const typeColor = { match: '#3B82F6', user: '#22C55E', finance: '#F59E0B', content: '#EC4899', people: '#8B5CF6' }
 
-const revenueData = [
-  { month: 'Sep', val: 20 }, { month: 'Oct', val: 42 }, { month: 'Nov', val: 58 },
-  { month: 'Dec', val: 100 }, { month: 'Jan', val: 34 }, { month: 'Feb', val: 18 },
-]
+const revenueData = []
 
 export default function DashboardAnalytics() {
   const [orders, setOrders] = useState([])
@@ -40,14 +23,14 @@ export default function DashboardAnalytics() {
   const pendingOrders = orders.filter(o => o.status === 'pending').length
 
   const stats = [
-    { label: 'Registered Teams',  value: '20',  icon: '🏆', change: 'Oredo LGA Edition', color: '#D4AF37' },
-    { label: 'Registered Players', value: '284', icon: '👤', change: '+18 this week',      color: '#3B82F6' },
-    { label: 'Matches Played',    value: '36',  icon: '⚽', change: '4 remaining',         color: '#22C55E' },
-    { label: 'Ticket Revenue',    value: confirmedRevenue > 0 ? `₦${(confirmedRevenue/1000).toFixed(0)}K` : '₦0', icon: '🎫', change: pendingOrders > 0 ? `${pendingOrders} pending` : 'Up to date', color: '#F59E0B' },
-    { label: 'Fan Accounts',      value: '—',   icon: '👥', change: 'Live from DB',        color: '#EC4899' },
-    { label: 'Active Sponsors',   value: '14',  icon: '💼', change: '₦85M total value',   color: '#8B5CF6' },
-    { label: 'Volunteers',        value: '63',  icon: '🤝', change: '12 pending approval', color: '#14B8A6' },
-    { label: 'News Articles',     value: '48',  icon: '📰', change: '6 drafts pending',    color: '#F97316' },
+    { label: 'Registered Teams',   value: '0',  icon: '🏆', change: '—', color: '#D4AF37' },
+    { label: 'Registered Players', value: '0',  icon: '👤', change: '—', color: '#3B82F6' },
+    { label: 'Matches Played',     value: '0',  icon: '⚽', change: '—', color: '#22C55E' },
+    { label: 'Ticket Revenue',     value: confirmedRevenue > 0 ? `₦${(confirmedRevenue/1000).toFixed(0)}K` : '₦0', icon: '🎫', change: pendingOrders > 0 ? `${pendingOrders} pending` : '—', color: '#F59E0B' },
+    { label: 'Fan Accounts',       value: '0',  icon: '👥', change: '—', color: '#EC4899' },
+    { label: 'Active Sponsors',    value: '0',  icon: '💼', change: '—', color: '#8B5CF6' },
+    { label: 'Volunteers',         value: '0',  icon: '🤝', change: '—', color: '#14B8A6' },
+    { label: 'News Articles',      value: '0',  icon: '📰', change: '—', color: '#F97316' },
   ]
 
   return (

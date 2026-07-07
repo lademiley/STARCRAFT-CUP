@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { c, StatCard, SectionCard, Badge, Modal, FormField } from './shared'
 
-const upcomingMatches = [
-  { id: 6,  home: 'Akoko-Edo Panthers', away: 'Etsako Central FC',   date: '2026-12-14', time: '09:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final' },
-  { id: 7,  home: 'Ikpoba-Okha FC',      away: 'Esan West Rangers',   date: '2026-12-14', time: '12:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final' },
-  { id: 8,  home: 'Owan East FC',         away: 'Egor United',          date: '2026-12-14', time: '15:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final' },
-  { id: 9,  home: 'Oredo City FC',        away: 'Owan West United',    date: '2026-12-14', time: '18:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final' },
-]
+const upcomingMatches = []
 
 export default function LiveScoreControl() {
   const [liveMatch, setLiveMatch] = useState(null)

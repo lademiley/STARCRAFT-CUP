@@ -1,20 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initFixtures = [
-  { id: 1,  home: 'Akoko-Edo Panthers',  away: 'Esan South FC',       date: '2026-12-02', time: '09:00', venue: 'Ugbowo Campus Main Bowl', round: 'Group Stage', status: 'completed', homeScore: 3, awayScore: 0 },
-  { id: 2,  home: 'Egor United',          away: 'Esan North Stars',    date: '2026-12-02', time: '11:30', venue: 'Ugbowo Campus Main Bowl', round: 'Group Stage', status: 'completed', homeScore: 2, awayScore: 1 },
-  { id: 3,  home: 'Esan West Rangers',    away: 'Igueben FC',           date: '2026-12-02', time: '14:00', venue: 'Ugbowo Campus Main Bowl', round: 'Group Stage', status: 'completed', homeScore: 2, awayScore: 0 },
-  { id: 4,  home: 'Ikpoba-Okha FC',       away: 'Ovia South United',   date: '2026-12-03', time: '09:00', venue: 'Ugbowo Campus Main Bowl', round: 'Group Stage', status: 'completed', homeScore: 4, awayScore: 0 },
-  { id: 5,  home: 'Owan East FC',         away: 'Bendel Insurance Youth',date:'2026-12-03',time: '14:00', venue: 'Ugbowo Campus Main Bowl', round: 'Group Stage', status: 'completed', homeScore: 3, awayScore: 0 },
-  { id: 6,  home: 'Akoko-Edo Panthers',  away: 'Etsako Central FC',   date: '2026-12-14', time: '09:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final', status: 'upcoming', homeScore: null, awayScore: null },
-  { id: 7,  home: 'Ikpoba-Okha FC',       away: 'Esan West Rangers',   date: '2026-12-14', time: '12:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final', status: 'upcoming', homeScore: null, awayScore: null },
-  { id: 8,  home: 'Owan East FC',         away: 'Egor United',          date: '2026-12-14', time: '15:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final', status: 'upcoming', homeScore: null, awayScore: null },
-  { id: 9,  home: 'Oredo City FC',        away: 'Owan West United',    date: '2026-12-14', time: '18:00', venue: 'Ugbowo Campus Main Bowl', round: 'Quarter-Final', status: 'upcoming', homeScore: null, awayScore: null },
-  { id: 10, home: 'TBD (SF1)',            away: 'TBD (SF2)',           date: '2026-12-17', time: '15:00', venue: 'Ugbowo Campus Main Bowl', round: 'Semi-Final',   status: 'upcoming', homeScore: null, awayScore: null },
-  { id: 11, home: 'TBD (SF3)',            away: 'TBD (SF4)',           date: '2026-12-17', time: '18:00', venue: 'Ugbowo Campus Main Bowl', round: 'Semi-Final',   status: 'upcoming', homeScore: null, awayScore: null },
-  { id: 12, home: 'TBD (Final)',          away: 'TBD (Final)',         date: '2026-12-20', time: '15:00', venue: 'Ogbemudia Stadium',       round: 'Final',        status: 'upcoming', homeScore: null, awayScore: null },
-]
+const initFixtures = []
 
 const blank = { home: '', away: '', date: '', time: '10:00', venue: 'Ugbowo Campus Main Bowl', round: 'Group Stage', status: 'upcoming', homeScore: null, awayScore: null }
 const roundColors = { 'Group Stage': '#3B82F6', 'Quarter-Final': '#F59E0B', 'Semi-Final': '#EC4899', 'Final': '#D4AF37', 'Opening Exhibition': '#22C55E' }

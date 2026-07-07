@@ -1,18 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initVols = [
-  { id: 1,  name: 'Adaeze Okonkwo',      email: 'adaeze.ok@gmail.com',    role: 'Media Team',    shift: 'Morning', status: 'Approved', applied: '2026-11-10' },
-  { id: 2,  name: 'Emeka Nwagbara',      email: 'emeka.nw@gmail.com',     role: 'Security',      shift: 'Evening', status: 'Approved', applied: '2026-11-11' },
-  { id: 3,  name: 'Chioma Ezeigbo',      email: 'chioma.ez@yahoo.com',    role: 'Ticketing',     shift: 'Morning', status: 'Pending',  applied: '2026-11-18' },
-  { id: 4,  name: 'Femi Adeyemi',        email: 'femi.ad@gmail.com',      role: 'First Aid',     shift: 'Full Day',status: 'Approved', applied: '2026-11-08' },
-  { id: 5,  name: 'Grace Oghifo',        email: 'grace.og@gmail.com',     role: 'Hospitality',   shift: 'Morning', status: 'Pending',  applied: '2026-11-20' },
-  { id: 6,  name: 'Uche Obiechina',      email: 'uche.ob@outlook.com',    role: 'Stewarding',    shift: 'Evening', status: 'Approved', applied: '2026-11-05' },
-  { id: 7,  name: 'Ngozi Akpan',         email: 'ngozi.ak@gmail.com',     role: 'Media Team',    shift: 'Morning', status: 'Pending',  applied: '2026-11-22' },
-  { id: 8,  name: 'Bello Aliyu',         email: 'bello.al@gmail.com',     role: 'Security',      shift: 'Evening', status: 'Approved', applied: '2026-11-12' },
-  { id: 9,  name: 'Tunde Obaseki',       email: 'tunde.ob@gmail.com',     role: 'Logistics',     shift: 'Full Day',status: 'Approved', applied: '2026-11-07' },
-  { id: 10, name: 'Amaka Igwe',          email: 'amaka.ig@yahoo.com',     role: 'Ticketing',     shift: 'Morning', status: 'Pending',  applied: '2026-11-25' },
-]
+const initVols = []
 
 const roleColors = { 'Media Team': '#8B5CF6', Security: '#EF4444', Ticketing: '#3B82F6', 'First Aid': '#EC4899', Hospitality: '#22C55E', Stewarding: '#F59E0B', Logistics: '#14B8A6' }
 const blank = { name: '', email: '', role: 'Ticketing', shift: 'Morning', status: 'Pending', applied: '' }

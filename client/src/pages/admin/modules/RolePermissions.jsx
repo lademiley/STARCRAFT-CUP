@@ -11,13 +11,7 @@ const PERMISSIONS = [
   'Review Team Registrations', 'Approve Team Registrations',
 ]
 
-const initRoles = [
-  { id: 1, name: 'Super Admin',    color: '#EF4444', permissions: PERMISSIONS },
-  { id: 2, name: 'Tournament Manager', color: '#D4AF37', permissions: ['View Dashboard','Manage Teams','Manage Players','Manage Fixtures','Enter Results','Manage Live Scores','Assign Referees','Manage Stadiums','View Finance','View Payments','Confirm Payments','Review Team Registrations','Approve Team Registrations'] },
-  { id: 3, name: 'Finance Officer', color: '#22C55E', permissions: ['View Dashboard','View Finance','Manage Finance','View Payments','Confirm Payments'] },
-  { id: 4, name: 'Media Manager',  color: '#8B5CF6', permissions: ['View Dashboard','Manage News','Manage Gallery','Send Notifications'] },
-  { id: 5, name: 'Volunteer Coordinator', color: '#14B8A6', permissions: ['View Dashboard','Manage Volunteers','Manage Staff'] },
-]
+const initRoles = []
 
 const blank = { name: '', color: '#3B82F6', permissions: [] }
 

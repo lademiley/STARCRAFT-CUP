@@ -1,20 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initLogs = [
-  { id: 1,  time: '2026-12-13 19:45', user: 'admin',             action: 'Confirmed payment order',           target: 'Order SCT-AB12CD',    level: 'info'    },
-  { id: 2,  time: '2026-12-13 18:30', user: 'system',            action: 'Ticket order submitted',            target: 'Order SCT-XY9Z21',    level: 'info'    },
-  { id: 3,  time: '2026-12-13 17:00', user: 'admin',             action: 'Match result updated',              target: 'Fixture ID 5',        level: 'info'    },
-  { id: 4,  time: '2026-12-12 15:22', user: 'adaeze.uwaifo',     action: 'Article published',                 target: 'QF Preview Article',  level: 'info'    },
-  { id: 5,  time: '2026-12-12 14:10', user: 'admin',             action: 'Volunteer approved',                target: 'Adaeze Okonkwo',       level: 'info'    },
-  { id: 6,  time: '2026-12-11 12:05', user: 'system',            action: 'Failed login attempt',              target: 'admin@scup2026.ng',   level: 'warning' },
-  { id: 7,  time: '2026-12-10 09:30', user: 'admin',             action: 'Team registration approved',        target: 'SC2026-DEMO01',       level: 'info'    },
-  { id: 8,  time: '2026-12-09 11:00', user: 'admin',             action: 'Payment order rejected',            target: 'Order SCT-ZZZZ00',    level: 'warning' },
-  { id: 9,  time: '2026-12-08 08:45', user: 'system',            action: 'Server started',                    target: 'API v1.0',            level: 'info'    },
-  { id: 10, time: '2026-12-07 16:20', user: 'admin',             action: 'Fixture schedule updated',          target: 'QF Fixtures',         level: 'info'    },
-  { id: 11, time: '2026-12-06 10:00', user: 'admin',             action: 'Admin login',                       target: 'admin@scup2026.ng',   level: 'info'    },
-  { id: 12, time: '2026-12-05 14:30', user: 'system',            action: 'Sponsor payment recorded',          target: 'Access Bank',         level: 'info'    },
-]
+const initLogs = []
 
 const levelColors = { info: '#3B82F6', warning: '#F59E0B', error: '#EF4444', critical: '#8B5CF6' }
 const levelIcons  = { info: 'ℹ️', warning: '⚠️', error: '❌', critical: '🔴' }

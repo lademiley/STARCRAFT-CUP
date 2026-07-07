@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Modal, FormField, ModuleHeader } from './shared'
 
-const initSent = [
-  { id: 1,  title: 'Quarter-Finals Tomorrow!',                audience: 'All Fans', type: 'Announcement', sent: '2026-12-13 18:00', recipients: 1847 },
-  { id: 2,  title: 'Your ticket payment has been confirmed',  audience: 'Confirmed Buyers', type: 'Transactional', sent: '2026-12-10 14:22', recipients: 423 },
-  { id: 3,  title: 'Match Result: Panthers 3–0 Esan South',  audience: 'All Fans', type: 'Match Update', sent: '2026-12-02 11:45', recipients: 1820 },
-  { id: 4,  title: 'Early Bird Ticket Reminder',              audience: 'Unverified Fans', type: 'Promotional', sent: '2026-11-28 09:00', recipients: 380 },
-]
+const initSent = []
 
 const typeColors = { Announcement: '#D4AF37', Transactional: '#22C55E', 'Match Update': '#3B82F6', Promotional: '#EC4899', Alert: '#EF4444' }
 const blank = { title: '', body: '', type: 'Announcement', audience: 'All Fans' }

@@ -3,23 +3,23 @@ import { c, SectionCard, FormField, ModuleHeader } from './shared'
 
 export default function WebsiteSettings() {
   const [settings, setSettings] = useState({
-    siteName: 'StarCraft Cup 2026',
-    siteTagline: 'Oredo LGA — Edo State, Nigeria',
-    contactEmail: 'info@scup2026.ng',
-    contactPhone: '+234 803 555 7788',
-    registrationOpen: true,
-    ticketsOpen: true,
+    siteName: '',
+    siteTagline: '',
+    contactEmail: '',
+    contactPhone: '',
+    registrationOpen: false,
+    ticketsOpen: false,
     maintenanceMode: false,
-    showLiveScores: true,
-    allowPublicResults: true,
+    showLiveScores: false,
+    allowPublicResults: false,
     googleAnalyticsId: '',
-    facebookPage: 'https://facebook.com/starcraftcup2026',
-    twitterHandle: '@StarCraftCup',
-    instagramHandle: '@starcraftcup2026',
+    facebookPage: '',
+    twitterHandle: '',
+    instagramHandle: '',
     primaryColor: '#D4AF37',
-    tournamentYear: '2026',
-    prizePool: '₦5,000,000',
-    registrationFee: '₦25,000',
+    tournamentYear: '',
+    prizePool: '',
+    registrationFee: '',
   })
   const [saved, setSaved] = useState(false)
 

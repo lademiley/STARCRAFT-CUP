@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Modal, FormField, ModuleHeader } from './shared'
 
-const initVenues = [
-  { id: 1, name: 'Ugbowo Campus Main Bowl', city: 'Benin City', capacity: 5000, surface: 'Natural Grass', status: 'Operational', facilities: 'Floodlights, Dressing Rooms, Media Box, First Aid Post', matchesHosted: 36, contact: 'UNIBEN Sports Dept — 070 1234 5678' },
-  { id: 2, name: 'Ogbemudia Stadium',       city: 'Benin City', capacity: 22000, surface: 'Natural Grass', status: 'Operational', facilities: 'Full Media Suite, VIP Box, Electronic Scoreboard, 4 Dressing Rooms', matchesHosted: 1, contact: 'Edo State Sports Commission — 070 9876 5432' },
-]
+const initVenues = []
 
 const blank = { name: '', city: '', capacity: 0, surface: 'Natural Grass', status: 'Operational', facilities: '', matchesHosted: 0, contact: '' }
 

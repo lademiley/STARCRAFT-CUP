@@ -1,20 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initPlayers = [
-  { id: 1,  name: 'Chukwuemeka Obi',    team: 'Akoko-Edo Panthers', position: 'Forward',   jersey: 9,  age: 17, goals: 8,  assists: 3, yellowCards: 1, redCards: 0, rating: 9.1, status: 'Active' },
-  { id: 2,  name: 'Victor Ehigie',       team: 'Egor United',         position: 'Midfielder',jersey: 8,  age: 19, goals: 4,  assists: 6, yellowCards: 2, redCards: 0, rating: 8.7, status: 'Active' },
-  { id: 3,  name: 'Emmanuel Okuosa',     team: 'Ikpoba-Okha FC',      position: 'Goalkeeper',jersey: 1,  age: 18, goals: 0,  assists: 0, yellowCards: 0, redCards: 0, rating: 8.5, status: 'Active' },
-  { id: 4,  name: 'Samuel Oriaifo',      team: 'Owan West United',    position: 'Defender',  jersey: 4,  age: 20, goals: 1,  assists: 2, yellowCards: 3, redCards: 0, rating: 8.2, status: 'Active' },
-  { id: 5,  name: 'David Akhigbe',       team: 'Oredo City FC',       position: 'Forward',   jersey: 11, age: 17, goals: 6,  assists: 4, yellowCards: 1, redCards: 0, rating: 8.0, status: 'Active' },
-  { id: 6,  name: 'Peter Osagie',        team: 'Owan East FC',        position: 'Midfielder',jersey: 6,  age: 18, goals: 3,  assists: 5, yellowCards: 2, redCards: 0, rating: 7.8, status: 'Active' },
-  { id: 7,  name: 'Felix Agbonlahor',    team: 'Esan Central FC',     position: 'Forward',   jersey: 10, age: 19, goals: 4,  assists: 3, yellowCards: 0, redCards: 0, rating: 7.9, status: 'Active' },
-  { id: 8,  name: 'Monday Ogunbor',      team: 'Etsako Central FC',   position: 'Defender',  jersey: 5,  age: 20, goals: 0,  assists: 1, yellowCards: 4, redCards: 0, rating: 7.5, status: 'Active' },
-  { id: 9,  name: 'John Uwaifo',         team: 'Esan West Rangers',   position: 'Forward',   jersey: 7,  age: 17, goals: 5,  assists: 1, yellowCards: 1, redCards: 0, rating: 7.2, status: 'Active' },
-  { id: 10, name: 'Chris Ehigiamusoe',   team: 'Owan West United',    position: 'Midfielder',jersey: 14, age: 18, goals: 2,  assists: 7, yellowCards: 1, redCards: 0, rating: 7.7, status: 'Active' },
-  { id: 11, name: 'Bright Omokhagbo',    team: 'Owan East FC',        position: 'Goalkeeper',jersey: 23, age: 19, goals: 0,  assists: 0, yellowCards: 0, redCards: 0, rating: 8.3, status: 'Active' },
-  { id: 12, name: 'Kingsley Idehen',     team: 'Ikpoba-Okha FC',      position: 'Forward',   jersey: 9,  age: 17, goals: 5,  assists: 2, yellowCards: 2, redCards: 1, rating: 6.9, status: 'Suspended' },
-]
+const initPlayers = []
 
 const posColor = { Forward: '#EF4444', Midfielder: '#3B82F6', Defender: '#22C55E', Goalkeeper: '#F59E0B' }
 const blank = { name: '', team: '', position: 'Forward', jersey: '', age: '', goals: 0, assists: 0, yellowCards: 0, redCards: 0, rating: 7.0, status: 'Active' }
@@ -48,9 +35,9 @@ export default function PlayerManagement() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
         <StatCard label="Total Players" value={players.length} icon="👤" color="#D4AF37" />
-        <StatCard label="Top Scorer"    value={`${Math.max(...players.map(p => p.goals))} goals`} icon="⚽" color="#22C55E" />
+        <StatCard label="Top Scorer"    value={players.length ? `${Math.max(...players.map(p => p.goals))} goals` : '—'} icon="⚽" color="#22C55E" />
         <StatCard label="Suspended"     value={players.filter(p => p.status === 'Suspended').length} icon="🟥" color="#EF4444" />
-        <StatCard label="Avg Rating"    value={(players.reduce((s, p) => s + p.rating, 0) / players.length).toFixed(1)} icon="⭐" color="#F59E0B" />
+        <StatCard label="Avg Rating"    value={players.length ? (players.reduce((s, p) => s + p.rating, 0) / players.length).toFixed(1) : '—'} icon="⭐" color="#F59E0B" />
       </div>
 
       <SectionCard title="👥 Player Registry" action="">

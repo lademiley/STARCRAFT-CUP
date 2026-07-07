@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initAlbums = [
-  { id: 1,  title: 'Opening Ceremony', date: '2026-12-01', photos: 84, videos: 3, event: 'Opening Exhibition', status: 'Published', featured: true },
-  { id: 2,  title: 'Group Stage MD1 — Dec 2',  date: '2026-12-02', photos: 62, videos: 4, event: 'Group Stage', status: 'Published', featured: false },
-  { id: 3,  title: 'Group Stage MD1 — Dec 3',  date: '2026-12-03', photos: 58, videos: 4, event: 'Group Stage', status: 'Published', featured: false },
-  { id: 4,  title: 'Group Stage Highlights Week 1', date: '2026-12-07', photos: 45, videos: 8, event: 'Group Stage', status: 'Published', featured: false },
-  { id: 5,  title: 'Chukwuemeka Obi — Player Spotlight', date: '2026-12-08', photos: 22, videos: 1, event: 'Player Feature', status: 'Published', featured: true },
-  { id: 6,  title: 'Group Stage Final Matchday',  date: '2026-12-11', photos: 70, videos: 6, event: 'Group Stage', status: 'Published', featured: false },
-  { id: 7,  title: 'Quarter-Final Preview Gallery', date: '2026-12-13', photos: 18, videos: 2, event: 'Quarter-Final', status: 'Draft', featured: false },
-  { id: 8,  title: 'Behind the Scenes — Tournament Staff', date: '2026-12-05', photos: 34, videos: 1, event: 'Behind The Scenes', status: 'Published', featured: false },
-]
+const initAlbums = []
 
 const eventColors = { 'Opening Exhibition': '#D4AF37', 'Group Stage': '#3B82F6', 'Quarter-Final': '#F59E0B', 'Semi-Final': '#EC4899', 'Final': '#22C55E', 'Player Feature': '#8B5CF6', 'Behind The Scenes': '#14B8A6' }
 const blank = { title: '', date: '', photos: 0, videos: 0, event: 'Group Stage', status: 'Draft', featured: false }

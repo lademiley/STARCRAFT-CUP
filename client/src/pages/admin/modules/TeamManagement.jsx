@@ -1,28 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initTeams = [
-  { id: 1,  name: 'Akoko-Edo Panthers',  short: 'AKP', logo: '🐆', lga: 'Akoko-Edo',      coach: 'Gabriel Alagbe',     group: 'A', players: 22, points: 10, status: 'Active' },
-  { id: 2,  name: 'Egor United',          short: 'EGU', logo: '🔥', lga: 'Egor',            coach: 'Emeka Olokor',       group: 'A', players: 20, points: 7,  status: 'Active' },
-  { id: 3,  name: 'Esan Central FC',      short: 'ESC', logo: '⭐', lga: 'Esan Central',    coach: 'Chidi Nwosu',        group: 'A', players: 19, points: 5,  status: 'Active' },
-  { id: 4,  name: 'Esan North Stars',     short: 'ENS', logo: '🌠', lga: 'Esan North-East', coach: 'Osaro Akhigbe',      group: 'A', players: 18, points: 4,  status: 'Active' },
-  { id: 5,  name: 'Esan South FC',        short: 'ESS', logo: '🌊', lga: 'Esan South-East', coach: 'Festus Agbamu',      group: 'A', players: 17, points: 1,  status: 'Active' },
-  { id: 6,  name: 'Esan West Rangers',    short: 'EWR', logo: '🦅', lga: 'Esan West',       coach: 'Dickson Owie',       group: 'B', players: 20, points: 9,  status: 'Active' },
-  { id: 7,  name: 'Etsako Central FC',    short: 'ETC', logo: '🏰', lga: 'Etsako Central',  coach: 'Sunday Omotosho',    group: 'B', players: 21, points: 8,  status: 'Active' },
-  { id: 8,  name: 'Etsako East United',   short: 'EEU', logo: '🦆', lga: 'Etsako East',     coach: 'John Ochuko',        group: 'B', players: 19, points: 6,  status: 'Active' },
-  { id: 9,  name: 'Etsako West FC',       short: 'ETW', logo: '🛡️', lga: 'Etsako West',     coach: 'Peter Aigbe',        group: 'B', players: 18, points: 4,  status: 'Active' },
-  { id: 10, name: 'Igueben FC',           short: 'IGU', logo: '⚔️', lga: 'Igueben',         coach: 'Felix Idahosa',      group: 'B', players: 17, points: 1,  status: 'Active' },
-  { id: 11, name: 'Ikpoba-Okha FC',       short: 'IKO', logo: '🏆', lga: 'Ikpoba-Okha',     coach: 'Austin Oghuvwu',     group: 'C', players: 23, points: 12, status: 'Active' },
-  { id: 12, name: 'Oredo City FC',        short: 'ORC', logo: '👑', lga: 'Oredo (Host)',    coach: 'Victor Ihejirika',   group: 'C', players: 22, points: 7,  status: 'Active' },
-  { id: 13, name: 'Orhionmwon FC',        short: 'ORH', logo: '🌿', lga: 'Orhionmwon',      coach: 'Mike Odalume',       group: 'C', players: 18, points: 5,  status: 'Active' },
-  { id: 14, name: 'Ovia North Rangers',   short: 'ONR', logo: '🦁', lga: 'Ovia North-East', coach: 'Emmanuel Okoro',     group: 'C', players: 19, points: 4,  status: 'Active' },
-  { id: 15, name: 'Ovia South United',    short: 'OSU', logo: '🌍', lga: 'Ovia South-West', coach: 'Bright Osifo',       group: 'C', players: 16, points: 0,  status: 'Active' },
-  { id: 16, name: 'Owan East FC',         short: 'OWE', logo: '🦊', lga: 'Owan East',       coach: 'Richard Ebore',      group: 'D', players: 21, points: 10, status: 'Active' },
-  { id: 17, name: 'Owan West United',     short: 'OWW', logo: '🌙', lga: 'Owan West',       coach: 'Samuel Oriaifo',     group: 'D', players: 20, points: 8,  status: 'Active' },
-  { id: 18, name: 'Uhunmwonde FC',        short: 'UHU', logo: '🏔️', lga: 'Uhunmwonde',      coach: 'Kingsley Egbase',    group: 'D', players: 18, points: 4,  status: 'Active' },
-  { id: 19, name: 'Oredo Host XI',        short: 'HXI', logo: '🏠', lga: 'Host (Oredo)',    coach: 'Chief Osagie-Eweka', group: 'D', players: 17, points: 3,  status: 'Active' },
-  { id: 20, name: 'Bendel Insurance Youth', short: 'BIY', logo: '🦁', lga: 'Defending 🏆',  coach: 'Godwin Enakhena',    group: 'D', players: 18, points: 0,  status: 'Active' },
-]
+const initTeams = []
 
 const blank = { name: '', short: '', logo: '⚽', lga: '', coach: '', group: 'A', players: 18, points: 0, status: 'Active' }
 

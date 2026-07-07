@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Modal, FormField, ModuleHeader, ActionRow, SearchBar } from './shared'
 
-const initResults = [
-  { id: 1,  home: 'Akoko-Edo Panthers', away: 'Esan South FC',          hs: 3, as: 0, date: '2026-12-02', round: 'Group Stage',   scorers: 'Chukwuemeka Obi ×2, Felix A.',      motm: 'Chukwuemeka Obi' },
-  { id: 2,  home: 'Egor United',         away: 'Esan North Stars',       hs: 2, as: 1, date: '2026-12-02', round: 'Group Stage',   scorers: 'Victor Ehigie, Osagie',             motm: 'Victor Ehigie' },
-  { id: 3,  home: 'Esan West Rangers',   away: 'Igueben FC',              hs: 2, as: 0, date: '2026-12-02', round: 'Group Stage',   scorers: 'John Uwaifo ×2',                    motm: 'John Uwaifo' },
-  { id: 4,  home: 'Ikpoba-Okha FC',      away: 'Ovia South United',      hs: 4, as: 0, date: '2026-12-03', round: 'Group Stage',   scorers: 'Kingsley Idehen ×2, Okuosa, OG',    motm: 'Kingsley Idehen' },
-  { id: 5,  home: 'Owan East FC',        away: 'Bendel Insurance Youth', hs: 3, as: 0, date: '2026-12-03', round: 'Group Stage',   scorers: 'Peter Osagie ×2, Ehigiamusoe',      motm: 'Peter Osagie' },
-  { id: 6,  home: 'Oredo City FC',       away: 'Orhionmwon FC',          hs: 2, as: 1, date: '2026-12-04', round: 'Group Stage',   scorers: 'David Akhigbe ×2',                  motm: 'David Akhigbe' },
-  { id: 7,  home: 'Owan West United',    away: 'Oredo Host XI',          hs: 2, as: 1, date: '2026-12-03', round: 'Group Stage',   scorers: 'Samuel Oriaifo, Ehigiamusoe',       motm: 'Samuel Oriaifo' },
-  { id: 8,  home: 'Etsako Central FC',   away: 'Etsako West FC',         hs: 1, as: 1, date: '2026-12-02', round: 'Group Stage',   scorers: 'Monday Ogunbor — Penalty',          motm: 'Monday Ogunbor' },
-]
+const initResults = []
 
 const blank = { home: '', away: '', hs: 0, as: 0, date: '', round: 'Group Stage', scorers: '', motm: '' }
 
@@ -44,7 +35,7 @@ export default function MatchResults() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
         <StatCard label="Results Logged" value={results.length}  icon="📊" color="#D4AF37" />
-        <StatCard label="Total Goals"    value={totalGoals}       icon="⚽" color="#22C55E" change={`${(totalGoals / results.length).toFixed(1)} per match`} />
+        <StatCard label="Total Goals"    value={totalGoals}       icon="⚽" color="#22C55E" change={results.length ? `${(totalGoals / results.length).toFixed(1)} per match` : '—'} />
         <StatCard label="Home Wins"      value={results.filter(r => r.hs > r.as).length}  icon="🏠" color="#3B82F6" />
         <StatCard label="Away Wins"      value={results.filter(r => r.as > r.hs).length}  icon="✈️" color="#F59E0B" />
       </div>

@@ -1,18 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initItems = [
-  { id: 1,  name: 'StarCraft Cup 2026 Jersey',     category: 'Clothing', price: 8500,  stock: 240, sold: 89,  status: 'In Stock' },
-  { id: 2,  name: 'Tournament Cap',                category: 'Clothing', price: 3500,  stock: 150, sold: 64,  status: 'In Stock' },
-  { id: 3,  name: 'Official Match Ball',           category: 'Sports',   price: 12000, stock: 30,  sold: 22,  status: 'Low Stock' },
-  { id: 4,  name: 'Supporter Scarf',               category: 'Clothing', price: 2500,  stock: 200, sold: 78,  status: 'In Stock' },
-  { id: 5,  name: 'Commemorative Mug',             category: 'Lifestyle',price: 2000,  stock: 120, sold: 45,  status: 'In Stock' },
-  { id: 6,  name: 'Phone Case (Tournament Theme)', category: 'Lifestyle',price: 3000,  stock: 80,  sold: 38,  status: 'In Stock' },
-  { id: 7,  name: 'Keychain Set (3-pack)',         category: 'Lifestyle',price: 1500,  stock: 0,   sold: 95,  status: 'Out of Stock' },
-  { id: 8,  name: 'Wall Calendar 2026–2027',       category: 'Print',    price: 2200,  stock: 60,  sold: 27,  status: 'In Stock' },
-  { id: 9,  name: 'Collector\'s Pin Badge Set',    category: 'Lifestyle',price: 4500,  stock: 14,  sold: 41,  status: 'Low Stock' },
-  { id: 10, name: 'Branded Water Bottle',          category: 'Lifestyle',price: 2800,  stock: 90,  sold: 56,  status: 'In Stock' },
-]
+const initItems = []
 
 const catColors = { Clothing: '#3B82F6', Sports: '#22C55E', Lifestyle: '#EC4899', Print: '#F59E0B' }
 const statusColors = { 'In Stock': '#22C55E', 'Low Stock': '#F59E0B', 'Out of Stock': '#EF4444' }

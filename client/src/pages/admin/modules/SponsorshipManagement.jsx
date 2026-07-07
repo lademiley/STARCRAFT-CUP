@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initSponsors = [
-  { id: 1,  name: 'Access Bank',     tier: 'Platinum', value: 20000000, status: 'Active',  contact: 'Mrs. Aisha Mohammed',  email: 'sponsors@accessbank.com',  logo: '🏦', paidPct: 100 },
-  { id: 2,  name: 'GTBank',          tier: 'Gold',     value: 15000000, status: 'Active',  contact: 'Mr. Bola Adesanya',    email: 'sponsorship@gtbank.com',   logo: '🟡', paidPct: 100 },
-  { id: 3,  name: 'MTN Nigeria',     tier: 'Gold',     value: 12000000, status: 'Active',  contact: 'Engr. Seun Ajiboye',   email: 'events@mtn.com.ng',        logo: '📱', paidPct: 75  },
-  { id: 4,  name: 'Dangote Group',   tier: 'Silver',   value: 8000000,  status: 'Active',  contact: 'Ms. Fatima Dangote',   email: 'csr@dangote.com',          logo: '🏭', paidPct: 100 },
-  { id: 5,  name: 'Zenith Bank',     tier: 'Silver',   value: 7500000,  status: 'Active',  contact: 'Mr. Chidi Okeke',      email: 'events@zenithbank.com',    logo: '💙', paidPct: 50  },
-  { id: 6,  name: 'Airtel Nigeria',  tier: 'Bronze',   value: 5000000,  status: 'Active',  contact: 'Ms. Ngozi Aneke',      email: 'corporate@airtel.com.ng',  logo: '📡', paidPct: 100 },
-  { id: 7,  name: 'NNPC Retail',     tier: 'Bronze',   value: 4000000,  status: 'Pending', contact: 'Mr. Yakubu Ibrahim',   email: 'sponsorship@nnpcretail.ng',logo: '⛽', paidPct: 0   },
-  { id: 8,  name: 'Edo State Govt',  tier: 'Platinum', value: 15000000, status: 'Active',  contact: 'Commissioner Ehigie',  email: 'info@edostategov.ng',      logo: '🏛️', paidPct: 100 },
-]
+const initSponsors = []
 
 const tierColors = { Platinum: '#E5E4E2', Gold: '#D4AF37', Silver: '#C0C0C0', Bronze: '#CD7F32' }
 const blank = { name: '', tier: 'Bronze', value: 0, status: 'Pending', contact: '', email: '', logo: '💼', paidPct: 0 }

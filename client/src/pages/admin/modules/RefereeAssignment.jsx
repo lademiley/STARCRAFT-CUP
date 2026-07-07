@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initReferees = [
-  { id: 1,  name: 'Chief James Edomwonyi', grade: 'FIFA', matches: 8, region: 'Benin City',  status: 'Available', phone: '+234 803 111 2233' },
-  { id: 2,  name: 'James Okafor',           grade: 'CAF',  matches: 6, region: 'Benin City',  status: 'Assigned',  phone: '+234 805 222 3344' },
-  { id: 3,  name: 'Paul Agbakoba',          grade: 'NFF',  matches: 5, region: 'Asaba',       status: 'Available', phone: '+234 807 333 4455' },
-  { id: 4,  name: 'Ehis Omoregie',          grade: 'NFF',  matches: 4, region: 'Benin City',  status: 'Available', phone: '+234 809 444 5566' },
-  { id: 5,  name: 'Tom Adaeze',             grade: 'NFF',  matches: 3, region: 'Warri',       status: 'Assigned',  phone: '+234 811 555 6677' },
-  { id: 6,  name: 'John Onyeka',            grade: 'NFF',  matches: 4, region: 'Enugu',       status: 'Available', phone: '+234 813 666 7788' },
-  { id: 7,  name: 'Chris Agoro',            grade: 'NFF',  matches: 3, region: 'Lagos',       status: 'Available', phone: '+234 815 777 8899' },
-  { id: 8,  name: 'Sandra Nwanguma',        grade: 'CAF',  matches: 5, region: 'Abuja',       status: 'Available', phone: '+234 817 888 9900' },
-]
+const initReferees = []
 
 const gradeColors = { FIFA: '#D4AF37', CAF: '#3B82F6', NFF: '#22C55E' }
 const blank = { name: '', grade: 'NFF', matches: 0, region: '', status: 'Available', phone: '' }

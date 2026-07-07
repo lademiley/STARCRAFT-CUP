@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const initStaff = [
-  { id: 1,  name: 'Engr. Osaro Osagie',      role: 'Tournament Director',     dept: 'Administration', status: 'Active', phone: '+234 803 001 0011', email: 'o.osagie@scup2026.ng' },
-  { id: 2,  name: 'Mrs. Blessing Ehigie',     role: 'Operations Manager',      dept: 'Operations',     status: 'Active', phone: '+234 805 002 0022', email: 'b.ehigie@scup2026.ng' },
-  { id: 3,  name: 'Mr. Chidi Nwachukwu',      role: 'Technical Director',      dept: 'Football',       status: 'Active', phone: '+234 807 003 0033', email: 'c.nwachukwu@scup2026.ng' },
-  { id: 4,  name: 'Dr. Grace Agbonlahor',     role: 'Medical Officer',         dept: 'Medical',        status: 'Active', phone: '+234 809 004 0044', email: 'g.agbonlahor@scup2026.ng' },
-  { id: 5,  name: 'Mr. Victor Okonkwo',       role: 'Security Coordinator',    dept: 'Security',       status: 'Active', phone: '+234 811 005 0055', email: 'v.okonkwo@scup2026.ng' },
-  { id: 6,  name: 'Miss Adaeze Uwaifo',       role: 'Media & Communications',  dept: 'Media',          status: 'Active', phone: '+234 813 006 0066', email: 'a.uwaifo@scup2026.ng' },
-  { id: 7,  name: 'Mr. Emmanuel Akhigbe',     role: 'Finance Officer',         dept: 'Finance',        status: 'Active', phone: '+234 815 007 0077', email: 'e.akhigbe@scup2026.ng' },
-  { id: 8,  name: 'Mr. Sunday Idahosa',       role: 'Logistics Coordinator',   dept: 'Operations',     status: 'On Leave', phone: '+234 817 008 0088', email: 's.idahosa@scup2026.ng' },
-]
+const initStaff = []
 
 const deptColors = { Administration: '#D4AF37', Operations: '#3B82F6', Football: '#22C55E', Medical: '#EC4899', Security: '#EF4444', Media: '#8B5CF6', Finance: '#F59E0B' }
 const blank = { name: '', role: '', dept: 'Administration', status: 'Active', phone: '', email: '' }
