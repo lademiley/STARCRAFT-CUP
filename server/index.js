@@ -169,16 +169,62 @@ app.post('/api/volunteers', (req, res) => {
 })
 
 // ---------- Team registration ----------
+const teamRegistrations = new Map() // refId -> registration object
+
 app.post('/api/teams/register', (req, res) => {
-  const { teamName, coach, email } = req.body
-  if (!teamName || !email) {
-    return res.status(400).json({ error: 'Team name and email are required' })
+  const { teamName, city, yearFounded, coach, homeColors, competitionHistory,
+          repName, repEmail, repPhone, players } = req.body
+  if (!teamName || !repEmail) {
+    return res.status(400).json({ error: 'Team name and representative email are required' })
   }
-  console.log('[TeamReg]', { teamName, coach, email })
-  res.json({
-    success: true,
-    reference: `SC2027-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
-  })
+  const ref = `SC2026-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
+  const registration = {
+    id: Date.now().toString(),
+    ref,
+    teamName, city: city || '', yearFounded: yearFounded || '',
+    coach: coach || '', homeColors: homeColors || '',
+    competitionHistory: competitionHistory || '',
+    repName: repName || '', repEmail, repPhone: repPhone || '',
+    players: players || [],
+    status: 'pending',
+    submittedAt: new Date().toISOString(),
+    reviewedAt: null,
+    reviewNote: '',
+  }
+  teamRegistrations.set(registration.id, registration)
+  console.log('[TeamReg]', { ref, teamName, repEmail })
+  res.status(201).json({ success: true, reference: ref, id: registration.id })
+})
+
+// Admin: get all team registrations
+app.get('/api/teams/registrations', (req, res) => {
+  const all = [...teamRegistrations.values()]
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+  res.json({ registrations: all })
+})
+
+// Admin: approve a team registration
+app.patch('/api/teams/registrations/:id/approve', (req, res) => {
+  const reg = teamRegistrations.get(req.params.id)
+  if (!reg) return res.status(404).json({ error: 'Registration not found' })
+  reg.status = 'approved'
+  reg.reviewedAt = new Date().toISOString()
+  reg.reviewNote = req.body.note || ''
+  teamRegistrations.set(reg.id, reg)
+  console.log('[TeamReg Approved]', reg.ref, reg.teamName)
+  res.json({ success: true, registration: reg })
+})
+
+// Admin: reject a team registration
+app.patch('/api/teams/registrations/:id/reject', (req, res) => {
+  const reg = teamRegistrations.get(req.params.id)
+  if (!reg) return res.status(404).json({ error: 'Registration not found' })
+  reg.status = 'rejected'
+  reg.reviewedAt = new Date().toISOString()
+  reg.reviewNote = req.body.note || ''
+  teamRegistrations.set(reg.id, reg)
+  console.log('[TeamReg Rejected]', reg.ref, reg.teamName)
+  res.json({ success: true, registration: reg })
 })
 
 // ---------- Auth middleware ----------
@@ -248,6 +294,12 @@ app.patch('/api/orders/:id/reject', (req, res) => {
   order.status = 'rejected'
   orders.set(order.id, order)
   res.json({ success: true, order })
+})
+
+// Admin: list all registered users (strip password hashes)
+app.get('/api/users', (req, res) => {
+  const allUsers = [...users.values()].map(({ passwordHash, ...safe }) => safe)
+  res.json({ users: allUsers })
 })
 
 // ---------- Generic error handler ----------

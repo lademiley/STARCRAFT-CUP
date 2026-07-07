@@ -38,14 +38,14 @@ export default function AdminLogin() {
         <div style={styles.header}>
           <div style={styles.shield}>🛡️</div>
           <h1 style={styles.title}>Admin Portal</h1>
-          <p style={styles.subtitle}>StarCraft Cup 2027 — Restricted Access</p>
+          <p style={styles.subtitle}>StarCraft Cup 2026 — Restricted Access</p>
         </div>
 
         {/* Hint */}
         <div style={styles.hint}>
           <span style={{ color: '#D4AF37', fontWeight: 700 }}>Demo Credentials</span><br />
           <small style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace' }}>
-            admin@starcraft2027.com &nbsp;|&nbsp; SC2027@Admin
+            admin@starcraft2026.com &nbsp;|&nbsp; SC2026@Admin
           </small>
         </div>
 
@@ -58,7 +58,7 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="admin@starcraft2027.com"
+                placeholder="admin@starcraft2026.com"
                 required
                 style={styles.input}
               />

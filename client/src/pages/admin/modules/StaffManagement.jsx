@@ -2,73 +2,77 @@ import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
 const initStaff = [
-  { id: 1, name: 'Dr. Chukwudi Eze', role: 'Tournament Director', dept: 'Management', email: 'c.eze@sc2027.ng', phone: '08011111111', status: 'Active', joined: '2026-09-01' },
-  { id: 2, name: 'Mrs. Amaka Okonkwo', role: 'Operations Manager', dept: 'Operations', email: 'a.okonkwo@sc2027.ng', phone: '08022222222', status: 'Active', joined: '2026-09-15' },
-  { id: 3, name: 'Mr. Festus Idehen', role: 'Head of Security', dept: 'Security', email: 'f.idehen@sc2027.ng', phone: '08033333333', status: 'Active', joined: '2026-10-01' },
-  { id: 4, name: 'Miss Blessing Osagie', role: 'Media Coordinator', dept: 'Media', email: 'b.osagie@sc2027.ng', phone: '08044444444', status: 'Active', joined: '2026-10-15' },
-  { id: 5, name: 'Mr. Emeka Agbamu', role: 'Finance Officer', dept: 'Finance', email: 'e.agbamu@sc2027.ng', phone: '08055555555', status: 'Active', joined: '2026-09-01' },
-  { id: 6, name: 'Dr. Grace Uwaifo', role: 'Team Doctor', dept: 'Medical', email: 'g.uwaifo@sc2027.ng', phone: '08066666666', status: 'Active', joined: '2026-11-01' },
-  { id: 7, name: 'Mr. Sunday Obi', role: 'Ground Staff Manager', dept: 'Operations', email: 's.obi@sc2027.ng', phone: '08077777777', status: 'On Leave', joined: '2026-09-01' },
+  { id: 1,  name: 'Engr. Osaro Osagie',      role: 'Tournament Director',     dept: 'Administration', status: 'Active', phone: '+234 803 001 0011', email: 'o.osagie@scup2026.ng' },
+  { id: 2,  name: 'Mrs. Blessing Ehigie',     role: 'Operations Manager',      dept: 'Operations',     status: 'Active', phone: '+234 805 002 0022', email: 'b.ehigie@scup2026.ng' },
+  { id: 3,  name: 'Mr. Chidi Nwachukwu',      role: 'Technical Director',      dept: 'Football',       status: 'Active', phone: '+234 807 003 0033', email: 'c.nwachukwu@scup2026.ng' },
+  { id: 4,  name: 'Dr. Grace Agbonlahor',     role: 'Medical Officer',         dept: 'Medical',        status: 'Active', phone: '+234 809 004 0044', email: 'g.agbonlahor@scup2026.ng' },
+  { id: 5,  name: 'Mr. Victor Okonkwo',       role: 'Security Coordinator',    dept: 'Security',       status: 'Active', phone: '+234 811 005 0055', email: 'v.okonkwo@scup2026.ng' },
+  { id: 6,  name: 'Miss Adaeze Uwaifo',       role: 'Media & Communications',  dept: 'Media',          status: 'Active', phone: '+234 813 006 0066', email: 'a.uwaifo@scup2026.ng' },
+  { id: 7,  name: 'Mr. Emmanuel Akhigbe',     role: 'Finance Officer',         dept: 'Finance',        status: 'Active', phone: '+234 815 007 0077', email: 'e.akhigbe@scup2026.ng' },
+  { id: 8,  name: 'Mr. Sunday Idahosa',       role: 'Logistics Coordinator',   dept: 'Operations',     status: 'On Leave', phone: '+234 817 008 0088', email: 's.idahosa@scup2026.ng' },
 ]
 
-const deptColors = { Management: '#D4AF37', Operations: '#3B82F6', Security: '#EF4444', Media: '#EC4899', Finance: '#22C55E', Medical: '#14B8A6' }
-const blank = { name: '', role: '', dept: 'Operations', email: '', phone: '', status: 'Active', joined: '' }
+const deptColors = { Administration: '#D4AF37', Operations: '#3B82F6', Football: '#22C55E', Medical: '#EC4899', Security: '#EF4444', Media: '#8B5CF6', Finance: '#F59E0B' }
+const blank = { name: '', role: '', dept: 'Administration', status: 'Active', phone: '', email: '' }
 
 export default function StaffManagement() {
-  const [staff, setStaff] = useState(initStaff)
-  const [modal, setModal] = useState(false)
-  const [form, setForm] = useState(blank)
-  const [editing, setEditing] = useState(null)
+  const [staff, setStaff]   = useState(initStaff)
   const [search, setSearch] = useState('')
   const [deptFilter, setDeptFilter] = useState('All')
+  const [modal, setModal]   = useState(null)
+  const [editing, setEditing] = useState(null)
+  const [form, setForm]     = useState(blank)
 
-  const depts = ['All', ...new Set(staff.map(s => s.dept))]
+  const depts    = [...new Set(staff.map(s => s.dept))]
   const filtered = staff.filter(s =>
     (deptFilter === 'All' || s.dept === deptFilter) &&
     (s.name.toLowerCase().includes(search.toLowerCase()) || s.role.toLowerCase().includes(search.toLowerCase()))
   )
-  const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }))
-  const openEdit = s => { setForm({ ...s }); setEditing(s.id); setModal(true) }
-  const handleSave = () => {
-    if (editing) setStaff(prev => prev.map(s => s.id === editing ? { ...form, id: editing } : s))
-    else setStaff(prev => [...prev, { ...form, id: Date.now() }])
-    setModal(false); setEditing(null)
+
+  const openAdd  = () => { setForm(blank); setModal('add') }
+  const openEdit = s => { setEditing(s.id); setForm({ ...s }); setModal('edit') }
+  const save     = () => {
+    if (modal === 'add') setStaff(p => [...p, { ...form, id: Date.now() }])
+    else setStaff(p => p.map(s => s.id === editing ? { ...form, id: editing } : s))
+    setModal(null)
   }
-  const handleDelete = id => { if (confirm('Remove staff member?')) setStaff(prev => prev.filter(s => s.id !== id)) }
+  const del = id => { if (confirm('Remove staff member?')) setStaff(p => p.filter(s => s.id !== id)) }
+  const f   = k  => e => setForm(p => ({ ...p, [k]: e.target.value }))
 
   return (
     <div>
-      <ModuleHeader title="Staff Management" subtitle="Tournament staff and personnel" action="Add Staff" onAction={() => { setForm(blank); setEditing(null); setModal(true) }} count={staff.length} />
+      <ModuleHeader title="Staff Management" subtitle="Tournament personnel directory" action="Add Staff" onAction={openAdd} count={staff.length} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
-        <StatCard label="Total Staff" value={staff.length} icon="👔" color="#D4AF37" />
-        <StatCard label="Active" value={staff.filter(s => s.status === 'Active').length} icon="✅" color="#22C55E" />
-        <StatCard label="On Leave" value={staff.filter(s => s.status === 'On Leave').length} icon="🏖️" color="#F59E0B" />
-        <StatCard label="Departments" value={new Set(staff.map(s => s.dept)).size} icon="🏢" color="#3B82F6" />
+        <StatCard label="Total Staff"  value={staff.length}                                icon="👔" color="#D4AF37" />
+        <StatCard label="Active"       value={staff.filter(s => s.status === 'Active').length} icon="✅" color="#22C55E" />
+        <StatCard label="On Leave"     value={staff.filter(s => s.status === 'On Leave').length} icon="🏖️" color="#F59E0B" />
+        <StatCard label="Departments"  value={depts.length}                                icon="🏢" color="#3B82F6" />
       </div>
 
-      <SectionCard title="👔 Staff Directory" action="">
+      <SectionCard title="👥 Staff Directory" action="">
         <ActionRow>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search staff..." />
+          <SearchBar value={search} onChange={setSearch} placeholder="Search name or role..." />
           <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)} style={c.select}>
+            <option value="All">All Departments</option>
             {depts.map(d => <option key={d}>{d}</option>)}
           </select>
         </ActionRow>
         <Table
-          cols={['Name', 'Role', 'Department', 'Email', 'Phone', 'Status', 'Actions']}
+          cols={['Name', 'Role', 'Department', 'Phone', 'Email', 'Status', 'Actions']}
           rows={filtered}
           renderRow={(s, i) => (
             <tr key={s.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
               <td style={{ ...c.td, fontWeight: 600 }}>{s.name}</td>
-              <td style={{ ...c.td, color: 'rgba(255,255,255,0.65)' }}>{s.role}</td>
+              <td style={{ ...c.td, fontSize: '0.8rem' }}>{s.role}</td>
               <td style={c.td}><Badge label={s.dept} color={deptColors[s.dept] || '#D4AF37'} /></td>
-              <td style={{ ...c.td, fontSize: '0.75rem' }}>{s.email}</td>
-              <td style={c.td}>{s.phone}</td>
+              <td style={{ ...c.td, fontSize: '0.75rem' }}>{s.phone}</td>
+              <td style={{ ...c.td, fontSize: '0.72rem' }}>{s.email}</td>
               <td style={c.td}><Badge label={s.status} color={s.status === 'Active' ? '#22C55E' : '#F59E0B'} /></td>
               <td style={c.td}>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button onClick={() => openEdit(s)} style={{ ...c.btn, ...c.btnGhost, padding: '4px 10px', fontSize: '0.72rem' }}>✏️</button>
-                  <button onClick={() => handleDelete(s.id)} style={{ ...c.btn, ...c.btnDanger, padding: '4px 10px', fontSize: '0.72rem' }}>🗑️</button>
+                  <button onClick={() => openEdit(s)} style={{ ...c.btn, ...c.btnGhost, padding: '4px 10px', fontSize: '0.7rem' }}>✏️</button>
+                  <button onClick={() => del(s.id)} style={{ ...c.btn, ...c.btnDanger, padding: '4px 10px', fontSize: '0.7rem' }}>🗑️</button>
                 </div>
               </td>
             </tr>
@@ -77,27 +81,26 @@ export default function StaffManagement() {
       </SectionCard>
 
       {modal && (
-        <Modal title={editing ? 'Edit Staff' : 'Add Staff Member'} onClose={() => { setModal(false); setEditing(null) }}>
-          <FormField label="Full Name"><input style={c.input} value={form.name} onChange={set('name')} placeholder="Dr. Chukwudi Eze" /></FormField>
-          <FormField label="Role / Title"><input style={c.input} value={form.role} onChange={set('role')} placeholder="Tournament Director" /></FormField>
+        <Modal title={modal === 'add' ? 'Add Staff Member' : 'Edit Staff'} onClose={() => setModal(null)}>
+          <FormField label="Full Name"><input style={c.input} value={form.name} onChange={f('name')} /></FormField>
+          <FormField label="Role / Title"><input style={c.input} value={form.role} onChange={f('role')} placeholder="e.g. Operations Manager" /></FormField>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <FormField label="Department">
-              <select style={{ ...c.select, width: '100%' }} value={form.dept} onChange={set('dept')}>
-                {Object.keys(deptColors).map(d => <option key={d}>{d}</option>)}
+              <select style={{ ...c.select, width: '100%' }} value={form.dept} onChange={f('dept')}>
+                {['Administration','Operations','Football','Medical','Security','Media','Finance'].map(d => <option key={d}>{d}</option>)}
               </select>
             </FormField>
             <FormField label="Status">
-              <select style={{ ...c.select, width: '100%' }} value={form.status} onChange={set('status')}>
+              <select style={{ ...c.select, width: '100%' }} value={form.status} onChange={f('status')}>
                 <option>Active</option><option>On Leave</option><option>Inactive</option>
               </select>
             </FormField>
+            <FormField label="Phone"><input style={c.input} value={form.phone} onChange={f('phone')} placeholder="+234..." /></FormField>
+            <FormField label="Email"><input style={c.input} value={form.email} onChange={f('email')} placeholder="staff@email.com" /></FormField>
           </div>
-          <FormField label="Email"><input style={c.input} type="email" value={form.email} onChange={set('email')} /></FormField>
-          <FormField label="Phone"><input style={c.input} value={form.phone} onChange={set('phone')} /></FormField>
-          <FormField label="Date Joined"><input style={c.input} type="date" value={form.joined} onChange={set('joined')} /></FormField>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
-            <button onClick={() => { setModal(false); setEditing(null) }} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
-            <button onClick={handleSave} style={{ ...c.btn, ...c.btnPrimary }}>💾 Save Staff</button>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button onClick={() => setModal(null)} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
+            <button onClick={save} style={{ ...c.btn, ...c.btnPrimary }}>💾 Save</button>
           </div>
         </Modal>
       )}

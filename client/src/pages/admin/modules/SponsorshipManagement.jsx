@@ -2,104 +2,117 @@ import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
 const initSponsors = [
-  { id: 1, name: 'Edo State Government', tier: 'Platinum', value: 30000000, logo: '🏛️', contact: 'Gov. Relations Office', email: 'sports@edostate.gov.ng', status: 'Active', category: 'Government' },
-  { id: 2, name: 'First Bank Nigeria', tier: 'Platinum', value: 20000000, logo: '🏦', contact: 'Mr. Adeyemi Folawiyo', email: 'sponsorship@firstbank.ng', status: 'Active', category: 'Banking' },
-  { id: 3, name: 'MTN Nigeria', tier: 'Gold', value: 12000000, logo: '📶', contact: 'Ms. Kemi Ade', email: 'csr@mtn.ng', status: 'Active', category: 'Telecom' },
-  { id: 4, name: 'Dangote Group', tier: 'Gold', value: 10000000, logo: '🏭', contact: 'PR Team', email: 'pr@dangote.com', status: 'Active', category: 'Conglomerate' },
-  { id: 5, name: 'Zenith Bank', tier: 'Gold', value: 8000000, logo: '💳', contact: 'Mr. Emeka Nwosu', email: 'marketing@zenithbank.com', status: 'Active', category: 'Banking' },
-  { id: 6, name: 'GTBank', tier: 'Gold', value: 15000000, logo: '🏧', contact: 'Mr. Ade Balogun', email: 'sponsor@gtb.com', status: 'Negotiating', category: 'Banking' },
-  { id: 7, name: 'Indomie Nigeria', tier: 'Silver', value: 4000000, logo: '🍜', contact: 'Marketing Dept', email: 'marketing@dufil.com', status: 'Active', category: 'Food & Beverage' },
-  { id: 8, name: 'Pepsi Nigeria', tier: 'Silver', value: 5000000, logo: '🥤', contact: 'Mr. Femi Babatunde', email: 'sponsorship@pepsi.ng', status: 'Active', category: 'Beverages' },
+  { id: 1,  name: 'Access Bank',     tier: 'Platinum', value: 20000000, status: 'Active',  contact: 'Mrs. Aisha Mohammed',  email: 'sponsors@accessbank.com',  logo: '🏦', paidPct: 100 },
+  { id: 2,  name: 'GTBank',          tier: 'Gold',     value: 15000000, status: 'Active',  contact: 'Mr. Bola Adesanya',    email: 'sponsorship@gtbank.com',   logo: '🟡', paidPct: 100 },
+  { id: 3,  name: 'MTN Nigeria',     tier: 'Gold',     value: 12000000, status: 'Active',  contact: 'Engr. Seun Ajiboye',   email: 'events@mtn.com.ng',        logo: '📱', paidPct: 75  },
+  { id: 4,  name: 'Dangote Group',   tier: 'Silver',   value: 8000000,  status: 'Active',  contact: 'Ms. Fatima Dangote',   email: 'csr@dangote.com',          logo: '🏭', paidPct: 100 },
+  { id: 5,  name: 'Zenith Bank',     tier: 'Silver',   value: 7500000,  status: 'Active',  contact: 'Mr. Chidi Okeke',      email: 'events@zenithbank.com',    logo: '💙', paidPct: 50  },
+  { id: 6,  name: 'Airtel Nigeria',  tier: 'Bronze',   value: 5000000,  status: 'Active',  contact: 'Ms. Ngozi Aneke',      email: 'corporate@airtel.com.ng',  logo: '📡', paidPct: 100 },
+  { id: 7,  name: 'NNPC Retail',     tier: 'Bronze',   value: 4000000,  status: 'Pending', contact: 'Mr. Yakubu Ibrahim',   email: 'sponsorship@nnpcretail.ng',logo: '⛽', paidPct: 0   },
+  { id: 8,  name: 'Edo State Govt',  tier: 'Platinum', value: 15000000, status: 'Active',  contact: 'Commissioner Ehigie',  email: 'info@edostategov.ng',      logo: '🏛️', paidPct: 100 },
 ]
 
-const tierColor = { Platinum: '#E5E7EB', Gold: '#D4AF37', Silver: '#9CA3AF', Bronze: '#9E5B28' }
-const blank = { name: '', tier: 'Gold', value: 5000000, logo: '🏢', contact: '', email: '', status: 'Negotiating', category: '' }
+const tierColors = { Platinum: '#E5E4E2', Gold: '#D4AF37', Silver: '#C0C0C0', Bronze: '#CD7F32' }
+const blank = { name: '', tier: 'Bronze', value: 0, status: 'Pending', contact: '', email: '', logo: '💼', paidPct: 0 }
 
 export default function SponsorshipManagement() {
   const [sponsors, setSponsors] = useState(initSponsors)
-  const [modal, setModal] = useState(false)
-  const [form, setForm] = useState(blank)
-  const [editing, setEditing] = useState(null)
-  const [search, setSearch] = useState('')
+  const [search, setSearch]     = useState('')
   const [tierFilter, setTierFilter] = useState('All')
+  const [modal, setModal]       = useState(null)
+  const [editing, setEditing]   = useState(null)
+  const [form, setForm]         = useState(blank)
 
   const filtered = sponsors.filter(s =>
     (tierFilter === 'All' || s.tier === tierFilter) &&
     s.name.toLowerCase().includes(search.toLowerCase())
   )
-  const totalValue = sponsors.filter(s => s.status === 'Active').reduce((sum, s) => sum + s.value, 0)
-  const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }))
-  const openEdit = s => { setForm({ ...s }); setEditing(s.id); setModal(true) }
-  const handleSave = () => {
-    if (editing) setSponsors(prev => prev.map(s => s.id === editing ? { ...form, id: editing, value: Number(form.value) } : s))
-    else setSponsors(prev => [...prev, { ...form, id: Date.now(), value: Number(form.value) }])
-    setModal(false); setEditing(null)
-  }
-  const handleDelete = id => { if (confirm('Remove sponsor?')) setSponsors(prev => prev.filter(s => s.id !== id)) }
 
-  const fmt = n => `₦${(n / 1000000).toFixed(1)}M`
+  const totalValue    = sponsors.filter(s => s.status === 'Active').reduce((sum, s) => sum + s.value, 0)
+  const collectedPct  = Math.round(sponsors.reduce((sum, s) => sum + s.value * (s.paidPct / 100), 0) / totalValue * 100) || 0
+
+  const openAdd  = () => { setForm(blank); setModal('add') }
+  const openEdit = s => { setEditing(s.id); setForm({ ...s }); setModal('edit') }
+  const save     = () => {
+    if (modal === 'add') setSponsors(p => [...p, { ...form, id: Date.now(), value: Number(form.value), paidPct: Number(form.paidPct) }])
+    else setSponsors(p => p.map(s => s.id === editing ? { ...form, id: editing } : s))
+    setModal(null)
+  }
+  const del = id => { if (confirm('Remove sponsor?')) setSponsors(p => p.filter(s => s.id !== id)) }
+  const f   = k  => e => setForm(p => ({ ...p, [k]: e.target.value }))
+  const fmt = n  => `₦${(n / 1000000).toFixed(1)}M`
 
   return (
     <div>
-      <ModuleHeader title="Sponsorship Management" subtitle="Manage tournament sponsors and deals" action="Add Sponsor" onAction={() => { setForm(blank); setEditing(null); setModal(true) }} count={sponsors.length} />
+      <ModuleHeader title="Sponsorship Management" subtitle="Sponsor deals and payment tracking" action="Add Sponsor" onAction={openAdd} count={sponsors.length} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
-        <StatCard label="Total Sponsors" value={sponsors.length} icon="💼" color="#D4AF37" />
-        <StatCard label="Total Value" value={fmt(totalValue)} icon="💰" color="#22C55E" />
-        <StatCard label="Platinum Tier" value={sponsors.filter(s => s.tier === 'Platinum').length} icon="💎" color="#E5E7EB" />
-        <StatCard label="Negotiating" value={sponsors.filter(s => s.status === 'Negotiating').length} icon="🤝" color="#F59E0B" />
+        <StatCard label="Total Sponsors"   value={sponsors.length}                               icon="💼" color="#D4AF37" />
+        <StatCard label="Total Value"      value={fmt(totalValue)}                               icon="💰" color="#22C55E" />
+        <StatCard label="Collected"        value={`${collectedPct}%`}                            icon="✅" color="#3B82F6" change={`${fmt(sponsors.reduce((s, sp) => s + sp.value * (sp.paidPct / 100), 0))} received`} />
+        <StatCard label="Platinum Sponsors" value={sponsors.filter(s => s.tier === 'Platinum').length} icon="⭐" color="#E5E4E2" />
       </div>
 
-      {/* Tier breakdown */}
-      {['Platinum', 'Gold', 'Silver'].map(tier => {
-        const tierSponsors = sponsors.filter(s => s.tier === tier)
-        if (!tierSponsors.length) return null
-        return (
-          <SectionCard key={tier} title={`${tier === 'Platinum' ? '💎' : tier === 'Gold' ? '🥇' : '🥈'} ${tier} Sponsors`} action="">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
-              {tierSponsors.map(s => (
-                <div key={s.id} style={{ ...c.card, borderLeft: `3px solid ${tierColor[s.tier]}` }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                    <span style={{ fontSize: '2rem' }}>{s.logo}</span>
-                    <Badge label={s.status} color={s.status === 'Active' ? '#22C55E' : '#F59E0B'} />
+      <SectionCard title="🤝 Sponsors" action="">
+        <ActionRow>
+          <SearchBar value={search} onChange={setSearch} placeholder="Search sponsor..." />
+          <select value={tierFilter} onChange={e => setTierFilter(e.target.value)} style={c.select}>
+            <option value="All">All Tiers</option>
+            {['Platinum','Gold','Silver','Bronze'].map(t => <option key={t}>{t}</option>)}
+          </select>
+        </ActionRow>
+        <Table
+          cols={['Sponsor', 'Tier', 'Deal Value', 'Paid %', 'Contact', 'Status', 'Actions']}
+          rows={filtered}
+          renderRow={(s, i) => (
+            <tr key={s.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
+              <td style={{ ...c.td, fontWeight: 700 }}><span style={{ marginRight: 8 }}>{s.logo}</span>{s.name}</td>
+              <td style={c.td}><Badge label={s.tier} color={tierColors[s.tier]} /></td>
+              <td style={{ ...c.td, fontWeight: 700, color: '#D4AF37' }}>{fmt(s.value)}</td>
+              <td style={c.td}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3 }}>
+                    <div style={{ height: '100%', width: `${s.paidPct}%`, background: s.paidPct === 100 ? '#22C55E' : '#F59E0B', borderRadius: 3, transition: 'width 600ms' }} />
                   </div>
-                  <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: 2 }}>{s.name}</div>
-                  <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>{s.category} · {s.contact}</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: tierColor[s.tier], marginBottom: 12 }}>{fmt(s.value)}</div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={() => openEdit(s)} style={{ ...c.btn, ...c.btnGhost, flex: 1, fontSize: '0.72rem' }}>✏️ Edit</button>
-                    <button onClick={() => handleDelete(s.id)} style={{ ...c.btn, ...c.btnDanger, padding: '8px 12px', fontSize: '0.72rem' }}>🗑️</button>
-                  </div>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: s.paidPct === 100 ? '#22C55E' : '#F59E0B', minWidth: 32 }}>{s.paidPct}%</span>
                 </div>
-              ))}
-            </div>
-          </SectionCard>
-        )
-      })}
+              </td>
+              <td style={{ ...c.td, fontSize: '0.75rem' }}>{s.contact}</td>
+              <td style={c.td}><Badge label={s.status} color={s.status === 'Active' ? '#22C55E' : '#F59E0B'} /></td>
+              <td style={c.td}>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button onClick={() => openEdit(s)} style={{ ...c.btn, ...c.btnGhost, padding: '4px 10px', fontSize: '0.7rem' }}>✏️</button>
+                  <button onClick={() => del(s.id)} style={{ ...c.btn, ...c.btnDanger, padding: '4px 10px', fontSize: '0.7rem' }}>🗑️</button>
+                </div>
+              </td>
+            </tr>
+          )}
+        />
+      </SectionCard>
 
       {modal && (
-        <Modal title={editing ? 'Edit Sponsor' : 'Add Sponsor'} onClose={() => { setModal(false); setEditing(null) }}>
-          <FormField label="Company Name"><input style={c.input} value={form.name} onChange={set('name')} /></FormField>
-          <FormField label="Logo Emoji"><input style={c.input} value={form.logo} onChange={set('logo')} /></FormField>
+        <Modal title={modal === 'add' ? 'Add Sponsor' : 'Edit Sponsor'} onClose={() => setModal(null)}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <FormField label="Company Name"><input style={c.input} value={form.name} onChange={f('name')} /></FormField>
+            <FormField label="Logo Emoji"><input style={c.input} value={form.logo} onChange={f('logo')} /></FormField>
             <FormField label="Tier">
-              <select style={{ ...c.select, width: '100%' }} value={form.tier} onChange={set('tier')}>
-                <option>Platinum</option><option>Gold</option><option>Silver</option><option>Bronze</option>
+              <select style={{ ...c.select, width: '100%' }} value={form.tier} onChange={f('tier')}>
+                {['Platinum','Gold','Silver','Bronze'].map(t => <option key={t}>{t}</option>)}
               </select>
             </FormField>
-            <FormField label="Deal Value (₦)"><input style={c.input} type="number" value={form.value} onChange={set('value')} /></FormField>
+            <FormField label="Deal Value (₦)"><input style={c.input} type="number" value={form.value} onChange={f('value')} /></FormField>
+            <FormField label="% Paid"><input style={c.input} type="number" min="0" max="100" value={form.paidPct} onChange={f('paidPct')} /></FormField>
+            <FormField label="Status">
+              <select style={{ ...c.select, width: '100%' }} value={form.status} onChange={f('status')}>
+                <option>Active</option><option>Pending</option><option>Inactive</option>
+              </select>
+            </FormField>
           </div>
-          <FormField label="Category"><input style={c.input} value={form.category} onChange={set('category')} placeholder="Banking, Telecom, etc." /></FormField>
-          <FormField label="Contact Person"><input style={c.input} value={form.contact} onChange={set('contact')} /></FormField>
-          <FormField label="Email"><input style={c.input} type="email" value={form.email} onChange={set('email')} /></FormField>
-          <FormField label="Status">
-            <select style={{ ...c.select, width: '100%' }} value={form.status} onChange={set('status')}>
-              <option>Active</option><option>Negotiating</option><option>Expired</option>
-            </select>
-          </FormField>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
-            <button onClick={() => { setModal(false); setEditing(null) }} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
-            <button onClick={handleSave} style={{ ...c.btn, ...c.btnPrimary }}>💾 Save Sponsor</button>
+          <FormField label="Contact Name"><input style={c.input} value={form.contact} onChange={f('contact')} /></FormField>
+          <FormField label="Email"><input style={c.input} value={form.email} onChange={f('email')} /></FormField>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button onClick={() => setModal(null)} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
+            <button onClick={save} style={{ ...c.btn, ...c.btnPrimary }}>💾 Save</button>
           </div>
         </Modal>
       )}

@@ -1,124 +1,117 @@
 import React, { useState } from 'react'
-import { c, StatCard, SectionCard, Badge, Table, ModuleHeader } from './shared'
+import { c, StatCard, SectionCard, Badge, Table, Modal, FormField } from './shared'
 
 const teams = [
-  { id: 1, name: 'Edo Warriors', manager: 'Emmanuel Okoro', group: 'A', points: 9, played: 3, won: 3, gf: 9, ga: 2 },
-  { id: 2, name: 'Oredo United', manager: 'Victor Ihejirika', group: 'A', points: 7, played: 3, won: 2, gf: 7, ga: 3 },
-  { id: 7, name: 'Benin Royals', manager: 'Austin Oghuvwu', group: 'B', points: 7, played: 3, won: 2, gf: 8, ga: 2 },
-  { id: 8, name: 'Delta Eagles', manager: 'John Ochuko', group: 'B', points: 6, played: 3, won: 2, gf: 6, ga: 4 },
+  { id: 11, name: 'Ikpoba-Okha FC',    coach: 'Austin Oghuvwu',   group: 'C', played: 4, won: 4, draw: 0, lost: 0, gf: 12, ga: 2,  points: 12 },
+  { id: 16, name: 'Owan East FC',      coach: 'Richard Ebore',     group: 'D', played: 4, won: 3, draw: 1, lost: 0, gf: 11, ga: 3,  points: 10 },
+  { id: 1,  name: 'Akoko-Edo Panthers',coach: 'Gabriel Alagbe',    group: 'A', played: 4, won: 3, draw: 1, lost: 0, gf: 10, ga: 3,  points: 10 },
+  { id: 7,  name: 'Etsako Central FC', coach: 'Sunday Omotosho',   group: 'B', played: 4, won: 2, draw: 2, lost: 0, gf: 8,  ga: 3,  points: 8  },
+  { id: 17, name: 'Owan West United',  coach: 'Samuel Oriaifo',    group: 'D', played: 4, won: 2, draw: 2, lost: 0, gf: 7,  ga: 4,  points: 8  },
 ]
 
-const teamSquads = {
-  1: [
-    { jersey: 23, name: 'Bright Omokhagbo', position: 'GK', goals: 0, assists: 0, status: 'Fit' },
-    { jersey: 4, name: 'Samuel Oriaifo', position: 'CB', goals: 1, assists: 2, status: 'Fit' },
-    { jersey: 9, name: 'Chukwuemeka Obi', position: 'ST', goals: 7, assists: 3, status: 'Fit' },
-    { jersey: 7, name: 'Osas Enobun', position: 'LW', goals: 2, assists: 4, status: 'Fit' },
-    { jersey: 11, name: 'Kingsley Asoro', position: 'RW', goals: 1, assists: 2, status: 'Suspended' },
-  ],
-  2: [
-    { jersey: 1, name: 'Peter Egbunu', position: 'GK', goals: 0, assists: 0, status: 'Fit' },
-    { jersey: 8, name: 'Victor Ehigie', position: 'CM', goals: 4, assists: 6, status: 'Fit' },
-    { jersey: 10, name: 'Felix Agbonlahor', position: 'ST', goals: 4, assists: 3, status: 'Fit' },
-  ],
-}
-
-const teamMessages = {
-  1: [
-    { from: 'Emmanuel Okoro', time: '2hr ago', text: 'Requesting two extra training sessions before the QF. Can stadium be booked?' },
-    { from: 'Emmanuel Okoro', time: '1 day ago', text: 'Confirmed 22-man squad submitted. All players cleared by medical.' },
-  ],
-  2: [
-    { from: 'Victor Ihejirika', time: '4hr ago', text: 'Player Ehigie has a minor muscle strain. Should be fit for Thursday.' },
-  ],
-}
-
-const posColor = { GK: '#F59E0B', CB: '#22C55E', CM: '#3B82F6', ST: '#EF4444', LW: '#EC4899', RW: '#8B5CF6', DM: '#14B8A6' }
+const messages = [
+  { id: 1, from: 'Austin Oghuvwu',   team: 'Ikpoba-Okha FC',    subject: 'QF strip colour confirmation', date: '2026-12-13', read: false },
+  { id: 2, from: 'Gabriel Alagbe',   team: 'Akoko-Edo Panthers',subject: 'Player injury update — Obi',   date: '2026-12-12', read: true  },
+  { id: 3, from: 'Richard Ebore',    team: 'Owan East FC',       subject: 'Bus transport request for QF', date: '2026-12-12', read: false },
+  { id: 4, from: 'Samuel Oriaifo',   team: 'Owan West United',   subject: 'Dressing room access query',   date: '2026-12-11', read: true  },
+  { id: 5, from: 'Sunday Omotosho',  team: 'Etsako Central FC',  subject: 'Referee assignment question',  date: '2026-12-10', read: true  },
+]
 
 export default function TeamManagerDashboard() {
-  const [selectedTeam, setSelectedTeam] = useState(1)
-  const squad = teamSquads[selectedTeam] || []
-  const messages = teamMessages[selectedTeam] || []
-  const team = teams.find(t => t.id === selectedTeam)
+  const [msgs, setMsgs]   = useState(messages)
+  const [modal, setModal] = useState(null)
+  const [compose, setCompose] = useState({ to: '', subject: '', body: '' })
+  const [toast, setToast] = useState('')
+
+  const markRead = id => setMsgs(p => p.map(m => m.id === id ? { ...m, read: true } : m))
+  const showToast = msg => { setToast(msg); setTimeout(() => setToast(''), 2500) }
+  const sendMsg = () => {
+    showToast('✅ Message sent to team manager')
+    setModal(null)
+    setCompose({ to: '', subject: '', body: '' })
+  }
 
   return (
-    <div>
-      <ModuleHeader title="Team Manager Dashboard" subtitle="Overview for all team managers and their squads" />
+    <div style={{ position: 'relative' }}>
+      {toast && (
+        <div style={{ position: 'fixed', top: 24, right: 24, background: '#1a1a1a', border: '1px solid rgba(212,175,55,0.4)', borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontSize: '0.85rem', color: '#fff' }}>
+          {toast}
+        </div>
+      )}
 
-      {/* Team Selector */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
-        {teams.map(t => (
-          <button key={t.id} onClick={() => setSelectedTeam(t.id)} style={{
-            ...c.btn,
-            ...(selectedTeam === t.id ? c.btnPrimary : c.btnGhost),
-            display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '10px 16px', minWidth: 160,
-          }}>
-            <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>{t.name}</span>
-            <span style={{ fontSize: '0.68rem', opacity: 0.7, marginTop: 2 }}>Group {t.group} · {t.points} pts</span>
-          </button>
-        ))}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+        <div>
+          <h2 style={{ margin: '0 0 4px', fontFamily: "'Cinzel',serif", fontSize: '1.2rem', color: '#fff' }}>Team Manager Hub</h2>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)' }}>Communicate with team coaches and track QF standings</p>
+        </div>
+        <button onClick={() => setModal('compose')} style={{ ...c.btn, ...c.btnPrimary }}>✉️ Compose Message</button>
       </div>
 
-      {team && (
-        <>
-          {/* Team Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
-            <StatCard label="Points" value={team.points} icon="📊" color="#D4AF37" />
-            <StatCard label="Matches Played" value={team.played} icon="⚽" color="#3B82F6" />
-            <StatCard label="Goals Scored" value={team.gf} icon="🥅" color="#22C55E" />
-            <StatCard label="Goals Conceded" value={team.ga} icon="🔴" color="#EF4444" />
-          </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
+        <StatCard label="Teams in QF" value={teams.length}                           icon="🏆" color="#D4AF37" />
+        <StatCard label="Unread Messages" value={msgs.filter(m => !m.read).length}   icon="📬" color="#F59E0B" change={msgs.filter(m => !m.read).length > 0 ? 'Needs attention' : 'All read'} />
+        <StatCard label="Total Messages" value={msgs.length}                          icon="✉️" color="#3B82F6" />
+        <StatCard label="Top Scorer Team" value="Ikpoba-Okha FC"                     icon="⚽" color="#22C55E" />
+      </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
-            {/* Squad */}
-            <SectionCard title={`👤 ${team.name} — Squad`} action="">
-              <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
-                <Badge label={`Manager: ${team.manager}`} color="#D4AF37" />
-                <Badge label={`Group ${team.group}`} color="#3B82F6" />
-                <Badge label={`${squad.filter(p => p.status === 'Fit').length}/${squad.length} fit`} color="#22C55E" />
-              </div>
-              <Table
-                cols={['#', 'Name', 'Pos', 'Goals', 'Assists', 'Status']}
-                rows={squad}
-                renderRow={(p, i) => (
-                  <tr key={p.jersey} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
-                    <td style={{ ...c.td, color: '#D4AF37', fontWeight: 700 }}>{p.jersey}</td>
-                    <td style={{ ...c.td, fontWeight: 600 }}>{p.name}</td>
-                    <td style={c.td}><Badge label={p.position} color={posColor[p.position] || '#D4AF37'} /></td>
-                    <td style={{ ...c.td, color: '#22C55E', fontWeight: 700 }}>{p.goals}</td>
-                    <td style={{ ...c.td, color: '#3B82F6', fontWeight: 700 }}>{p.assists}</td>
-                    <td style={c.td}><Badge label={p.status} color={p.status === 'Fit' ? '#22C55E' : '#EF4444'} /></td>
-                  </tr>
-                )}
-              />
-            </SectionCard>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        {/* QF Leaderboard */}
+        <SectionCard title="🏆 QF-Bound Standings" action="">
+          <Table
+            cols={['Team', 'Group', 'P', 'W', 'D', 'L', 'GF', 'GA', 'Pts']}
+            rows={teams}
+            renderRow={(t, i) => (
+              <tr key={t.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
+                <td style={{ ...c.td, fontWeight: 600, fontSize: '0.82rem' }}>{i === 0 ? '🥇 ' : i === 1 ? '🥈 ' : i === 2 ? '🥉 ' : ''}{t.name}</td>
+                <td style={c.td}><Badge label={`Grp ${t.group}`} color="#D4AF37" /></td>
+                <td style={c.td}>{t.played}</td>
+                <td style={{ ...c.td, color: '#22C55E' }}>{t.won}</td>
+                <td style={c.td}>{t.draw}</td>
+                <td style={{ ...c.td, color: '#EF4444' }}>{t.lost}</td>
+                <td style={c.td}>{t.gf}</td>
+                <td style={c.td}>{t.ga}</td>
+                <td style={{ ...c.td, fontWeight: 900, color: '#D4AF37' }}>{t.points}</td>
+              </tr>
+            )}
+          />
+        </SectionCard>
 
-            {/* Messages & Requests */}
-            <SectionCard title="💬 Manager Messages" action="">
-              {messages.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {messages.map((m, i) => (
-                    <div key={i} style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.12)', borderRadius: 8, padding: '12px 14px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#D4AF37' }}>{m.from}</span>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>{m.time}</span>
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.75)' }}>{m.text}</div>
-                    </div>
-                  ))}
+        {/* Messages */}
+        <SectionCard title="📬 Manager Messages" action="">
+          {msgs.length === 0 && <p style={{ color: 'rgba(255,255,255,0.35)', textAlign: 'center', padding: 20 }}>No messages.</p>}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {msgs.map(m => (
+              <div key={m.id} onClick={() => markRead(m.id)} style={{ padding: '12px 16px', background: m.read ? 'rgba(255,255,255,0.02)' : 'rgba(212,175,55,0.06)', border: `1px solid ${m.read ? 'rgba(255,255,255,0.06)' : 'rgba(212,175,55,0.25)'}`, borderRadius: 10, cursor: 'pointer', transition: 'all 200ms' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontWeight: m.read ? 500 : 700, fontSize: '0.85rem' }}>{m.subject}</span>
+                  {!m.read && <Badge label="New" color="#D4AF37" />}
                 </div>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>
-                  No messages from this team manager
+                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)' }}>
+                  {m.from} · {m.team} · {m.date}
                 </div>
-              )}
-              <div style={{ marginTop: 16 }}>
-                <textarea placeholder="Reply to manager..." style={{ ...c.input, minHeight: 72, resize: 'vertical', width: '100%', marginBottom: 10 }} />
-                <button style={{ ...c.btn, ...c.btnPrimary, width: '100%' }}>📤 Send Reply</button>
               </div>
-            </SectionCard>
+            ))}
           </div>
-        </>
+        </SectionCard>
+      </div>
+
+      {modal === 'compose' && (
+        <Modal title="✉️ Message a Team Manager" onClose={() => setModal(null)}>
+          <FormField label="To (Team / Manager)">
+            <select style={{ ...c.select, width: '100%' }} value={compose.to} onChange={e => setCompose(p => ({ ...p, to: e.target.value }))}>
+              <option value="">Select team...</option>
+              {teams.map(t => <option key={t.id} value={t.name}>{t.name} — {t.coach}</option>)}
+            </select>
+          </FormField>
+          <FormField label="Subject"><input style={c.input} value={compose.subject} onChange={e => setCompose(p => ({ ...p, subject: e.target.value }))} placeholder="Message subject" /></FormField>
+          <FormField label="Message">
+            <textarea style={{ ...c.input, minHeight: 100, resize: 'vertical' }} value={compose.body} onChange={e => setCompose(p => ({ ...p, body: e.target.value }))} placeholder="Your message..." />
+          </FormField>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button onClick={() => setModal(null)} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
+            <button onClick={sendMsg} style={{ ...c.btn, ...c.btnPrimary }}>📤 Send Message</button>
+          </div>
+        </Modal>
       )}
     </div>
   )

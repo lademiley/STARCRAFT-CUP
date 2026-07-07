@@ -2,85 +2,71 @@ import React, { useState } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
 const initReferees = [
-  { id: 1, name: 'James Okafor', level: 'FIFA', location: 'Benin City', matches: 8, status: 'Available', phone: '08012345678' },
-  { id: 2, name: 'Paul Agbakoba', level: 'NFF A', location: 'Warri', matches: 6, status: 'Available', phone: '08023456789' },
-  { id: 3, name: 'Ehis Omoregie', level: 'NFF A', location: 'Benin City', matches: 7, status: 'Assigned', phone: '08034567890' },
-  { id: 4, name: 'Tom Adaeze', level: 'NFF B', location: 'Asaba', matches: 5, status: 'Available', phone: '08045678901' },
-  { id: 5, name: 'John Onyeka', level: 'NFF B', location: 'Sapele', matches: 4, status: 'Unavailable', phone: '08056789012' },
-  { id: 6, name: 'Chris Agoro', level: 'State', location: 'Ekpoma', matches: 3, status: 'Available', phone: '08067890123' },
+  { id: 1,  name: 'Chief James Edomwonyi', grade: 'FIFA', matches: 8, region: 'Benin City',  status: 'Available', phone: '+234 803 111 2233' },
+  { id: 2,  name: 'James Okafor',           grade: 'CAF',  matches: 6, region: 'Benin City',  status: 'Assigned',  phone: '+234 805 222 3344' },
+  { id: 3,  name: 'Paul Agbakoba',          grade: 'NFF',  matches: 5, region: 'Asaba',       status: 'Available', phone: '+234 807 333 4455' },
+  { id: 4,  name: 'Ehis Omoregie',          grade: 'NFF',  matches: 4, region: 'Benin City',  status: 'Available', phone: '+234 809 444 5566' },
+  { id: 5,  name: 'Tom Adaeze',             grade: 'NFF',  matches: 3, region: 'Warri',       status: 'Assigned',  phone: '+234 811 555 6677' },
+  { id: 6,  name: 'John Onyeka',            grade: 'NFF',  matches: 4, region: 'Enugu',       status: 'Available', phone: '+234 813 666 7788' },
+  { id: 7,  name: 'Chris Agoro',            grade: 'NFF',  matches: 3, region: 'Lagos',       status: 'Available', phone: '+234 815 777 8899' },
+  { id: 8,  name: 'Sandra Nwanguma',        grade: 'CAF',  matches: 5, region: 'Abuja',       status: 'Available', phone: '+234 817 888 9900' },
 ]
 
-const initAssignments = [
-  { id: 1, fixture: 'Edo Warriors vs Benin Royals', date: '2027-03-20', referee: 'James Okafor', assistant1: 'Paul Agbakoba', assistant2: 'Tom Adaeze', fourth: 'Chris Agoro', status: 'Confirmed' },
-  { id: 2, fixture: 'Oredo United vs Delta Eagles', date: '2027-03-20', referee: 'Ehis Omoregie', assistant1: 'Tom Adaeze', assistant2: 'Chris Agoro', fourth: 'John Onyeka', status: 'Pending' },
-  { id: 3, fixture: 'Ugbowo Stars vs Uromi FC', date: '2027-03-22', referee: 'Paul Agbakoba', assistant1: 'James Okafor', assistant2: 'Chris Agoro', fourth: 'Ehis Omoregie', status: 'Confirmed' },
-]
-
-const levelColor = { FIFA: '#D4AF37', 'NFF A': '#22C55E', 'NFF B': '#3B82F6', State: '#8B5CF6' }
-const blank = { name: '', level: 'NFF A', location: '', matches: 0, status: 'Available', phone: '' }
+const gradeColors = { FIFA: '#D4AF37', CAF: '#3B82F6', NFF: '#22C55E' }
+const blank = { name: '', grade: 'NFF', matches: 0, region: '', status: 'Available', phone: '' }
 
 export default function RefereeAssignment() {
-  const [referees, setReferees] = useState(initReferees)
-  const [assignments, setAssignments] = useState(initAssignments)
-  const [modal, setModal] = useState(null)
-  const [form, setForm] = useState(blank)
-  const [editing, setEditing] = useState(null)
+  const [refs, setRefs]   = useState(initReferees)
   const [search, setSearch] = useState('')
+  const [modal, setModal]  = useState(null)
+  const [editing, setEditing] = useState(null)
+  const [form, setForm]    = useState(blank)
 
-  const filtered = referees.filter(r => r.name.toLowerCase().includes(search.toLowerCase()))
-  const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }))
+  const filtered = refs.filter(r =>
+    r.name.toLowerCase().includes(search.toLowerCase()) ||
+    r.region.toLowerCase().includes(search.toLowerCase())
+  )
 
-  const handleSave = () => {
-    if (editing) setReferees(prev => prev.map(r => r.id === editing ? { ...form, id: editing, matches: Number(form.matches) } : r))
-    else setReferees(prev => [...prev, { ...form, id: Date.now(), matches: Number(form.matches) }])
-    setModal(null); setEditing(null)
+  const openAdd  = () => { setForm(blank); setModal('add') }
+  const openEdit = r => { setEditing(r.id); setForm({ ...r }); setModal('edit') }
+  const save     = () => {
+    if (modal === 'add') setRefs(p => [...p, { ...form, id: Date.now(), matches: Number(form.matches) }])
+    else setRefs(p => p.map(r => r.id === editing ? { ...form, id: editing } : r))
+    setModal(null)
   }
-  const handleDelete = id => { if (confirm('Remove referee?')) setReferees(prev => prev.filter(r => r.id !== id)) }
-  const openEdit = r => { setForm({ ...r }); setEditing(r.id); setModal('ref') }
+  const del = id => { if (confirm('Remove referee?')) setRefs(p => p.filter(r => r.id !== id)) }
+  const f   = k  => e => setForm(p => ({ ...p, [k]: e.target.value }))
 
   return (
     <div>
-      <ModuleHeader title="Referee Assignment" subtitle="Manage officials and match assignments" action="Add Referee" onAction={() => { setForm(blank); setEditing(null); setModal('ref') }} count={referees.length} />
+      <ModuleHeader title="Referee Assignment" subtitle="Official registry and match assignments" action="Add Official" onAction={openAdd} count={refs.length} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
-        <StatCard label="Total Referees" value={referees.length} icon="🟡" color="#D4AF37" />
-        <StatCard label="Available" value={referees.filter(r => r.status === 'Available').length} icon="✅" color="#22C55E" />
-        <StatCard label="Assigned" value={referees.filter(r => r.status === 'Assigned').length} icon="📌" color="#3B82F6" />
-        <StatCard label="FIFA Grade" value={referees.filter(r => r.level === 'FIFA').length} icon="⭐" color="#F59E0B" />
+        <StatCard label="Total Officials" value={refs.length}                                  icon="🟡" color="#D4AF37" />
+        <StatCard label="Available"       value={refs.filter(r => r.status === 'Available').length} icon="✅" color="#22C55E" />
+        <StatCard label="Assigned"        value={refs.filter(r => r.status === 'Assigned').length}  icon="📋" color="#3B82F6" />
+        <StatCard label="FIFA / CAF"      value={refs.filter(r => r.grade !== 'NFF').length}        icon="⭐" color="#F59E0B" />
       </div>
 
-      <SectionCard title="👥 Match Assignments" action="">
-        {assignments.map((a, i) => (
-          <div key={a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: i < assignments.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
-            <div>
-              <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.9rem' }}>{a.fixture}</div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{a.date} · Referee: {a.referee}</div>
-              <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>AR1: {a.assistant1} · AR2: {a.assistant2} · 4th: {a.fourth}</div>
-            </div>
-            <Badge label={a.status} color={a.status === 'Confirmed' ? '#22C55E' : '#F59E0B'} />
-          </div>
-        ))}
-      </SectionCard>
-
-      <SectionCard title="🟡 Referee Registry" action="">
+      <SectionCard title="👔 Officials Registry" action="">
         <ActionRow>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search referees..." />
+          <SearchBar value={search} onChange={setSearch} placeholder="Search name or region..." />
         </ActionRow>
         <Table
-          cols={['Name', 'Level', 'Location', 'Matches', 'Phone', 'Status', 'Actions']}
+          cols={['Name', 'Grade', 'Region', 'Matches', 'Phone', 'Status', 'Actions']}
           rows={filtered}
           renderRow={(r, i) => (
             <tr key={r.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
               <td style={{ ...c.td, fontWeight: 600 }}>{r.name}</td>
-              <td style={c.td}><Badge label={r.level} color={levelColor[r.level] || '#D4AF37'} /></td>
-              <td style={c.td}>{r.location}</td>
-              <td style={c.td}>{r.matches}</td>
-              <td style={c.td}>{r.phone}</td>
-              <td style={c.td}><Badge label={r.status} color={r.status === 'Available' ? '#22C55E' : r.status === 'Assigned' ? '#3B82F6' : '#EF4444'} /></td>
+              <td style={c.td}><Badge label={r.grade} color={gradeColors[r.grade] || '#D4AF37'} /></td>
+              <td style={c.td}>{r.region}</td>
+              <td style={{ ...c.td, fontWeight: 700, color: '#D4AF37' }}>{r.matches}</td>
+              <td style={{ ...c.td, fontSize: '0.75rem' }}>{r.phone}</td>
+              <td style={c.td}><Badge label={r.status} color={r.status === 'Available' ? '#22C55E' : '#F59E0B'} /></td>
               <td style={c.td}>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button onClick={() => openEdit(r)} style={{ ...c.btn, ...c.btnGhost, padding: '4px 10px', fontSize: '0.72rem' }}>✏️</button>
-                  <button onClick={() => handleDelete(r.id)} style={{ ...c.btn, ...c.btnDanger, padding: '4px 10px', fontSize: '0.72rem' }}>🗑️</button>
+                  <button onClick={() => openEdit(r)} style={{ ...c.btn, ...c.btnGhost, padding: '4px 10px', fontSize: '0.7rem' }}>✏️</button>
+                  <button onClick={() => del(r.id)} style={{ ...c.btn, ...c.btnDanger, padding: '4px 10px', fontSize: '0.7rem' }}>🗑️</button>
                 </div>
               </td>
             </tr>
@@ -88,26 +74,26 @@ export default function RefereeAssignment() {
         />
       </SectionCard>
 
-      {modal === 'ref' && (
-        <Modal title={editing ? 'Edit Referee' : 'Add Referee'} onClose={() => { setModal(null); setEditing(null) }}>
-          <FormField label="Full Name"><input style={c.input} value={form.name} onChange={set('name')} placeholder="James Okafor" /></FormField>
+      {modal && (
+        <Modal title={modal === 'add' ? 'Add Official' : 'Edit Official'} onClose={() => setModal(null)}>
+          <FormField label="Full Name"><input style={c.input} value={form.name} onChange={f('name')} placeholder="Referee name" /></FormField>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <FormField label="Level">
-              <select style={{ ...c.select, width: '100%' }} value={form.level} onChange={set('level')}>
-                <option>FIFA</option><option>NFF A</option><option>NFF B</option><option>State</option>
+            <FormField label="Grade">
+              <select style={{ ...c.select, width: '100%' }} value={form.grade} onChange={f('grade')}>
+                <option>FIFA</option><option>CAF</option><option>NFF</option>
               </select>
             </FormField>
             <FormField label="Status">
-              <select style={{ ...c.select, width: '100%' }} value={form.status} onChange={set('status')}>
+              <select style={{ ...c.select, width: '100%' }} value={form.status} onChange={f('status')}>
                 <option>Available</option><option>Assigned</option><option>Unavailable</option>
               </select>
             </FormField>
+            <FormField label="Region"><input style={c.input} value={form.region} onChange={f('region')} placeholder="City" /></FormField>
+            <FormField label="Phone"><input style={c.input} value={form.phone} onChange={f('phone')} placeholder="+234..." /></FormField>
           </div>
-          <FormField label="Location"><input style={c.input} value={form.location} onChange={set('location')} /></FormField>
-          <FormField label="Phone"><input style={c.input} value={form.phone} onChange={set('phone')} /></FormField>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
-            <button onClick={() => { setModal(null); setEditing(null) }} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
-            <button onClick={handleSave} style={{ ...c.btn, ...c.btnPrimary }}>💾 Save</button>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button onClick={() => setModal(null)} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
+            <button onClick={save} style={{ ...c.btn, ...c.btnPrimary }}>💾 Save</button>
           </div>
         </Modal>
       )}
