@@ -82,8 +82,7 @@ export default function Register() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Registration failed'); setLoading(false); return }
-      setSubmittedRef(data.reference)
-      setSubmitted(true)
+      navigate(`/team-dashboard?ref=${data.reference}&token=${data.dashboardToken}`)
     } catch {
       setError('Network error — please try again')
     }

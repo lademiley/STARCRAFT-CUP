@@ -26,6 +26,7 @@ import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import Tickets from './pages/Tickets'
 import Profile from './pages/Profile'
+import TeamDashboard from './pages/TeamDashboard'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -81,6 +82,7 @@ function App() {
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
           <Route path="/tickets" element={<PublicLayout><Tickets /></PublicLayout>} />
           <Route path="/profile" element={<PublicLayout><Profile /></PublicLayout>} />
+          <Route path="/team-dashboard" element={<TeamDashboard />} />
         </Routes>
       </Router>
     </AuthProvider>

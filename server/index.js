@@ -177,10 +177,13 @@ app.post('/api/teams/register', (req, res) => {
   if (!teamName || !repEmail) {
     return res.status(400).json({ error: 'Team name and representative email are required' })
   }
-  const ref = `SC2026-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
+  const ref            = `SC2026-${crypto.randomBytes(3).toString('hex').toUpperCase()}`
+  const dashboardToken = crypto.randomBytes(32).toString('hex')
+  const id             = crypto.randomBytes(16).toString('hex')
   const registration = {
-    id: Date.now().toString(),
+    id,
     ref,
+    dashboardToken,
     teamName, city: city || '', yearFounded: yearFounded || '',
     coach: coach || '', homeColors: homeColors || '',
     competitionHistory: competitionHistory || '',
@@ -193,7 +196,43 @@ app.post('/api/teams/register', (req, res) => {
   }
   teamRegistrations.set(registration.id, registration)
   console.log('[TeamReg]', { ref, teamName, repEmail })
-  res.status(201).json({ success: true, reference: ref, id: registration.id })
+  res.status(201).json({ success: true, reference: ref, dashboardToken })
+})
+
+// Public: look up a single registration by ref + dashboardToken
+app.get('/api/teams/registrations/by-ref/:ref', (req, res) => {
+  const token = req.query.token || ''
+  const found = [...teamRegistrations.values()].find(r => r.ref === req.params.ref)
+  if (!found) return res.status(404).json({ error: 'Registration not found' })
+  // Constant-time comparison to prevent timing attacks
+  const expected = Buffer.from(found.dashboardToken)
+  const provided  = Buffer.from(token.padEnd(found.dashboardToken.length, '\0').slice(0, found.dashboardToken.length))
+  if (expected.length !== provided.length || !crypto.timingSafeEqual(expected, provided)) {
+    return res.status(403).json({ error: 'Invalid access token' })
+  }
+  // Strip token before sending to client
+  const { dashboardToken: _t, ...safe } = found
+  res.json({ registration: safe })
+})
+
+// Team rep: add a player — authenticated by ref + dashboardToken in body
+app.patch('/api/teams/registrations/by-ref/:ref/players', (req, res) => {
+  const { token, player } = req.body
+  const reg = [...teamRegistrations.values()].find(r => r.ref === req.params.ref)
+  if (!reg) return res.status(404).json({ error: 'Registration not found' })
+  const expected = Buffer.from(reg.dashboardToken)
+  const provided  = Buffer.from((token || '').padEnd(reg.dashboardToken.length, '\0').slice(0, reg.dashboardToken.length))
+  if (expected.length !== provided.length || !crypto.timingSafeEqual(expected, provided)) {
+    return res.status(403).json({ error: 'Invalid access token' })
+  }
+  if (reg.status === 'rejected') return res.status(400).json({ error: 'Cannot modify a rejected registration' })
+  if (reg.players.length >= 18) return res.status(400).json({ error: 'Maximum squad size of 18 reached' })
+  if (!player || !player.name || !player.name.trim()) return res.status(400).json({ error: 'Player name is required' })
+  reg.players = [...reg.players, player]
+  teamRegistrations.set(reg.id, reg)
+  console.log('[TeamReg AddPlayer]', reg.ref, player.name)
+  const { dashboardToken: _t, ...safe } = reg
+  res.json({ success: true, registration: safe })
 })
 
 // Admin: get all team registrations
