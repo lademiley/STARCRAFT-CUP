@@ -1,0 +1,456 @@
+Design a premium, modern, world-class football tournament website for StarCraft Cup 2027 with a luxury sports aesthetic inspired by UEFA Champions League, FIFA World Cup, and Premier League digital experiences. The website should be fast, highly interactive, fully responsive, SEO-optimized, and designed for maximum fan engagement.
+
+Website Pages
+Home
+
+Include:
+
+Full-screen Hero Banner
+Countdown Timer
+Register Team CTA
+Watch Live CTA
+Fixtures CTA
+Featured Sponsors
+Tournament Overview
+Latest News
+Live Scores
+Upcoming Matches
+Featured Players
+Tournament Statistics
+Host City Highlights
+Gallery Preview
+Testimonials
+Partner Logos
+Newsletter Subscription
+Footer
+About
+
+Sections:
+
+About StarCraft Cup
+History
+Vision
+Mission
+Core Values
+Objectives
+Tournament Motto
+Organizing Committee
+Why Edo State?
+Why Oredo LGA?
+Long-term Vision
+Sustainability Plan
+Tournament
+
+Include:
+
+Competition Format
+Group Tables
+Match Schedule
+Knockout Bracket
+Tournament Calendar
+Rules & Regulations
+Participating Teams
+Match Venues
+Prize Structure
+Awards
+Teams
+
+Features:
+
+Team Profiles
+Team Logos
+Squad List
+Coaches
+Team Statistics
+Recent Results
+Upcoming Matches
+Group Position
+Players
+
+Display:
+
+Player Cards
+Age
+Position
+Jersey Number
+Goals
+Assists
+Clean Sheets
+Yellow Cards
+Red Cards
+MVP Votes
+Player Biography
+Market Value
+Scout Notes
+Fixtures
+
+Include:
+
+Upcoming Matches
+Completed Matches
+Live Matches
+Match Preview
+Match Report
+Stadium
+Kickoff Time
+Weather
+Referee
+Lineups
+Live Commentary
+Live Score Center
+
+Features:
+
+Real-time Scores
+Live Commentary
+Match Timeline
+Possession
+Shots
+Corners
+Fouls
+Cards
+Substitutions
+Player Ratings
+League Table
+
+Show:
+
+Played
+Won
+Draw
+Lost
+Goals
+Goal Difference
+Points
+Qualification Status
+Statistics
+
+Include:
+
+Top Scorers
+Golden Boot Race
+Assists
+Clean Sheets
+Most Saves
+Player Ratings
+Team Rankings
+Possession Leaders
+Pass Accuracy
+Heatmaps
+Gallery
+
+Include:
+
+Photos
+Videos
+Opening Ceremony
+Finals
+Fan Moments
+Awards
+Drone Footage
+Behind-the-scenes
+News
+
+Features:
+
+Latest News
+Press Releases
+Interviews
+Match Reports
+Transfer News
+Tournament Updates
+Search
+Categories
+Tags
+Sponsors
+
+Display:
+
+Platinum Sponsors
+Gold Sponsors
+Silver Sponsors
+Official Partners
+Sponsor Benefits
+Become a Sponsor Form
+Media Center
+
+Include:
+
+Press Accreditation
+Download Logos
+Brand Guidelines
+Media Kits
+Press Photos
+Press Contacts
+Volunteers
+
+Features:
+
+Volunteer Registration
+Roles
+Requirements
+Benefits
+Training Schedule
+Contact
+
+Include:
+
+Contact Form
+Office Address
+Phone Numbers
+Email
+WhatsApp
+Google Maps
+Social Media
+FAQ
+User Authentication
+Login
+Register
+Forgot Password
+Email Verification
+Two-Factor Authentication
+Social Login (Google, Facebook)
+
+
+Style guide to use for the website:
+
+Color Palette
+Primary Gold
+
+Used for trophies, medals, headlines and premium elements.
+
+HEX: #D4AF37
+RGB: 212,175,55
+Championship Red
+
+Main background color.
+
+HEX: #8B0E12
+
+Alternative
+
+HEX: #A11217
+Dark Burgundy
+
+For gradients and overlays.
+
+HEX: #4A090B
+White
+
+Primary typography.
+
+HEX: #FFFFFF
+Black
+
+Text shadows and dark backgrounds.
+
+HEX: #111111
+Metallic Bronze
+
+Supporting color.
+
+HEX: #9E5B28
+Accent Gold
+
+For buttons and highlights.
+
+HEX: #F2C94C
+Gradient Recommendation
+
+Background
+
+#4A090B
+↓
+
+#8B0E12
+↓
+
+#C41E24
+
+Gold Objects
+
+#8C6A12
+↓
+
+#D4AF37
+↓
+
+#FFE08A
+Typography
+Primary Heading
+
+Cinzel
+
+Alternative
+
+Trajan Pro
+Cormorant Garamond
+
+Perfect for
+
+STARCRAFT CUP
+Winners
+Champions
+Secondary Font
+
+Montserrat Bold
+
+Used for
+
+Venue
+Date
+Fixtures
+Statistics
+Body Font
+
+Poppins
+
+or
+
+Open Sans
+
+Font Hierarchy
+Hero Title
+
+80–120 px
+
+Bold
+
+Uppercase
+
+White
+
+Secondary Heading
+
+32–48 px
+
+Bold
+
+Gold
+
+Body
+
+18–22 px
+
+Regular
+
+White
+
+Small Details
+
+14–16 px
+
+Medium
+
+Icons
+
+Style
+
+Outlined
+Minimal
+Gold
+Rounded
+
+Examples
+
+Calendar
+Stadium
+Trophy
+Referee whistle
+Football
+Ticket
+Live Match
+Medal
+Buttons
+
+Primary
+
+Gold Background
+
+Background
+#D4AF37
+
+Text
+#111111
+
+Rounded
+
+12px radius
+
+Secondary
+
+Transparent
+
+Gold Border
+
+Gold Text
+
+Card Design
+
+Background
+
+Dark Burgundy
+
+Border
+
+Gold
+
+Radius
+
+20px
+
+Shadow
+
+Soft Gold Glow
+
+Website Theme
+
+Hero Section
+
+Large Trophy
+
+Dark Red Gradient
+
+Animated Gold Particles
+
+Call to Action
+
+Register Team
+
+Buy Ticket
+
+View Fixtures
+
+Event Information Layout
+STARCRAFT CUP 2026
+
+Host City: Oredo LGA
+
+Venue: University of Benin, Ugbowo Main Bowl
+
+Final: Samuel Ogbemudia Stadium
+
+Premier: Starcraft Cup '26
+
+Sponsor: Edo State Government
+
+UI Style for Digital Platforms
+
+Cards
+
+Rounded corners (20px)
+Glassmorphism overlays
+Gold borders
+Soft shadows
+
+Navigation
+
+Transparent header
+Gold hover effects
+Sticky navigation
+
+Buttons
+
+Gold fill
+White hover glow
+Smooth 300ms transitions
