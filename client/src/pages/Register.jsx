@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -23,8 +23,18 @@ export default function Register() {
   const [loading,    setLoading]    = useState(false)
   const [showPayment, setShowPayment] = useState(false)
   const [payMethod,   setPayMethod]   = useState('bank')
+  const [paymentSettings, setPaymentSettings] = useState(null)
   const { setUser } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    fetch('/api/settings/payment')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.settings) setPaymentSettings(d.settings) })
+      .catch(() => {})
+  }, [])
+
+  const activeMethods = paymentSettings?.methods?.filter(m => m.enabled) || []
 
   const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }))
 
@@ -360,62 +370,38 @@ export default function Register() {
                   ))}
                 </div>
 
-                {/* Bank Transfer details */}
-                {payMethod === 'bank' && (
-                  <div style={ps.detailsBox}>
-                    <div style={ps.detailsTitle}>Bank Transfer Details</div>
-                    {[
-                      ['Bank Name',       'Zenith Bank Plc'],
-                      ['Account Name',    'StarCraft Cup 2026 Committee'],
-                      ['Account Number',  '2034567890'],
-                      ['Amount',          '₦25,000'],
-                      ['Payment Ref',     `REG-${form.teamName.replace(/\s+/g,'').toUpperCase().slice(0,6)}`],
-                    ].map(([k, v]) => (
-                      <div key={k} style={ps.detailRow}>
-                        <span style={ps.detailKey}>{k}</span>
-                        <span style={ps.detailVal}>{v}</span>
-                      </div>
-                    ))}
-                    <div style={ps.note}>
-                      ⚠️ Use your team name or reference as payment narration. Send your bank receipt to <strong>payments@starcraftcup.ng</strong> after transfer.
+                {/* Payment method details — driven by admin-configured settings */}
+                {activeMethods.length === 0 ? (
+                  <div style={{ ...ps.detailsBox, textAlign: 'center', padding: '20px' }}>
+                    <div style={{ fontSize: '1.8rem', marginBottom: 10 }}>⚙️</div>
+                    <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
+                      Payment details are being configured. Please contact the tournament office directly to complete your payment.
                     </div>
                   </div>
-                )}
-
-                {/* USSD */}
-                {payMethod === 'ussd' && (
-                  <div style={ps.detailsBox}>
-                    <div style={ps.detailsTitle}>USSD Quick Payment</div>
-                    {[
-                      ['GTBank',     '*737*2034567890*25000#'],
-                      ['Access Bank','*901*2034567890*25000#'],
-                      ['First Bank', '*894*2034567890*25000#'],
-                      ['UBA',        '*919*2034567890*25000#'],
-                      ['Zenith Bank','*966*2034567890*25000#'],
-                    ].map(([bank, code]) => (
-                      <div key={bank} style={ps.detailRow}>
-                        <span style={ps.detailKey}>{bank}</span>
-                        <span style={{ ...ps.detailVal, fontFamily: 'monospace', fontSize: '0.9rem', color: '#D4AF37', letterSpacing: 0.5 }}>{code}</span>
-                      </div>
-                    ))}
-                    <div style={ps.note}>
-                      Dial the code for your bank. After payment, email your transaction ID to <strong>payments@starcraftcup.ng</strong>.
+                ) : (
+                  activeMethods.map((method, idx) => (
+                    <div key={method.id || idx} style={ps.detailsBox}>
+                      <div style={ps.detailsTitle}>🏦 {method.label || 'Bank Transfer Details'}</div>
+                      {[
+                        method.bankName      && ['Bank Name',       method.bankName],
+                        method.accountName   && ['Account Name',    method.accountName],
+                        method.accountNumber && ['Account Number',  method.accountNumber],
+                        method.sortCode      && ['Sort Code',       method.sortCode],
+                        ['Amount',    '₦25,000'],
+                        ['Payment Ref', `REG-${form.teamName.replace(/\s+/g,'').toUpperCase().slice(0,6) || 'TEAM'}`],
+                      ].filter(Boolean).map(([k, v]) => (
+                        <div key={k} style={ps.detailRow}>
+                          <span style={ps.detailKey}>{k}</span>
+                          <span style={{ ...ps.detailVal, color: k === 'Payment Ref' ? '#D4AF37' : '#fff' }}>{v}</span>
+                        </div>
+                      ))}
+                      {method.instructions ? (
+                        <div style={ps.note}>⚠️ {method.instructions}</div>
+                      ) : (
+                        <div style={ps.note}>⚠️ Use your team name or the Payment Ref as your transfer narration so we can identify your payment.</div>
+                      )}
                     </div>
-                  </div>
-                )}
-
-                {/* Online */}
-                {payMethod === 'online' && (
-                  <div style={ps.detailsBox}>
-                    <div style={ps.detailsTitle}>Online / Card Payment</div>
-                    <div style={{ textAlign: 'center', padding: '16px 0', color: 'rgba(255,255,255,0.55)', fontSize: '0.85rem', lineHeight: 1.7 }}>
-                      <div style={{ fontSize: '2rem', marginBottom: 10 }}>🔒</div>
-                      Online card payment will be enabled once your registration is reviewed and approved. You will receive a secure payment link via email.
-                    </div>
-                    <div style={ps.note}>
-                      Meanwhile, use <strong>Bank Transfer</strong> or <strong>USSD</strong> to make payment now and complete your registration.
-                    </div>
-                  </div>
+                  ))
                 )}
 
                 {/* Error */}

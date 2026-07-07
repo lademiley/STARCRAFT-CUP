@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 
+function usePaymentSettings() {
+  const [settings, setSettings] = useState(null)
+  useEffect(() => {
+    fetch('/api/settings/payment')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.settings) setSettings(d.settings) })
+      .catch(() => {})
+  }, [])
+  return settings
+}
+
 const POSITIONS = ['Goalkeeper','Defender','Midfielder','Forward','Winger','Striker','Sweeper','Libero']
 
 const emptyPlayer = () => ({ name: '', age: '', position: '', jersey: '' })
@@ -48,6 +59,7 @@ export default function TeamDashboard() {
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState(null)
   const [tab, setTab]                   = useState('status')         // 'status' | 'squad'
+  const paymentSettings                 = usePaymentSettings()
 
   // Add-player form
   const [showForm, setShowForm]         = useState(false)
@@ -145,23 +157,141 @@ export default function TeamDashboard() {
 
   const cfg    = STATUS_CFG[reg.status] || STATUS_CFG.pending
   const canAdd = reg.status !== 'rejected' && reg.players.length < 18
+  const activeMethods = paymentSettings?.methods?.filter(m => m.enabled) || []
+  const payRef = `REG-${reg.teamName.replace(/\s+/g,'').toUpperCase().slice(0,6)}`
 
+  /* ─── Topbar (shared) ─── */
+  const topbar = (
+    <div style={s.topbar}>
+      <div style={s.topbarLeft}>
+        <span style={{ fontSize: '1.4rem' }}>⚽</span>
+        <div>
+          <div style={s.brand}>STARCRAFT CUP 2026</div>
+          <div style={s.brandSub}>Team Representative Dashboard</div>
+        </div>
+      </div>
+      <div style={s.topbarRight}>
+        <div style={{ ...s.refBadge, color: '#D4AF37' }}>{reg.ref}</div>
+        <Link to="/" style={s.btnGhost}>← Home</Link>
+      </div>
+    </div>
+  )
+
+  /* ═══════════════════════════════════════════════════════
+     PENDING — Payment confirmation gate
+  ═══════════════════════════════════════════════════════ */
+  if (reg.status === 'pending') {
+    return (
+      <div style={s.page}>
+        {topbar}
+        <div style={{ maxWidth: 640, margin: '0 auto', padding: '40px 24px 60px' }}>
+
+          {/* Hero */}
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: 12 }}>🏦</div>
+            <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '1.5rem', color: '#D4AF37', marginBottom: 8 }}>
+              Complete Your Payment
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.7 }}>
+              Your team <strong style={{ color: '#fff' }}>{reg.teamName}</strong> has been registered.<br />
+              Transfer the registration fee to the account below to confirm your place in the tournament.
+            </p>
+          </div>
+
+          {/* Amount box */}
+          <div style={{ background: 'rgba(212,175,55,0.07)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 14, padding: '20px 24px', textAlign: 'center', marginBottom: 20 }}>
+            <div style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: 2, color: 'rgba(212,175,55,0.6)', textTransform: 'uppercase', marginBottom: 6 }}>Registration Fee</div>
+            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '2.4rem', fontWeight: 900, color: '#D4AF37', lineHeight: 1 }}>₦25,000</div>
+            <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', marginTop: 8, fontStyle: 'italic' }}>{reg.teamName}</div>
+          </div>
+
+          {/* Bank details */}
+          {activeMethods.length === 0 ? (
+            <div style={{ background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 12, padding: '20px 24px', marginBottom: 20, textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '0.88rem' }}>
+              ⚙️ Payment details are being configured. Please contact the committee directly.
+            </div>
+          ) : activeMethods.map((method, idx) => (
+            <div key={method.id || idx} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: 2, color: 'rgba(212,175,55,0.6)', textTransform: 'uppercase', marginBottom: 14 }}>
+                🏦 {method.label || 'Official Account'}
+              </div>
+              {[
+                method.bankName      && ['Bank',           method.bankName],
+                method.accountName   && ['Account Name',   method.accountName],
+                method.accountNumber && ['Account Number', method.accountNumber],
+                method.sortCode      && ['Sort Code',      method.sortCode],
+              ].filter(Boolean).map(([k, v]) => (
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 16 }}>
+                  <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', flexShrink: 0 }}>{k}</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, textAlign: 'right', wordBreak: 'break-word' }}>{v}</span>
+                </div>
+              ))}
+              {/* Payment reference row */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0 0', gap: 16 }}>
+                <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', flexShrink: 0 }}>Payment Reference</span>
+                <span style={{ fontFamily: "'Cinzel', serif", fontSize: '1rem', color: '#D4AF37', fontWeight: 900, letterSpacing: 2 }}>{payRef}</span>
+              </div>
+              {method.instructions && (
+                <p style={{ margin: '12px 0 0', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{method.instructions}</p>
+              )}
+            </div>
+          ))}
+
+          {/* Warning note */}
+          <div style={{ background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 10, padding: '14px 18px', marginBottom: 24, fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>
+            ⚠️ Use <strong style={{ color: '#F59E0B' }}>{payRef}</strong> as your transfer narration so we can match your payment.
+            Once our committee confirms your transfer, this page will unlock your full team dashboard automatically.
+          </div>
+
+          {/* Auto-refresh notice */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
+            <span style={{ ...s.pulse, background: '#F59E0B', flexShrink: 0, width: 8, height: 8, borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+            This page checks for payment confirmation automatically every 30 seconds.
+            You can bookmark this URL and return at any time.
+          </div>
+        </div>
+        <style>{globalCss}</style>
+      </div>
+    )
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     REJECTED — simple message
+  ═══════════════════════════════════════════════════════ */
+  if (reg.status === 'rejected') {
+    return (
+      <div style={s.page}>
+        {topbar}
+        <div style={{ maxWidth: 600, margin: '0 auto', padding: '60px 24px' }}>
+          <div style={{ ...s.card, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', textAlign: 'center', padding: '48px 32px' }}>
+            <div style={{ fontSize: '3rem', marginBottom: 14 }}>❌</div>
+            <h3 style={{ fontFamily: "'Cinzel', serif", color: '#f87171', marginBottom: 12 }}>Application Not Approved</h3>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 0 }}>
+              Unfortunately your team application was not approved at this time.
+            </p>
+            {reg.reviewNote && (
+              <div style={{ marginTop: 20, padding: '14px 18px', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, fontSize: '0.85rem', color: '#f87171', fontStyle: 'italic', textAlign: 'left' }}>
+                <strong>Reason:</strong> {reg.reviewNote}
+              </div>
+            )}
+            <div style={{ marginTop: 28, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to="/register" style={s.btnPrimary}>Register a New Team</Link>
+              <Link to="/contact" style={s.btnGhost}>Contact Committee</Link>
+            </div>
+          </div>
+        </div>
+        <style>{globalCss}</style>
+      </div>
+    )
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     APPROVED — full dashboard (payment confirmed ✅)
+  ═══════════════════════════════════════════════════════ */
   return (
     <div style={s.page}>
       {/* ── Top bar ── */}
-      <div style={s.topbar}>
-        <div style={s.topbarLeft}>
-          <span style={{ fontSize: '1.4rem' }}>⚽</span>
-          <div>
-            <div style={s.brand}>STARCRAFT CUP 2026</div>
-            <div style={s.brandSub}>Team Representative Dashboard</div>
-          </div>
-        </div>
-        <div style={s.topbarRight}>
-          <div style={{ ...s.refBadge, color: '#D4AF37' }}>{reg.ref}</div>
-          <Link to="/" style={s.btnGhost}>← Home</Link>
-        </div>
-      </div>
+      {topbar}
 
       <div style={s.body}>
         {/* ── Team header ── */}
@@ -179,15 +309,25 @@ export default function TeamDashboard() {
           </div>
           <div style={{ marginLeft: 'auto' }}>
             <div style={{ ...s.statusPill, background: cfg.bg, border: `1px solid ${cfg.border}`, color: cfg.color }}>
-              {cfg.pulse && <span style={{ ...s.pulse, background: cfg.color }} />}
-              {cfg.icon} {reg.status.charAt(0).toUpperCase() + reg.status.slice(1)}
+              {cfg.icon} Approved
             </div>
+          </div>
+        </div>
+
+        {/* Payment confirmed banner */}
+        <div style={{ background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 12, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12, fontSize: '0.88rem', color: '#4ade80' }}>
+          <span style={{ fontSize: '1.3rem' }}>✅</span>
+          <div>
+            <strong>Payment Confirmed — Dashboard Unlocked</strong>
+            <span style={{ color: 'rgba(255,255,255,0.5)', marginLeft: 8, fontSize: '0.8rem' }}>
+              {reg.reviewNote ? `Committee note: ${reg.reviewNote}` : 'Your team is officially registered for StarCraft Cup 2026.'}
+            </span>
           </div>
         </div>
 
         {/* ── Tabs ── */}
         <div style={s.tabs}>
-          {[['status','📋 Application Status'],['squad','👥 Squad Management']].map(([key, label]) => (
+          {[['status','📋 Registration Details'],['squad','👥 Squad Management']].map(([key, label]) => (
             <button key={key} onClick={() => setTab(key)} style={{ ...s.tab, ...(tab === key ? s.tabActive : {}) }}>
               {label}
             </button>
@@ -197,29 +337,6 @@ export default function TeamDashboard() {
         {/* ════════ STATUS TAB ════════ */}
         {tab === 'status' && (
           <div>
-            {/* Status notification card */}
-            <div style={{ ...s.card, background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 20 }}>
-              <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                <div style={{ fontSize: '2.5rem', flexShrink: 0 }}>{cfg.icon}</div>
-                <div style={{ flex: 1 }}>
-                  <h3 style={{ color: cfg.color, marginBottom: 8, fontFamily: "'Cinzel', serif" }}>{cfg.title}</h3>
-                  <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: 0 }}>
-                    {cfg.message}
-                  </p>
-                  {reg.status === 'rejected' && reg.reviewNote && (
-                    <div style={{ marginTop: 14, padding: '12px 16px', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, fontSize: '0.85rem', color: '#f87171', fontStyle: 'italic' }}>
-                      <strong>Reason:</strong> {reg.reviewNote}
-                    </div>
-                  )}
-                  {reg.status === 'approved' && reg.reviewNote && (
-                    <div style={{ marginTop: 14, padding: '12px 16px', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, fontSize: '0.85rem', color: '#4ade80' }}>
-                      <strong>Note from committee:</strong> {reg.reviewNote}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {/* Registration details grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
               <div style={s.card}>
@@ -229,8 +346,8 @@ export default function TeamDashboard() {
                     {[
                       ['Reference',    <span style={{ fontFamily: 'monospace', color: '#D4AF37', fontWeight: 700 }}>{reg.ref}</span>],
                       ['Submitted',    fmt(reg.submittedAt)],
-                      ['Reviewed',     reg.reviewedAt ? fmt(reg.reviewedAt) : <span style={{ color: 'rgba(255,255,255,0.3)' }}>Pending</span>],
-                      ['Status',       <span style={{ color: cfg.color, fontWeight: 700 }}>{reg.status.charAt(0).toUpperCase() + reg.status.slice(1)}</span>],
+                      ['Confirmed',    reg.reviewedAt ? fmt(reg.reviewedAt) : '—'],
+                      ['Status',       <span style={{ color: cfg.color, fontWeight: 700 }}>Approved ✅</span>],
                     ].map(([k, v]) => (
                       <tr key={k}>
                         <td style={s.dtKey}>{k}</td>
@@ -274,14 +391,6 @@ export default function TeamDashboard() {
                 ))}
               </div>
             </div>
-
-            {/* Reminder for pending */}
-            {reg.status === 'pending' && (
-              <div style={{ marginTop: 16, padding: '14px 20px', background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 12, fontSize: '0.83rem', color: 'rgba(255,255,255,0.55)', display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span style={{ fontSize: '1.1rem' }}>🔄</span>
-                This page refreshes automatically every 30 seconds. You can also bookmark it and return at any time using your reference code.
-              </div>
-            )}
           </div>
         )}
 
