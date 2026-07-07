@@ -341,6 +341,50 @@ app.get('/api/users', (req, res) => {
   res.json({ users: allUsers })
 })
 
+// ---------- Payment Settings ----------
+// Stores admin-configurable payment methods shown to fans on the Tickets page
+let paymentSettings = {
+  methods: [
+    {
+      id: 'bank1',
+      type: 'bank',
+      enabled: true,
+      label: 'Bank Transfer',
+      bankName: 'First Bank Nigeria',
+      accountName: 'StarCraft Cup 2026 Tournament Committee',
+      accountNumber: '3085762491',
+      sortCode: '',
+      instructions: 'Transfer the exact amount and use your order reference as the payment narration.',
+    }
+  ],
+  footerNote: 'QR code tickets will be activated on your profile once payment is confirmed by our team.',
+}
+
+// Public: anyone can fetch payment methods (fans need it during checkout)
+app.get('/api/settings/payment', (req, res) => {
+  res.json({ settings: paymentSettings })
+})
+
+// Admin: update payment settings (requires authentication)
+app.put('/api/settings/payment', requireAuth, (req, res) => {
+  const { methods, footerNote } = req.body
+  if (!Array.isArray(methods)) {
+    return res.status(400).json({ error: 'methods must be an array' })
+  }
+  // Sanitise each method — only allow known fields
+  const allowed = ['id','type','enabled','label','bankName','accountName','accountNumber','sortCode','instructions']
+  paymentSettings = {
+    methods: methods.map(m => {
+      const clean = {}
+      for (const k of allowed) if (k in m) clean[k] = m[k]
+      return clean
+    }),
+    footerNote: typeof footerNote === 'string' ? footerNote : paymentSettings.footerNote,
+  }
+  console.log('[PaymentSettings] Updated by admin')
+  res.json({ success: true, settings: paymentSettings })
+})
+
 // ---------- Generic error handler ----------
 app.use((err, req, res, next) => {
   console.error('[Error]', err.message)

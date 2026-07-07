@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fixtures } from '../data/mockData'
@@ -87,12 +87,18 @@ export default function Tickets() {
   const [payRef] = useState(() => `SCT-${Date.now().toString(36).toUpperCase().slice(-6)}`)
   const [submitting, setSubmitting] = useState(false)
   const [payError, setPayError] = useState('')
+  const [paymentSettings, setPaymentSettings] = useState(null)
 
-  const BANK = {
-    name: 'First Bank Nigeria',
-    accountName: 'StarCraft Cup 2026 Tournament Committee',
-    accountNumber: '3085762491',
-  }
+  useEffect(() => {
+    fetch('/api/settings/payment')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.settings) setPaymentSettings(d.settings) })
+      .catch(() => {})
+  }, [])
+
+  // Active (enabled) payment methods, or fallback if API not yet loaded
+  const activeMethods = paymentSettings?.methods?.filter(m => m.enabled) || []
+  const footerNote = paymentSettings?.footerNote || 'QR code tickets will be activated on your profile once your payment is confirmed by our team.'
 
   const handleCheckout = () => setPayStep('bank')
 
@@ -119,36 +125,52 @@ export default function Tickets() {
   if (payStep === 'bank') {
     return (
       <div style={styles.page}>
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '100px 24px 60px' }}>
+        <div style={{ maxWidth: 580, margin: '0 auto', padding: '100px 24px 60px' }}>
           <div style={{ ...styles.card, padding: '40px' }}>
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
               <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🏦</div>
-              <h2 style={{ color: 'var(--gold)', marginBottom: 6 }}>Bank Transfer</h2>
+              <h2 style={{ color: 'var(--gold)', marginBottom: 6 }}>
+                {activeMethods.length === 1 ? activeMethods[0].label : 'Payment Details'}
+              </h2>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
                 Transfer the exact amount below to our official account, then click "I've Paid" to submit your order.
               </p>
             </div>
 
-            {/* Bank details */}
-            <div style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 12, padding: '24px', marginBottom: 24 }}>
-              <div style={{ fontFamily: 'var(--font-secondary)', fontSize: '0.72rem', letterSpacing: '2px', color: 'rgba(212,175,55,0.7)', textTransform: 'uppercase', marginBottom: 16 }}>
-                🏦 Official Tournament Account
+            {/* Payment method blocks — one per enabled method */}
+            {activeMethods.length === 0 && (
+              <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px', marginBottom: 24, fontSize: '0.85rem', color: '#f87171', textAlign: 'center' }}>
+                ⚠️ Payment details are being configured. Please contact the tournament office directly.
               </div>
-              {[
-                ['Bank', BANK.name],
-                ['Account Name', BANK.accountName],
-                ['Account Number', BANK.accountNumber],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', gap: 12 }}>
-                  <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', flexShrink: 0 }}>{k}</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, textAlign: 'right', wordBreak: 'break-word' }}>{v}</span>
+            )}
+
+            {activeMethods.map((method, idx) => (
+              <div key={method.id || idx} style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 12, padding: '24px', marginBottom: 20 }}>
+                <div style={{ fontFamily: 'var(--font-secondary)', fontSize: '0.72rem', letterSpacing: '2px', color: 'rgba(212,175,55,0.7)', textTransform: 'uppercase', marginBottom: 16 }}>
+                  🏦 {method.label || 'Official Tournament Account'}
                 </div>
-              ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0 0', gap: 12 }}>
-                <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>Payment Reference</span>
-                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--gold)', fontWeight: 900, letterSpacing: 2 }}>{payRef}</span>
+                {[
+                  method.bankName && ['Bank', method.bankName],
+                  method.accountName && ['Account Name', method.accountName],
+                  method.accountNumber && ['Account Number', method.accountNumber],
+                  method.sortCode && ['Sort Code', method.sortCode],
+                ].filter(Boolean).map(([k, v]) => (
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', gap: 12 }}>
+                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', flexShrink: 0 }}>{k}</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, textAlign: 'right', wordBreak: 'break-word' }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0 0', gap: 12 }}>
+                  <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>Payment Reference</span>
+                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--gold)', fontWeight: 900, letterSpacing: 2 }}>{payRef}</span>
+                </div>
+                {method.instructions && (
+                  <p style={{ margin: '12px 0 0', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+                    {method.instructions}
+                  </p>
+                )}
               </div>
-            </div>
+            ))}
 
             {/* Amount */}
             <div style={{ background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -171,14 +193,25 @@ export default function Tickets() {
             </div>
 
             <div style={{ background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 24, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
-              ⚠️ Use <strong style={{ color: '#F59E0B' }}>{payRef}</strong> as the payment description/narration so our team can match your payment. QR code tickets will be sent to <strong style={{ color: 'var(--white)' }}>{user?.email}</strong> and appear in your profile once confirmed.
+              ⚠️ Use <strong style={{ color: '#F59E0B' }}>{payRef}</strong> as the payment description/narration so our team can match your payment.{' '}
+              {footerNote} Confirmation will be sent to <strong style={{ color: 'var(--white)' }}>{user?.email}</strong>.
             </div>
 
             {payError && <div style={{ color: '#ff6b6b', fontSize: '0.85rem', marginBottom: 16, textAlign: 'center' }}>{payError}</div>}
 
-            <button onClick={handleSubmitPayment} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 10 }} disabled={submitting}>
+            <button
+              onClick={handleSubmitPayment}
+              className="btn btn-primary"
+              style={{ width: '100%', justifyContent: 'center', marginBottom: 10, opacity: activeMethods.length === 0 ? 0.4 : 1 }}
+              disabled={submitting || activeMethods.length === 0}
+            >
               {submitting ? 'Submitting…' : "✅ I've Made the Payment"}
             </button>
+            {activeMethods.length === 0 && (
+              <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', marginBottom: 10 }}>
+                Payment details are being configured — please check back shortly or contact us.
+              </p>
+            )}
             <button onClick={() => setPayStep(null)} className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>
               ← Back to Basket
             </button>

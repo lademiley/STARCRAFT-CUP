@@ -21,6 +21,7 @@ import Notifications from './modules/Notifications'
 import FinancialReports from './modules/FinancialReports'
 import TicketSales from './modules/TicketSales'
 import PaymentOrders from './modules/PaymentOrders'
+import PaymentSettings from './modules/PaymentSettings'
 import Merchandise from './modules/Merchandise'
 import AuditLogs from './modules/AuditLogs'
 import WebsiteSettings from './modules/WebsiteSettings'
@@ -76,6 +77,7 @@ const MENU = [
       { id: 'finance', label: 'Financial Reports', icon: '💰' },
       { id: 'tickets', label: 'Ticket Sales', icon: '🎫' },
       { id: 'payments', label: 'Payment Orders', icon: '💳' },
+      { id: 'paymentSettings', label: 'Payment Methods', icon: '🏦' },
       { id: 'merch', label: 'Merchandise', icon: '👕' },
     ]
   },
@@ -110,6 +112,7 @@ const MODULE_MAP = {
   finance: FinancialReports,
   tickets: TicketSales,
   payments: PaymentOrders,
+  paymentSettings: PaymentSettings,
   merch: Merchandise,
   notifications: Notifications,
   audit: AuditLogs,
