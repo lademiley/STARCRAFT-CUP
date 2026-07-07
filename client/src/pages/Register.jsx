@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const steps = ['Account', 'Team Info', 'Players', 'Review']
 
 export default function Register() {
   const [step, setStep] = useState(0)
   const [mode, setMode] = useState('team') // 'team' | 'fan'
-  const [form, setForm] = useState({ email:'', password:'', confirmPassword:'', teamName:'', city:'', coach:'', phone:'', group:'', kit:'', players:[] })
+  const [form, setForm] = useState({ email:'', password:'', confirmPassword:'', name:'', phone:'', favouriteTeam:'', teamName:'', city:'', coach:'', kit:'', players:[] })
   const [submitted, setSubmitted] = useState(false)
+  const [fanError, setFanError] = useState('')
+  const [fanLoading, setFanLoading] = useState(false)
+  const { setUser } = useAuth()
+  const navigate = useNavigate()
 
   if (submitted) {
     return (
@@ -149,16 +154,53 @@ export default function Register() {
 
           {/* Fan Registration */}
           {mode === 'fan' && (
-            <form onSubmit={e=>{e.preventDefault();setSubmitted(true)}}>
-              <div className="form-group"><label>Full Name</label><input type="text" className="form-control" placeholder="Your name" required /></div>
-              <div className="form-group"><label>Email Address</label><input type="email" className="form-control" placeholder="your@email.com" required /></div>
-              <div className="form-group"><label>Phone Number</label><input type="tel" className="form-control" placeholder="+234..." /></div>
+            <form onSubmit={async e => {
+              e.preventDefault()
+              setFanError('')
+              if (form.password !== form.confirmPassword) {
+                setFanError('Passwords do not match')
+                return
+              }
+              if (form.password.length < 8) {
+                setFanError('Password must be at least 8 characters')
+                return
+              }
+              setFanLoading(true)
+              try {
+                const res = await fetch('/api/auth/register', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  credentials: 'include',
+                  body: JSON.stringify({ email: form.email, password: form.password, name: form.name, mode: 'fan' }),
+                })
+                const data = await res.json()
+                if (!res.ok) { setFanError(data.error || 'Registration failed'); setFanLoading(false); return }
+                setUser(data.user)
+                navigate('/tickets')
+              } catch {
+                setFanError('Network error — please try again')
+                setFanLoading(false)
+              }
+            }}>
+              {fanError && (
+                <div style={{background:'rgba(139,14,18,0.4)',border:'1px solid rgba(212,175,55,0.3)',borderRadius:8,padding:'12px 16px',marginBottom:16,color:'#ff6b6b',fontSize:'0.9rem',textAlign:'center'}}>
+                  {fanError}
+                </div>
+              )}
+              <div className="form-group"><label>Full Name</label><input type="text" className="form-control" placeholder="Your name" required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} /></div>
+              <div className="form-group"><label>Email Address</label><input type="email" className="form-control" placeholder="your@email.com" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})} /></div>
+              <div className="form-group"><label>Phone Number</label><input type="tel" className="form-control" placeholder="+234..." value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} /></div>
               <div className="form-group"><label>Favourite Team</label>
-                <select className="form-control"><option value="">Select a team</option>{['Edo Warriors','Oredo United','Benin Royals','Delta Eagles','Ugbowo Stars','Uromi FC'].map(t=><option key={t}>{t}</option>)}</select>
+                <select className="form-control" value={form.favouriteTeam} onChange={e=>setForm({...form,favouriteTeam:e.target.value})}>
+                  <option value="">Select a team</option>
+                  {['Akoko-Edo Panthers','Egor United','Esan Central FC','Ikpoba-Okha FC','Oredo City FC','Owan East FC','Owan West United','Etsako Central FC','Esan West Rangers','Bendel Insurance Youth'].map(t=><option key={t}>{t}</option>)}
+                </select>
               </div>
-              <div className="form-group"><label>Password</label><input type="password" className="form-control" placeholder="Create password" required /></div>
-              <div className="form-group"><label>Confirm Password</label><input type="password" className="form-control" placeholder="Confirm password" required /></div>
-              <button type="submit" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:16}}>Create Fan Account 🎉</button>
+              <div className="form-group"><label>Password</label><input type="password" className="form-control" placeholder="Create password (min 8 chars)" required value={form.password} onChange={e=>setForm({...form,password:e.target.value})} /></div>
+              <div className="form-group"><label>Confirm Password</label><input type="password" className="form-control" placeholder="Confirm password" required value={form.confirmPassword} onChange={e=>setForm({...form,confirmPassword:e.target.value})} /></div>
+              <button type="submit" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:16}} disabled={fanLoading}>
+                {fanLoading ? 'Creating account…' : 'Create Fan Account 🎉'}
+              </button>
               <div className="divider-text"><span>or sign up with</span></div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:16}}>
                 <button type="button" className="btn btn-secondary" style={{justifyContent:'center'}}>G Google</button>

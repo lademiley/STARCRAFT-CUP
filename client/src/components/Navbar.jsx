@@ -40,7 +40,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const location = useLocation()
-  const { isAdmin, adminLogout } = useAuth()
+  const { user, logout, isAdmin, adminLogout } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -131,6 +131,14 @@ export default function Navbar() {
                 <Link to="/admin/dashboard" className="btn btn-admin btn-sm">🛡️ Admin</Link>
                 <button onClick={adminLogout} className="btn btn-secondary btn-sm">Logout</button>
               </>
+            ) : user ? (
+              <>
+                <Link to="/tickets" className="btn btn-primary btn-sm">🎫 Buy Tickets</Link>
+                <span style={{fontFamily:'var(--font-secondary)',fontSize:'0.78rem',color:'rgba(255,255,255,0.6)',maxWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                  {user.name}
+                </span>
+                <button onClick={logout} className="btn btn-secondary btn-sm">Logout</button>
+              </>
             ) : (
               <>
                 <Link to="/login" className="btn btn-secondary btn-sm">Login</Link>
@@ -165,6 +173,14 @@ export default function Navbar() {
               <>
                 <Link to="/admin/dashboard" className="btn btn-admin" style={{width:'100%',justifyContent:'center',marginBottom:12}}>🛡️ Admin Dashboard</Link>
                 <button onClick={adminLogout} className="btn btn-secondary" style={{width:'100%',justifyContent:'center'}}>Logout</button>
+              </>
+            ) : user ? (
+              <>
+                <div style={{fontFamily:'var(--font-secondary)',fontSize:'0.85rem',color:'rgba(255,255,255,0.6)',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.08)',marginBottom:12}}>
+                  Signed in as <strong style={{color:'var(--gold)'}}>{user.name}</strong>
+                </div>
+                <Link to="/tickets" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:12}}>🎫 Buy Tickets</Link>
+                <button onClick={logout} className="btn btn-secondary" style={{width:'100%',justifyContent:'center'}}>Logout</button>
               </>
             ) : (
               <>

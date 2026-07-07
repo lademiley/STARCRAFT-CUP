@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
       const data = await res.json()
       if (!res.ok) return { success: false, error: data.error || 'Login failed' }
       setUser(data.user)
-      return { success: true }
+      return { success: true, user: data.user }
     } catch {
       return { success: false, error: 'Network error — please try again' }
     }

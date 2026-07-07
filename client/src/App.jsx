@@ -24,6 +24,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
+import Tickets from './pages/Tickets'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -77,6 +78,7 @@ function App() {
           <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
+          <Route path="/tickets" element={<PublicLayout><Tickets /></PublicLayout>} />
         </Routes>
       </Router>
     </AuthProvider>

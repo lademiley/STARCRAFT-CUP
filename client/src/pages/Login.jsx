@@ -17,7 +17,7 @@ export default function Login() {
     const result = await login(form.email, form.password)
     setLoading(false)
     if (result.success) {
-      navigate('/')
+      navigate(result.user?.mode === 'fan' ? '/tickets' : '/')
     } else {
       setError(result.error || 'Invalid email or password')
     }
