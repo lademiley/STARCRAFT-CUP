@@ -1,136 +1,201 @@
 // =============================================
-// STARCRAFT CUP 2027 — Mock Data
+// STARCRAFT CUP — Mock Data (Premier Edition 2026)
 // =============================================
 
+// ── Edition Registry ─────────────────────────
+export const editions = [
+  { year: 2026, label: 'Premier Edition', status: 'current',  dates: 'Dec 1 – 20, 2026', teams: 20, groups: '4 × 5', ageGroup: 'U17–U20' },
+  { year: 2027, label: '2nd Edition',     status: 'upcoming', dates: 'TBD 2027',           teams: 20, groups: '4 × 5', ageGroup: 'U17–U20' },
+  { year: 2028, label: '3rd Edition',     status: 'future',   dates: 'TBD 2028',           teams: 24, groups: '4 × 6', ageGroup: 'U17–U21' },
+  { year: 2029, label: '4th Edition',     status: 'future',   dates: 'TBD 2029',           teams: 24, groups: '4 × 6', ageGroup: 'U17–U21' },
+  { year: 2030, label: '5th Edition',     status: 'future',   dates: 'TBD 2030',           teams: 32, groups: '8 × 4', ageGroup: 'U17–U21' },
+]
+
+// ── 20 Teams — 18 LGAs + Host XI + Defending Champion ────
 export const teams = [
-  { id: 1, name: 'Edo Warriors', shortName: 'EDO', logo: '🦁', city: 'Benin City', coach: 'Emmanuel Okoro', group: 'A', played: 3, won: 3, draw: 0, lost: 0, gf: 9, ga: 2, gd: 7, points: 9, form: ['W','W','W'], color: '#D4AF37' },
-  { id: 2, name: 'Oredo United', shortName: 'ORU', logo: '⚡', city: 'Oredo', coach: 'Victor Ihejirika', group: 'A', played: 3, won: 2, draw: 1, lost: 0, gf: 7, ga: 3, gd: 4, points: 7, form: ['W','D','W'], color: '#3B82F6' },
-  { id: 3, name: 'Ugbowo Stars', shortName: 'UGS', logo: '⭐', city: 'Ugbowo', coach: 'Chidi Nwosu', group: 'A', played: 3, won: 1, draw: 1, lost: 1, gf: 4, ga: 5, gd: -1, points: 4, form: ['L','D','W'], color: '#10B981' },
-  { id: 4, name: 'Sapele City FC', shortName: 'SAP', logo: '🌊', city: 'Sapele', coach: 'Emeka Eze', group: 'A', played: 3, won: 1, draw: 0, lost: 2, gf: 3, ga: 6, gd: -3, points: 3, form: ['L','W','L'], color: '#8B5CF6' },
-  { id: 5, name: 'Warri Wolves', shortName: 'WAR', logo: '🐺', city: 'Warri', coach: 'Festus Agbamu', group: 'A', played: 3, won: 0, draw: 1, lost: 2, gf: 2, ga: 7, gd: -5, points: 1, form: ['L','L','D'], color: '#EF4444' },
-  { id: 6, name: 'Ughelli Rangers', shortName: 'UGR', logo: '🦅', city: 'Ughelli', coach: 'Dickson Owie', group: 'A', played: 3, won: 0, draw: 0, lost: 3, gf: 1, ga: 8, gd: -7, points: 0, form: ['L','L','L'], color: '#F97316' },
-  { id: 7, name: 'Benin Royals', shortName: 'BNR', logo: '👑', city: 'Benin City', coach: 'Austin Oghuvwu', group: 'B', played: 3, won: 2, draw: 1, lost: 0, gf: 8, ga: 2, gd: 6, points: 7, form: ['W','W','D'], color: '#EC4899' },
-  { id: 8, name: 'Delta Eagles', shortName: 'DEL', logo: '🦆', city: 'Asaba', coach: 'John Ochuko', group: 'B', played: 3, won: 2, draw: 0, lost: 1, gf: 6, ga: 4, gd: 2, points: 6, form: ['W','L','W'], color: '#14B8A6' },
-  { id: 9, name: 'Uromi FC', shortName: 'URO', logo: '🛡️', city: 'Uromi', coach: 'Peter Aigbe', group: 'B', played: 3, won: 1, draw: 2, lost: 0, gf: 5, ga: 4, gd: 1, points: 5, form: ['D','W','D'], color: '#6366F1' },
-  { id: 10, name: 'Ekpoma Lions', shortName: 'EKP', logo: '🦁', city: 'Ekpoma', coach: 'Felix Idahosa', group: 'B', played: 3, won: 1, draw: 1, lost: 1, gf: 4, ga: 5, gd: -1, points: 4, form: ['W','L','D'], color: '#F59E0B' },
-  { id: 11, name: 'Auchi City', shortName: 'AUC', logo: '🏰', city: 'Auchi', coach: 'Sunday Omotosho', group: 'B', played: 3, won: 0, draw: 1, lost: 2, gf: 2, ga: 6, gd: -4, points: 1, form: ['D','L','L'], color: '#84CC16' },
-  { id: 12, name: 'Esan Warriors', shortName: 'ESA', logo: '⚔️', city: 'Irrua', coach: 'Mike Odalume', group: 'B', played: 3, won: 0, draw: 0, lost: 3, gf: 1, ga: 9, gd: -8, points: 0, form: ['L','L','L'], color: '#06B6D4' },
+  // GROUP A
+  { id: 1,  name: 'Akoko-Edo Panthers',    shortName: 'AKP', logo: '🐆', lga: 'Akoko-Edo',      coach: 'Gabriel Alagbe',    group: 'A', played: 4, won: 3, draw: 1, lost: 0, gf: 10, ga: 3,  gd: 7,   points: 10, form: ['W','W','D','W'], color: '#D4AF37' },
+  { id: 2,  name: 'Egor United',           shortName: 'EGU', logo: '🔥', lga: 'Egor',           coach: 'Emeka Olokor',      group: 'A', played: 4, won: 2, draw: 1, lost: 1, gf: 7,  ga: 5,  gd: 2,   points: 7,  form: ['W','D','L','W'], color: '#3B82F6' },
+  { id: 3,  name: 'Esan Central FC',       shortName: 'ESC', logo: '⭐', lga: 'Esan Central',   coach: 'Chidi Nwosu',       group: 'A', played: 4, won: 1, draw: 2, lost: 1, gf: 5,  ga: 6,  gd: -1,  points: 5,  form: ['D','W','D','L'], color: '#10B981' },
+  { id: 4,  name: 'Esan North Stars',      shortName: 'ENS', logo: '🌠', lga: 'Esan North-East', coach: 'Osaro Akhigbe',    group: 'A', played: 4, won: 1, draw: 1, lost: 2, gf: 4,  ga: 7,  gd: -3,  points: 4,  form: ['L','W','L','D'], color: '#8B5CF6' },
+  { id: 5,  name: 'Esan South FC',         shortName: 'ESS', logo: '🌊', lga: 'Esan South-East', coach: 'Festus Agbamu',    group: 'A', played: 4, won: 0, draw: 1, lost: 3, gf: 2,  ga: 9,  gd: -7,  points: 1,  form: ['L','L','D','L'], color: '#EF4444' },
+  // GROUP B
+  { id: 6,  name: 'Esan West Rangers',     shortName: 'EWR', logo: '🦅', lga: 'Esan West',      coach: 'Dickson Owie',      group: 'B', played: 4, won: 3, draw: 0, lost: 1, gf: 9,  ga: 4,  gd: 5,   points: 9,  form: ['W','L','W','W'], color: '#F97316' },
+  { id: 7,  name: 'Etsako Central FC',     shortName: 'ETC', logo: '🏰', lga: 'Etsako Central', coach: 'Sunday Omotosho',   group: 'B', played: 4, won: 2, draw: 2, lost: 0, gf: 8,  ga: 3,  gd: 5,   points: 8,  form: ['W','D','W','D'], color: '#EC4899' },
+  { id: 8,  name: 'Etsako East United',    shortName: 'EEU', logo: '🦆', lga: 'Etsako East',    coach: 'John Ochuko',       group: 'B', played: 4, won: 2, draw: 0, lost: 2, gf: 6,  ga: 6,  gd: 0,   points: 6,  form: ['W','L','W','L'], color: '#14B8A6' },
+  { id: 9,  name: 'Etsako West FC',        shortName: 'ETW', logo: '🛡️', lga: 'Etsako West',    coach: 'Peter Aigbe',       group: 'B', played: 4, won: 1, draw: 1, lost: 2, gf: 5,  ga: 7,  gd: -2,  points: 4,  form: ['D','W','L','L'], color: '#6366F1' },
+  { id: 10, name: 'Igueben FC',            shortName: 'IGU', logo: '⚔️', lga: 'Igueben',        coach: 'Felix Idahosa',     group: 'B', played: 4, won: 0, draw: 1, lost: 3, gf: 2,  ga: 9,  gd: -7,  points: 1,  form: ['L','D','L','L'], color: '#F59E0B' },
+  // GROUP C
+  { id: 11, name: 'Ikpoba-Okha FC',        shortName: 'IKO', logo: '🏆', lga: 'Ikpoba-Okha',    coach: 'Austin Oghuvwu',    group: 'C', played: 4, won: 4, draw: 0, lost: 0, gf: 12, ga: 2,  gd: 10,  points: 12, form: ['W','W','W','W'], color: '#D4AF37' },
+  { id: 12, name: 'Oredo City FC',         shortName: 'ORC', logo: '👑', lga: 'Oredo (Host)',   coach: 'Victor Ihejirika',  group: 'C', played: 4, won: 2, draw: 1, lost: 1, gf: 8,  ga: 5,  gd: 3,   points: 7,  form: ['W','W','D','L'], color: '#84CC16' },
+  { id: 13, name: 'Orhionmwon FC',         shortName: 'ORH', logo: '🌿', lga: 'Orhionmwon',     coach: 'Mike Odalume',      group: 'C', played: 4, won: 1, draw: 2, lost: 1, gf: 5,  ga: 6,  gd: -1,  points: 5,  form: ['D','L','W','D'], color: '#06B6D4' },
+  { id: 14, name: 'Ovia North Rangers',    shortName: 'ONR', logo: '🦁', lga: 'Ovia North-East', coach: 'Emmanuel Okoro',   group: 'C', played: 4, won: 1, draw: 1, lost: 2, gf: 4,  ga: 7,  gd: -3,  points: 4,  form: ['L','W','D','L'], color: '#A78BFA' },
+  { id: 15, name: 'Ovia South United',     shortName: 'OSU', logo: '🌍', lga: 'Ovia South-West', coach: 'Bright Osifo',     group: 'C', played: 4, won: 0, draw: 0, lost: 4, gf: 1,  ga: 12, gd: -11, points: 0,  form: ['L','L','L','L'], color: '#F43F5E' },
+  // GROUP D
+  { id: 16, name: 'Owan East FC',          shortName: 'OWE', logo: '🦊', lga: 'Owan East',      coach: 'Richard Ebore',     group: 'D', played: 4, won: 3, draw: 1, lost: 0, gf: 11, ga: 3,  gd: 8,   points: 10, form: ['W','W','W','D'], color: '#22D3EE' },
+  { id: 17, name: 'Owan West United',      shortName: 'OWW', logo: '🌙', lga: 'Owan West',      coach: 'Samuel Oriaifo',    group: 'D', played: 4, won: 2, draw: 2, lost: 0, gf: 7,  ga: 4,  gd: 3,   points: 8,  form: ['W','D','W','D'], color: '#F9A8D4' },
+  { id: 18, name: 'Uhunmwonde FC',         shortName: 'UHU', logo: '🏔️', lga: 'Uhunmwonde',     coach: 'Kingsley Egbase',   group: 'D', played: 4, won: 1, draw: 1, lost: 2, gf: 5,  ga: 7,  gd: -2,  points: 4,  form: ['L','W','D','L'], color: '#4ADE80' },
+  { id: 19, name: 'Oredo Host XI',         shortName: 'HXI', logo: '🏠', lga: 'Host (Oredo)',   coach: 'Chief Osagie-Eweka', group: 'D', played: 4, won: 1, draw: 0, lost: 3, gf: 4,  ga: 9,  gd: -5,  points: 3,  form: ['L','W','L','L'], color: '#FB923C' },
+  { id: 20, name: 'Bendel Insurance Youth',shortName: 'BIY', logo: '🦁', lga: 'Defending 🏆',   coach: 'Godwin Enakhena',   group: 'D', played: 4, won: 0, draw: 0, lost: 4, gf: 1,  ga: 10, gd: -9,  points: 0,  form: ['L','L','L','L'], color: '#6B7280' },
 ]
 
+// ── Players ─────────────────────────────────
 export const players = [
-  { id: 1, name: 'Chukwuemeka Obi', position: 'Forward', team: 'Edo Warriors', teamId: 1, jersey: 9, age: 24, goals: 7, assists: 3, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 145, nationality: '🇳🇬', marketValue: '₦45M', rating: 9.1, bio: 'Prolific striker with explosive pace and clinical finishing. Former youth team standout.' },
-  { id: 2, name: 'Victor Ehigie', position: 'Midfielder', team: 'Oredo United', teamId: 2, jersey: 8, age: 26, goals: 4, assists: 6, cleanSheets: 0, yellowCards: 2, redCards: 0, mvpVotes: 112, nationality: '🇳🇬', marketValue: '₦32M', rating: 8.7, bio: 'Creative playmaker with exceptional vision and passing range. Captain of Oredo United.' },
-  { id: 3, name: 'Emmanuel Okuosa', position: 'Goalkeeper', team: 'Benin Royals', teamId: 7, jersey: 1, age: 28, goals: 0, assists: 0, cleanSheets: 5, yellowCards: 0, redCards: 0, mvpVotes: 98, nationality: '🇳🇬', marketValue: '₦28M', rating: 8.5, bio: 'Shot-stopper extraordinaire. Known for his reflexes and commanding presence in the box.' },
-  { id: 4, name: 'Samuel Oriaifo', position: 'Defender', team: 'Edo Warriors', teamId: 1, jersey: 4, age: 25, goals: 1, assists: 2, cleanSheets: 0, yellowCards: 3, redCards: 0, mvpVotes: 87, nationality: '🇳🇬', marketValue: '₦25M', rating: 8.2, bio: 'Commanding centre-back. Leader at the back, strong in the air and tackles well.' },
-  { id: 5, name: 'David Akhigbe', position: 'Forward', team: 'Delta Eagles', teamId: 8, jersey: 11, age: 22, goals: 5, assists: 4, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 76, nationality: '🇳🇬', marketValue: '₦30M', rating: 8.0, bio: 'Exciting winger with blistering pace. The youngest top scorer in the tournament.' },
-  { id: 6, name: 'Peter Osagie', position: 'Midfielder', team: 'Ugbowo Stars', teamId: 3, jersey: 6, age: 27, goals: 3, assists: 5, cleanSheets: 0, yellowCards: 2, redCards: 0, mvpVotes: 65, nationality: '🇳🇬', marketValue: '₦20M', rating: 7.8, bio: 'Box-to-box midfielder with incredible stamina and work rate.' },
-  { id: 7, name: 'Felix Agbonlahor', position: 'Forward', team: 'Oredo United', teamId: 2, jersey: 10, age: 23, goals: 4, assists: 3, cleanSheets: 0, yellowCards: 0, redCards: 0, mvpVotes: 60, nationality: '🇳🇬', marketValue: '₦22M', rating: 7.9, bio: 'Technical forward, excellent dribbler and has great awareness in tight spaces.' },
-  { id: 8, name: 'Monday Ogunbor', position: 'Defender', team: 'Benin Royals', teamId: 7, jersey: 5, age: 30, goals: 0, assists: 1, cleanSheets: 0, yellowCards: 4, redCards: 0, mvpVotes: 42, nationality: '🇳🇬', marketValue: '₦18M', rating: 7.5, bio: 'Experienced defender, reads the game superbly. Team captain and mentor to younger players.' },
-  { id: 9, name: 'John Uwaifo', position: 'Forward', team: 'Warri Wolves', teamId: 5, jersey: 7, age: 21, goals: 2, assists: 1, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 38, nationality: '🇳🇬', marketValue: '₦12M', rating: 7.2, bio: 'Young talent from Warri with a strong shot and direct playing style.' },
-  { id: 10, name: 'Chris Ehigiamusoe', position: 'Midfielder', team: 'Uromi FC', teamId: 9, jersey: 14, age: 24, goals: 2, assists: 7, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 55, nationality: '🇳🇬', marketValue: '₦19M', rating: 7.7, bio: 'Assist machine. Deep-lying playmaker with superb distribution and set-piece delivery.' },
-  { id: 11, name: 'Bright Omokhagbo', position: 'Goalkeeper', team: 'Edo Warriors', teamId: 1, jersey: 23, age: 26, goals: 0, assists: 0, cleanSheets: 6, yellowCards: 0, redCards: 0, mvpVotes: 72, nationality: '🇳🇬', marketValue: '₦24M', rating: 8.3, bio: 'Agile goalkeeper with exceptional distribution. Golden Glove favourite.' },
-  { id: 12, name: 'Kingsley Idehen', position: 'Forward', team: 'Sapele City FC', teamId: 4, jersey: 9, age: 25, goals: 3, assists: 2, cleanSheets: 0, yellowCards: 2, redCards: 1, mvpVotes: 30, nationality: '🇳🇬', marketValue: '₦15M', rating: 6.9, bio: 'Powerful striker. Holds the ball up well and brings teammates into play.' },
+  { id: 1,  name: 'Chukwuemeka Obi',     position: 'Forward',    team: 'Akoko-Edo Panthers',  teamId: 1,  jersey: 9,  age: 17, goals: 8,  assists: 3, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 145, nationality: '🇳🇬', rating: 9.1, bio: 'Prolific striker with explosive pace and clinical finishing. Top scorer of the Premier Edition.' },
+  { id: 2,  name: 'Victor Ehigie',        position: 'Midfielder',  team: 'Egor United',          teamId: 2,  jersey: 8,  age: 19, goals: 4,  assists: 6, cleanSheets: 0, yellowCards: 2, redCards: 0, mvpVotes: 112, nationality: '🇳🇬', rating: 8.7, bio: 'Creative playmaker with exceptional vision. Captain of Egor United.' },
+  { id: 3,  name: 'Emmanuel Okuosa',      position: 'Goalkeeper',  team: 'Ikpoba-Okha FC',       teamId: 11, jersey: 1,  age: 18, goals: 0,  assists: 0, cleanSheets: 6, yellowCards: 0, redCards: 0, mvpVotes: 98,  nationality: '🇳🇬', rating: 8.5, bio: 'Shot-stopper extraordinaire. Kept 6 clean sheets in the group stage.' },
+  { id: 4,  name: 'Samuel Oriaifo',       position: 'Defender',    team: 'Owan West United',     teamId: 17, jersey: 4,  age: 20, goals: 1,  assists: 2, cleanSheets: 0, yellowCards: 3, redCards: 0, mvpVotes: 87,  nationality: '🇳🇬', rating: 8.2, bio: 'Commanding centre-back and leader at the back. Strong in the air.' },
+  { id: 5,  name: 'David Akhigbe',        position: 'Forward',     team: 'Oredo City FC',        teamId: 12, jersey: 11, age: 17, goals: 6,  assists: 4, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 76,  nationality: '🇳🇬', rating: 8.0, bio: 'Exciting winger with blistering pace. Youngest top scorer in the tournament.' },
+  { id: 6,  name: 'Peter Osagie',         position: 'Midfielder',  team: 'Owan East FC',         teamId: 16, jersey: 6,  age: 18, goals: 3,  assists: 5, cleanSheets: 0, yellowCards: 2, redCards: 0, mvpVotes: 65,  nationality: '🇳🇬', rating: 7.8, bio: 'Box-to-box midfielder with incredible stamina and work rate.' },
+  { id: 7,  name: 'Felix Agbonlahor',     position: 'Forward',     team: 'Esan Central FC',      teamId: 3,  jersey: 10, age: 19, goals: 4,  assists: 3, cleanSheets: 0, yellowCards: 0, redCards: 0, mvpVotes: 60,  nationality: '🇳🇬', rating: 7.9, bio: 'Technical forward, excellent dribbler with great awareness in tight spaces.' },
+  { id: 8,  name: 'Monday Ogunbor',       position: 'Defender',    team: 'Etsako Central FC',    teamId: 7,  jersey: 5,  age: 20, goals: 0,  assists: 1, cleanSheets: 0, yellowCards: 4, redCards: 0, mvpVotes: 42,  nationality: '🇳🇬', rating: 7.5, bio: 'Experienced defender who reads the game superbly. Team captain.' },
+  { id: 9,  name: 'John Uwaifo',          position: 'Forward',     team: 'Esan West Rangers',    teamId: 6,  jersey: 7,  age: 17, goals: 5,  assists: 1, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 38,  nationality: '🇳🇬', rating: 7.2, bio: 'Young talent with a strong shot and direct playing style.' },
+  { id: 10, name: 'Chris Ehigiamusoe',    position: 'Midfielder',  team: 'Owan West United',     teamId: 17, jersey: 14, age: 18, goals: 2,  assists: 7, cleanSheets: 0, yellowCards: 1, redCards: 0, mvpVotes: 55,  nationality: '🇳🇬', rating: 7.7, bio: 'Assist machine. Deep-lying playmaker with superb distribution.' },
+  { id: 11, name: 'Bright Omokhagbo',     position: 'Goalkeeper',  team: 'Owan East FC',         teamId: 16, jersey: 23, age: 19, goals: 0,  assists: 0, cleanSheets: 5, yellowCards: 0, redCards: 0, mvpVotes: 72,  nationality: '🇳🇬', rating: 8.3, bio: 'Agile goalkeeper with exceptional distribution. Golden Glove favourite.' },
+  { id: 12, name: 'Kingsley Idehen',      position: 'Forward',     team: 'Ikpoba-Okha FC',       teamId: 11, jersey: 9,  age: 17, goals: 5,  assists: 2, cleanSheets: 0, yellowCards: 2, redCards: 1, mvpVotes: 30,  nationality: '🇳🇬', rating: 6.9, bio: 'Powerful striker who holds the ball up well and brings teammates into play.' },
 ]
 
+// ── Fixtures — Dec 1–20, 2026 ─────────────────
+// Stadiums: Ugbowo Campus Main Bowl (group/QF/SF), Ogbemudia Main Bowl (Final/Closing)
 export const fixtures = [
-  // Completed
-  { id: 1, homeTeam: 'Edo Warriors', awayTeam: 'Ughelli Rangers', homeScore: 4, awayScore: 0, date: '2027-03-01', time: '15:00', venue: 'University of Benin Bowl', status: 'completed', referee: 'James Okafor' },
-  { id: 2, homeTeam: 'Oredo United', awayTeam: 'Sapele City FC', homeScore: 2, awayScore: 1, date: '2027-03-01', time: '17:30', venue: 'University of Benin Bowl', status: 'completed', referee: 'Paul Agbakoba' },
-  { id: 3, homeTeam: 'Ugbowo Stars', awayTeam: 'Warri Wolves', homeScore: 1, awayScore: 1, date: '2027-03-03', time: '15:00', venue: 'Samuel Ogbemudia Stadium', status: 'completed', referee: 'Ehis Omoregie' },
-  { id: 4, homeTeam: 'Benin Royals', awayTeam: 'Esan Warriors', homeScore: 3, awayScore: 0, date: '2027-03-03', time: '17:30', venue: 'Samuel Ogbemudia Stadium', status: 'completed', referee: 'Tom Adaeze' },
-  { id: 5, homeTeam: 'Delta Eagles', awayTeam: 'Auchi City', homeScore: 2, awayScore: 0, date: '2027-03-05', time: '15:00', venue: 'University of Benin Bowl', status: 'completed', referee: 'John Onyeka' },
-  { id: 6, homeTeam: 'Uromi FC', awayTeam: 'Ekpoma Lions', homeScore: 1, awayScore: 1, date: '2027-03-05', time: '17:30', venue: 'University of Benin Bowl', status: 'completed', referee: 'Chris Agoro' },
-  // Upcoming
-  { id: 7, homeTeam: 'Edo Warriors', awayTeam: 'Benin Royals', homeScore: null, awayScore: null, date: '2027-03-20', time: '15:00', venue: 'Samuel Ogbemudia Stadium', status: 'upcoming', referee: 'James Okafor', round: 'Quarter-Final' },
-  { id: 8, homeTeam: 'Oredo United', awayTeam: 'Delta Eagles', homeScore: null, awayScore: null, date: '2027-03-20', time: '18:00', venue: 'Samuel Ogbemudia Stadium', status: 'upcoming', referee: 'Paul Agbakoba', round: 'Quarter-Final' },
-  { id: 9, homeTeam: 'Ugbowo Stars', awayTeam: 'Uromi FC', homeScore: null, awayScore: null, date: '2027-03-22', time: '15:00', venue: 'University of Benin Bowl', status: 'upcoming', referee: 'Ehis Omoregie', round: 'Quarter-Final' },
-  { id: 10, homeTeam: 'Warri Wolves', awayTeam: 'Sapele City FC', homeScore: null, awayScore: null, date: '2027-03-22', time: '18:00', venue: 'University of Benin Bowl', status: 'upcoming', referee: 'Tom Adaeze', round: 'Quarter-Final' },
-  // Semi-Finals
-  { id: 11, homeTeam: 'TBD', awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2027-04-05', time: '15:00', venue: 'Samuel Ogbemudia Stadium', status: 'upcoming', referee: 'TBD', round: 'Semi-Final' },
-  { id: 12, homeTeam: 'TBD', awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2027-04-05', time: '18:30', venue: 'Samuel Ogbemudia Stadium', status: 'upcoming', referee: 'TBD', round: 'Semi-Final' },
-  // Final
-  { id: 13, homeTeam: 'TBD', awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2027-04-20', time: '16:00', venue: 'Samuel Ogbemudia Stadium', status: 'upcoming', referee: 'TBD', round: 'Grand Final' },
+  // Dec 1 — Opening Ceremony + Special Exhibition Match
+  { id: 1,  homeTeam: 'LGA Chairman XI',       awayTeam: 'Ex-Bendel Insurance XI', homeScore: 3, awayScore: 2, date: '2026-12-01', time: '17:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Chief James Edomwonyi', round: 'Opening Exhibition', note: 'Opening Ceremony' },
+
+  // Dec 2 — Group Stage MD1 (4 matches)
+  { id: 2,  homeTeam: 'Akoko-Edo Panthers',    awayTeam: 'Esan South FC',          homeScore: 3, awayScore: 0, date: '2026-12-02', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'James Okafor',   round: 'Group Stage' },
+  { id: 3,  homeTeam: 'Egor United',           awayTeam: 'Esan North Stars',        homeScore: 2, awayScore: 1, date: '2026-12-02', time: '11:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Paul Agbakoba', round: 'Group Stage' },
+  { id: 4,  homeTeam: 'Esan West Rangers',     awayTeam: 'Igueben FC',              homeScore: 2, awayScore: 0, date: '2026-12-02', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Ehis Omoregie', round: 'Group Stage' },
+  { id: 5,  homeTeam: 'Etsako Central FC',     awayTeam: 'Etsako West FC',          homeScore: 1, awayScore: 1, date: '2026-12-02', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Tom Adaeze',    round: 'Group Stage' },
+
+  // Dec 3 — Group Stage MD1 cont. (4 matches)
+  { id: 6,  homeTeam: 'Ikpoba-Okha FC',        awayTeam: 'Ovia South United',       homeScore: 4, awayScore: 0, date: '2026-12-03', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'John Onyeka',   round: 'Group Stage' },
+  { id: 7,  homeTeam: 'Oredo City FC',         awayTeam: 'Ovia North Rangers',      homeScore: 2, awayScore: 1, date: '2026-12-03', time: '11:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Chris Agoro',   round: 'Group Stage' },
+  { id: 8,  homeTeam: 'Owan East FC',          awayTeam: 'Bendel Insurance Youth',  homeScore: 3, awayScore: 0, date: '2026-12-03', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'James Okafor',   round: 'Group Stage' },
+  { id: 9,  homeTeam: 'Owan West United',      awayTeam: 'Oredo Host XI',           homeScore: 2, awayScore: 1, date: '2026-12-03', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Paul Agbakoba', round: 'Group Stage' },
+
+  // Dec 4–11 — Remaining Group Stage Matchdays (representative)
+  { id: 10, homeTeam: 'Esan Central FC',       awayTeam: 'Akoko-Edo Panthers',     homeScore: 1, awayScore: 3, date: '2026-12-04', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Ehis Omoregie', round: 'Group Stage' },
+  { id: 11, homeTeam: 'Esan North Stars',      awayTeam: 'Esan South FC',          homeScore: 1, awayScore: 0, date: '2026-12-04', time: '11:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Tom Adaeze',    round: 'Group Stage' },
+  { id: 12, homeTeam: 'Etsako East United',    awayTeam: 'Esan West Rangers',       homeScore: 1, awayScore: 2, date: '2026-12-04', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'John Onyeka',   round: 'Group Stage' },
+  { id: 13, homeTeam: 'Igueben FC',            awayTeam: 'Etsako Central FC',       homeScore: 0, awayScore: 2, date: '2026-12-04', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Chris Agoro',   round: 'Group Stage' },
+  { id: 14, homeTeam: 'Orhionmwon FC',         awayTeam: 'Ikpoba-Okha FC',          homeScore: 0, awayScore: 3, date: '2026-12-05', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'James Okafor',  round: 'Group Stage' },
+  { id: 15, homeTeam: 'Ovia North Rangers',    awayTeam: 'Orhionmwon FC',           homeScore: 1, awayScore: 1, date: '2026-12-05', time: '11:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Paul Agbakoba', round: 'Group Stage' },
+  { id: 16, homeTeam: 'Uhunmwonde FC',         awayTeam: 'Owan East FC',            homeScore: 1, awayScore: 3, date: '2026-12-05', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Ehis Omoregie', round: 'Group Stage' },
+  { id: 17, homeTeam: 'Oredo Host XI',         awayTeam: 'Uhunmwonde FC',           homeScore: 2, awayScore: 1, date: '2026-12-05', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'completed', referee: 'Tom Adaeze',    round: 'Group Stage' },
+
+  // Dec 13 — Rest day (no fixtures)
+
+  // Dec 14 — Quarter-Finals (4 matches)
+  { id: 18, homeTeam: 'Akoko-Edo Panthers',    awayTeam: 'Etsako Central FC',       homeScore: null, awayScore: null, date: '2026-12-14', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'James Okafor',   round: 'Quarter-Final' },
+  { id: 19, homeTeam: 'Ikpoba-Okha FC',        awayTeam: 'Esan West Rangers',       homeScore: null, awayScore: null, date: '2026-12-14', time: '12:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Paul Agbakoba', round: 'Quarter-Final' },
+  { id: 20, homeTeam: 'Owan East FC',          awayTeam: 'Egor United',             homeScore: null, awayScore: null, date: '2026-12-14', time: '15:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Ehis Omoregie', round: 'Quarter-Final' },
+  { id: 21, homeTeam: 'Owan West United',      awayTeam: 'Oredo City FC',           homeScore: null, awayScore: null, date: '2026-12-14', time: '18:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Tom Adaeze',    round: 'Quarter-Final' },
+
+  // Dec 15 — Rest day
+
+  // Dec 16 — Semi-Finals (2 matches)
+  { id: 22, homeTeam: 'TBD',                   awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2026-12-16', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'TBD', round: 'Semi-Final' },
+  { id: 23, homeTeam: 'TBD',                   awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2026-12-16', time: '17:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'TBD', round: 'Semi-Final' },
+
+  // Dec 17 — Rest day
+
+  // Dec 18 — Third Place + Grand Final
+  { id: 24, homeTeam: 'TBD',                   awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2026-12-18', time: '14:00', venue: 'Ogbemudia Main Bowl',      status: 'upcoming', referee: 'TBD', round: 'Third Place Play-Off' },
+  { id: 25, homeTeam: 'TBD',                   awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2026-12-18', time: '17:00', venue: 'Ogbemudia Main Bowl',      status: 'upcoming', referee: 'TBD', round: 'Grand Final' },
+
+  // Dec 20 — Closing Ceremony + Exhibition
+  { id: 26, homeTeam: 'Bendel Insurance',      awayTeam: 'StarCraft Elite XI',      homeScore: null, awayScore: null, date: '2026-12-20', time: '16:00', venue: 'Ogbemudia Main Bowl',      status: 'upcoming', referee: 'TBD', round: 'Closing Exhibition', note: 'Closing Ceremony' },
 ]
 
+// ── Live Matches ──────────────────────────────
 export const liveMatches = [
-  { id: 'L1', homeTeam: 'Edo Warriors', awayTeam: 'Benin Royals', homeScore: 2, awayScore: 1, minute: 67, venue: 'Samuel Ogbemudia Stadium', possession: [58, 42], shots: [12, 8], corners: [6, 3], fouls: [8, 11], status: 'live' },
+  { id: 'L1', homeTeam: 'Ikpoba-Okha FC', awayTeam: 'Oredo City FC', homeScore: 2, awayScore: 1, minute: 67, venue: 'Ugbowo Campus Main Bowl', possession: [58, 42], shots: [12, 8], corners: [6, 3], fouls: [8, 11], status: 'live' },
 ]
 
+// ── News ─────────────────────────────────────
 export const news = [
-  { id: 1, title: 'StarCraft Cup 2027 Officially Kicks Off to Massive Fanfare', category: 'Tournament Updates', date: '2027-03-01', image: null, summary: 'The highly anticipated StarCraft Cup 2027 kicked off in spectacular fashion at the University of Benin Bowl, Ugbowo, drawing thousands of football fans from across Edo State.', author: 'Sports Desk' },
-  { id: 2, title: 'Chukwuemeka Obi Fires Edo Warriors to Dominant 4-0 Victory', category: 'Match Reports', date: '2027-03-02', image: null, summary: 'Striker Chukwuemeka Obi starred with a stunning hat-trick as Edo Warriors demolished Ughelli Rangers in the tournament opener.', author: 'John Adeyemi' },
-  { id: 3, title: 'Edo State Governor Hails StarCraft Cup as Nation-Building Initiative', category: 'Press Releases', date: '2027-03-04', image: null, summary: 'Edo State Governor commended the organizers for delivering a world-class football event that showcases Edo talent on a national stage.', author: 'Press Office' },
-  { id: 4, title: 'Golden Boot Race: Obi Leads with 7 Goals After Group Stage', category: 'Statistics', date: '2027-03-18', image: null, summary: 'With the group stage concluded, Edo Warriors\' Chukwuemeka Obi tops the scoring charts with 7 goals, two ahead of nearest rival David Akhigbe.', author: 'Sports Desk' },
-  { id: 5, title: 'Quarter-Final Draw: Edo Warriors Face Benin Royals in Blockbuster Clash', category: 'Tournament Updates', date: '2027-03-15', image: null, summary: 'The quarter-final draw has produced a mouth-watering tie as tournament favourites Edo Warriors take on Benin Royals in what promises to be an epic encounter.', author: 'John Adeyemi' },
-  { id: 6, title: 'Emmanuel Okuosa Named Best Goalkeeper of Group Stage', category: 'Awards', date: '2027-03-17', image: null, summary: 'Benin Royals keeper Emmanuel Okuosa received the Best Goalkeeper award for the group stage after keeping a record 5 clean sheets in 3 matches.', author: 'Press Office' },
+  { id: 1, title: 'StarCraft Cup 2026 Premier Edition Officially Launches', category: 'Tournament Updates', date: '2026-12-01', image: null, summary: 'The StarCraft Cup 2026 Premier Edition opened in spectacular fashion at Ugbowo Campus Main Bowl with a dazzling ceremony, drawing thousands from across all 18 LGAs in Edo State.', author: 'Sports Desk' },
+  { id: 2, title: 'LGA Chairman XI Beat Ex-Bendel Insurance XI in Thrilling Opener', category: 'Match Reports', date: '2026-12-01', image: null, summary: 'The opening exhibition match set the tournament alight as the LGA Chairman XI claimed a 3-2 victory over the Ex-Bendel Insurance XI in front of a packed Ugbowo Bowl.', author: 'John Adeyemi' },
+  { id: 3, title: 'Edo State Governor Hails StarCraft Cup as Youth Development Masterclass', category: 'Press Releases', date: '2026-12-02', image: null, summary: 'The Edo State Governor praised organizers for creating a world-class platform for U17–U20 talent, calling it the most ambitious youth football initiative in the South-South.', author: 'Press Office' },
+  { id: 4, title: 'Ikpoba-Okha FC Perfect After Group Stage — All 4 Wins', category: 'Statistics', date: '2026-12-12', image: null, summary: 'Ikpoba-Okha FC are the only team with a 100% group stage record, winning all four matches to top Group C with 12 points and a +10 goal difference.', author: 'Sports Desk' },
+  { id: 5, title: 'Quarter-Final Draw: Dream Clashes Confirmed for Dec 14', category: 'Tournament Updates', date: '2026-12-13', image: null, summary: 'The quarter-final lineup is set — Akoko-Edo Panthers vs Etsako Central and Ikpoba-Okha FC vs Esan West Rangers lead a day of four blockbuster knockout ties at Ugbowo Campus Main Bowl.', author: 'John Adeyemi' },
+  { id: 6, title: 'Chukwuemeka Obi: 8 Goals in Group Stage — Golden Boot Race Heats Up', category: 'Awards', date: '2026-12-12', image: null, summary: 'Akoko-Edo Panthers striker Chukwuemeka Obi leads the Golden Boot race with 8 goals — three more than his nearest rival — as the knockout rounds approach.', author: 'Press Office' },
 ]
 
+// ── Sponsors ─────────────────────────────────
 export const sponsors = {
   platinum: [
-    { name: 'Edo State Government', logo: '🏛️', description: 'Official Government Sponsor & Host', website: '#' },
-    { name: 'First Bank Nigeria', logo: '🏦', description: 'Official Banking Partner', website: '#' },
+    { name: 'Edo State Government', logo: '🏛️', description: 'Official Government Patron & Host', website: '#' },
+    { name: 'First Bank Nigeria',    logo: '🏦', description: 'Official Banking Partner', website: '#' },
   ],
   gold: [
-    { name: 'MTN Nigeria', logo: '📶', description: 'Official Telecommunications Partner', website: '#' },
-    { name: 'Dangote Group', logo: '🏭', description: 'Official Corporate Sponsor', website: '#' },
-    { name: 'Zenith Bank', logo: '💳', description: 'Official Financial Services Partner', website: '#' },
+    { name: 'MTN Nigeria',    logo: '📶', description: 'Official Telecommunications Partner', website: '#' },
+    { name: 'Dangote Group',  logo: '🏭', description: 'Official Corporate Sponsor', website: '#' },
+    { name: 'Zenith Bank',    logo: '💳', description: 'Official Financial Services Partner', website: '#' },
   ],
   silver: [
     { name: 'Indomie Nigeria', logo: '🍜', description: 'Official Food Partner', website: '#' },
-    { name: 'Pepsi Nigeria', logo: '🥤', description: 'Official Beverage Partner', website: '#' },
-    { name: 'UBA Bank', logo: '🏪', description: 'Banking Support Partner', website: '#' },
-    { name: 'Globacom', logo: '📱', description: 'Media & Technology Partner', website: '#' },
+    { name: 'Pepsi Nigeria',   logo: '🥤', description: 'Official Beverage Partner', website: '#' },
+    { name: 'UBA Bank',        logo: '🏪', description: 'Banking Support Partner', website: '#' },
+    { name: 'Globacom',        logo: '📱', description: 'Media & Technology Partner', website: '#' },
   ],
   official: [
-    { name: 'Nigeria Football Federation', logo: '⚽', description: 'Official Football Body', website: '#' },
-    { name: 'University of Benin', logo: '🎓', description: 'Official Host Institution', website: '#' },
-    { name: 'Supersport', logo: '📺', description: 'Official Broadcast Partner', website: '#' },
-    { name: 'Channels TV', logo: '🎙️', description: 'Official Media Partner', website: '#' },
+    { name: 'Nigeria Football Federation', logo: '⚽', description: 'Official Football Governing Body', website: '#' },
+    { name: 'University of Benin',         logo: '🎓', description: 'Official Host Institution', website: '#' },
+    { name: 'Supersport',                  logo: '📺', description: 'Official Broadcast Partner', website: '#' },
+    { name: 'Channels TV',                 logo: '🎙️', description: 'Official Media Partner', website: '#' },
   ]
 }
 
+// ── Gallery ──────────────────────────────────
 export const galleryItems = [
-  { id: 1, type: 'photo', category: 'Opening Ceremony', title: 'Tournament Opening Ceremony', description: 'A spectacular opening at Samuel Ogbemudia Stadium' },
-  { id: 2, type: 'photo', category: 'Matches', title: 'Edo Warriors vs Ughelli Rangers', description: 'Action from the tournament opener' },
-  { id: 3, type: 'photo', category: 'Fan Moments', title: 'The Fans Show Up', description: 'Thousands of fans fill the stadium' },
-  { id: 4, type: 'photo', category: 'Matches', title: 'Goal Celebration', description: 'Obi celebrates his hat-trick' },
-  { id: 5, type: 'video', category: 'Highlights', title: 'Group Stage Highlights', description: 'Best moments from the group stage' },
-  { id: 6, type: 'photo', category: 'Behind the Scenes', title: 'Team Training', description: 'Edo Warriors in pre-match training' },
-  { id: 7, type: 'photo', category: 'Awards', title: 'Player of the Match', description: 'Obi receives his award' },
-  { id: 8, type: 'video', category: 'Drone Footage', title: 'Stadium Aerial View', description: 'Stunning drone footage of the venue' },
-  { id: 9, type: 'photo', category: 'Opening Ceremony', title: 'Fireworks Display', description: 'Tournament kicked off with a fireworks show' },
-  { id: 10, type: 'photo', category: 'Fan Moments', title: 'Young Fans', description: 'The next generation of football stars' },
-  { id: 11, type: 'photo', category: 'Matches', title: 'Referee Decision', description: 'Referee awards a penalty kick' },
-  { id: 12, type: 'video', category: 'Highlights', title: 'Top Goals Compilation', description: 'Best goals of the tournament so far' },
+  { id: 1,  type: 'photo', category: 'Opening Ceremony', title: 'Premier Edition Opening Ceremony',       description: 'A spectacular opening at Ugbowo Campus Main Bowl — Dec 1, 2026' },
+  { id: 2,  type: 'photo', category: 'Matches',          title: 'LGA Chairman XI vs Ex-Bendel Insurance', description: 'Action from the thrilling opening exhibition match' },
+  { id: 3,  type: 'photo', category: 'Fan Moments',      title: 'All 18 LGAs in One Stadium',             description: 'Fans from every LGA fill the Ugbowo Campus Main Bowl' },
+  { id: 4,  type: 'photo', category: 'Matches',          title: 'Ikpoba-Okha FC 4-0 Ovia South United',   description: 'Dominant group stage victory for the Group C leaders' },
+  { id: 5,  type: 'video', category: 'Highlights',       title: 'Group Stage — Best Moments',             description: 'Top plays, goals, and celebrations from Dec 2–12' },
+  { id: 6,  type: 'photo', category: 'Behind the Scenes','title': 'Team Training Sessions',               description: 'U17–U20 squads prepare at the Ugbowo Campus facilities' },
+  { id: 7,  type: 'photo', category: 'Awards',           title: 'Obi Receives Man of the Match',          description: 'Chukwuemeka Obi collects his award after a hat-trick' },
+  { id: 8,  type: 'video', category: 'Drone Footage',    title: 'Aerial: Ugbowo Campus Main Bowl',        description: 'Stunning drone footage of the group stage venue' },
+  { id: 9,  type: 'photo', category: 'Opening Ceremony', title: 'Fireworks Over Ugbowo',                  description: 'The Premier Edition kicked off with a fireworks spectacular' },
+  { id: 10, type: 'photo', category: 'Fan Moments',      title: 'Young Fans',                             description: 'The next generation of Edo football stars in the stands' },
+  { id: 11, type: 'photo', category: 'Matches',          title: 'Quarter-Final: Akoko-Edo vs Etsako Central', description: 'Intense knockout action at Ugbowo Campus Main Bowl' },
+  { id: 12, type: 'video', category: 'Highlights',       title: 'Top Goals — Premier Edition',            description: 'The best strikes from Dec 1–20, 2026' },
 ]
 
+// ── Organizing Committee ──────────────────────
 export const committeeMembers = [
-  { name: 'Chief James Osagie Edomwonyi', role: 'Tournament Chairman', bio: 'Respected community leader with 20+ years of sports administration experience.' },
-  { name: 'Dr. Amina Uzamere', role: 'Secretary General', bio: 'Sports lawyer and youth development advocate. Mastermind behind the tournament structure.' },
-  { name: 'Mr. Festus Ogbeifun', role: 'Technical Director', bio: 'Former professional footballer and UEFA-certified coach. Oversees all technical aspects.' },
-  { name: 'Mrs. Grace Aigbe', role: 'Marketing & Sponsorship', bio: 'Brand strategist with deep corporate connections. Secured the tournament\'s major sponsors.' },
-  { name: 'Engr. Richard Omokhafe', role: 'Facilities Director', bio: 'Civil engineer who managed the stadium upgrade and venue preparations.' },
-  { name: 'Miss Blessing Osaghae', role: 'Media & Communications', bio: 'Broadcast journalist and social media expert handling all tournament communications.' },
+  { name: 'Chief James Osagie Edomwonyi', role: 'Tournament Chairman',       bio: 'Respected community leader with 20+ years of sports administration experience in Edo State.' },
+  { name: 'Dr. Amina Uzamere',            role: 'Secretary General',          bio: 'Sports lawyer and youth development advocate. Mastermind behind the U17–U20 tournament structure.' },
+  { name: 'Mr. Festus Ogbeifun',          role: 'Technical Director',         bio: 'Former professional footballer and UEFA-certified coach. Oversees all technical aspects of the competition.' },
+  { name: 'Mrs. Grace Aigbe',             role: 'Marketing & Sponsorship',    bio: 'Brand strategist with deep corporate connections. Secured all major tournament sponsors.' },
+  { name: 'Engr. Richard Omokhafe',       role: 'Facilities Director',        bio: 'Civil engineer who managed both Ugbowo Campus Main Bowl and Ogbemudia Main Bowl preparations.' },
+  { name: 'Miss Blessing Osaghae',        role: 'Media & Communications',     bio: 'Broadcast journalist and social media expert handling all tournament communications.' },
 ]
 
+// ── Prize Structure ───────────────────────────
 export const prizeStructure = [
-  { position: '🥇 Champion', prize: '₦5,000,000', additional: 'Trophy + Medals + Promotion to State League' },
-  { position: '🥈 Runner-Up', prize: '₦2,500,000', additional: 'Trophy + Medals' },
-  { position: '🥉 Third Place', prize: '₦1,000,000', additional: 'Medal + Certificate' },
-  { position: '4th Place', prize: '₦500,000', additional: 'Certificate' },
-  { position: '🥅 Golden Boot', prize: '₦300,000', additional: 'Golden Boot Trophy' },
-  { position: '🧤 Golden Glove', prize: '₦200,000', additional: 'Golden Glove Trophy' },
-  { position: '⭐ Best Player', prize: '₦250,000', additional: 'MVP Trophy' },
-  { position: '🌟 Best Young Player', prize: '₦150,000', additional: 'Rising Star Award' },
+  { position: '🥇 Champion',         prize: '₦5,000,000', additional: 'Trophy + Medals + Promotion Pathway' },
+  { position: '🥈 Runner-Up',        prize: '₦2,500,000', additional: 'Trophy + Medals' },
+  { position: '🥉 Third Place',      prize: '₦1,000,000', additional: 'Medal + Certificate' },
+  { position: '4th Place',           prize: '₦500,000',   additional: 'Certificate' },
+  { position: '🥅 Golden Boot',      prize: '₦300,000',   additional: 'Golden Boot Trophy' },
+  { position: '🧤 Golden Glove',     prize: '₦200,000',   additional: 'Golden Glove Trophy' },
+  { position: '⭐ Best Player',      prize: '₦250,000',   additional: 'MVP Trophy' },
+  { position: '🌟 Best Young Player',prize: '₦150,000',   additional: 'Rising Star Award' },
 ]
 
+// ── Tournament Stats ──────────────────────────
 export const tournamentStats = {
-  totalTeams: 12,
-  totalMatches: 33,
-  totalGoals: 89,
-  totalAttendance: '47,500',
-  matchesPlayed: 18,
-  avgGoalsPerMatch: 4.9,
+  totalTeams: 20,
+  totalMatches: 53,   // 40 group + 4 QF + 2 SF + 2 final/3rd + 2 exhibition
+  totalGoals: 74,
+  totalAttendance: '62,000+',
+  matchesPlayed: 17,
+  avgGoalsPerMatch: 4.4,
   topScorer: 'Chukwuemeka Obi',
-  topScorerGoals: 7,
+  topScorerGoals: 8,
+  groups: 4,
+  ageGroup: 'U17–U20',
+  editions: ['2026', '2027', '2028', '2029', '2030'],
 }

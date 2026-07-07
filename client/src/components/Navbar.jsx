@@ -59,7 +59,7 @@ export default function Navbar() {
             <div className="logo-icon">⚽</div>
             <div className="logo-text">
               <span className="logo-top">STARCRAFT</span>
-              <span className="logo-bottom">CUP 2027</span>
+              <span className="logo-bottom">CUP 2026</span>
             </div>
           </Link>
 

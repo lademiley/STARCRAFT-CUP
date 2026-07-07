@@ -4,7 +4,7 @@ import { teams, players, fixtures, news, sponsors, tournamentStats } from '../da
 
 // Countdown Timer
 function Countdown() {
-  const target = new Date('2027-04-20T16:00:00')
+  const target = new Date('2026-12-01T10:00:00')
   const [time, setTime] = useState({})
   useEffect(() => {
     const calc = () => {
@@ -84,15 +84,15 @@ export default function Home() {
           <div className="hero-badge"><span className="badge badge-gold">🏆 Official Tournament</span></div>
           <h1 className="hero-title">
             <span className="text-shimmer">STARCRAFT</span>
-            <br /><span style={{color:'#fff'}}>CUP 2027</span>
+            <br /><span style={{color:'#fff'}}>CUP 2026</span>
           </h1>
-          <p className="hero-sub">Premier Football Tournament • Edo State, Nigeria</p>
+          <p className="hero-sub">Premier Youth Football Tournament • U17–U20 • Edo State, Nigeria</p>
           <div className="hero-info">
-            <div className="hero-info-item"><span>📍</span><span>Oredo LGA, Edo State</span></div>
+            <div className="hero-info-item"><span>📍</span><span>Edo State, Nigeria</span></div>
             <div className="hero-divider" />
-            <div className="hero-info-item"><span>🏟️</span><span>Samuel Ogbemudia Stadium</span></div>
+            <div className="hero-info-item"><span>🏟️</span><span>Ugbowo Campus Main Bowl</span></div>
             <div className="hero-divider" />
-            <div className="hero-info-item"><span>📅</span><span>March – April 2027</span></div>
+            <div className="hero-info-item"><span>📅</span><span>Dec 1 – 20, 2026</span></div>
           </div>
           <Countdown />
           <div className="hero-ctas">
@@ -119,6 +119,7 @@ export default function Home() {
               { label: 'Goals Scored', value: tournamentStats.totalGoals, icon: '🥅' },
               { label: 'Fan Attendance', value: tournamentStats.totalAttendance, icon: '👥' },
               { label: 'Prize Pool', value: '₦10M+', icon: '🏆' },
+              { label: 'Age Group', value: 'U17–U20', icon: '🧒' },
             ].map(s => (
               <div key={s.label} className="stat-item">
                 <span className="stat-icon">{s.icon}</span>
@@ -136,11 +137,11 @@ export default function Home() {
           <div className="overview-grid">
             <div className="overview-text">
               <span className="eyebrow">About the Tournament</span>
-              <h2>A New Era of Grassroots Football Excellence</h2>
-              <p style={{marginBottom:16}}>The StarCraft Cup 2027 is Edo State's most prestigious community football tournament, bringing together 12 elite local clubs to compete for glory, recognition, and a share of ₦10 million in prizes.</p>
-              <p style={{marginBottom:24}}>Hosted in the historic Oredo Local Government Area at the University of Benin Bowl and Samuel Ogbemudia Stadium, this tournament is designed to unearth the next generation of Nigerian football stars.</p>
+              <h2>Edo State's Premier U17–U20 Football Competition</h2>
+              <p style={{marginBottom:16}}>The StarCraft Cup 2026 — Premier Edition — is Edo State's most ambitious youth football tournament, bringing together 20 teams from all 18 LGAs, the tournament host, and the defending champion to compete for glory and a share of ₦10 million in prizes.</p>
+              <p style={{marginBottom:24}}>Played across two iconic Edo State venues — Ugbowo Campus Main Bowl and Ogbemudia Main Bowl — from December 1 to 20, 2026, the tournament is designed to unearth the next generation of Nigerian football stars at U17–U20 level.</p>
               <div className="overview-features">
-                {['12 Elite Clubs','33 Competitive Matches','World-class Venues','₦10M Prize Pool','Live Broadcasting','Youth Development'].map(f => (
+                {['20 LGA Teams','U17–U20 Age Group','4 Groups of 5','₦10M Prize Pool','Two World-class Venues','Dec 1–20, 2026'].map(f => (
                   <div key={f} className="feature-chip">✦ {f}</div>
                 ))}
               </div>
@@ -151,12 +152,14 @@ export default function Home() {
                 <div style={{padding:'28px 28px 0',borderBottom:'1px solid rgba(212,175,55,0.15)',paddingBottom:20}}>
                   <h4 style={{color:'var(--gold)',marginBottom:16,fontFamily:'var(--font-heading)',letterSpacing:'1px'}}>🏆 Tournament Info</h4>
                   {[
-                    ['Host City','Oredo LGA, Edo State'],
-                    ['Main Venue','University of Benin Bowl'],
-                    ['Final Venue','Samuel Ogbemudia Stadium'],
-                    ['Format','Group Stage + Knockout'],
-                    ['Teams','12 Clubs (2 Groups of 6)'],
-                    ['Sponsor','Edo State Government'],
+                    ['Edition','Premier Edition — 2026'],
+                    ['Location','Edo State, Nigeria'],
+                    ['Age Group','U17 – U20'],
+                    ['Group Venue','Ugbowo Campus Main Bowl'],
+                    ['Final Venue','Ogbemudia Main Bowl'],
+                    ['Format','4 Groups of 5 → Knockout'],
+                    ['Teams','20 (18 LGAs + Host + Champion)'],
+                    ['Dates','Dec 1 – 20, 2026'],
                   ].map(([k,v]) => (
                     <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
                       <span style={{fontSize:'0.85rem',color:'rgba(255,255,255,0.5)'}}>{k}</span>
@@ -377,18 +380,18 @@ export default function Home() {
         <div className="container">
           <div className="section-header">
             <span className="eyebrow">Venue</span>
-            <h2>Host City: Oredo LGA, Edo State</h2>
-            <p>A city of culture, history, and football passion</p>
+            <h2>Host State: Edo State, Nigeria</h2>
+            <p>A land of culture, history, and deep football passion</p>
             <div className="divider" />
           </div>
           <div className="grid-3">
             {[
-              { icon:'🏛️', title:'Historical Legacy', desc:'Home to the ancient Benin Kingdom, one of the oldest and most sophisticated kingdoms in Africa.' },
-              { icon:'🏟️', title:'World-Class Venues', desc:'Samuel Ogbemudia Stadium hosts Nigeria National League matches and has a capacity of 20,000.' },
-              { icon:'⚽', title:'Football Culture', desc:'Benin City is a hotbed of football talent, having produced several Super Eagles players.' },
-              { icon:'🎓', title:'University Hub', desc:'University of Benin provides the main bowl venue — a campus buzzing with youthful energy.' },
-              { icon:'🏙️', title:'Modern Infrastructure', desc:'Rapidly developing city with excellent road networks, hotels, and fan facilities.' },
-              { icon:'🌿', title:'Vibrant Community', desc:'Oredo LGA is at the heart of Benin City, with an enthusiastic and passionate football community.' },
+              { icon:'🏛️', title:'Historical Legacy', desc:'Edo State is home to the ancient Benin Kingdom, one of the oldest and most sophisticated civilisations in Africa.' },
+              { icon:'🏟️', title:'Two World-Class Venues', desc:'Ugbowo Campus Main Bowl (10,000) hosts group/knockout matches; Ogbemudia Main Bowl (20,000) crowns the champion.' },
+              { icon:'⚽', title:'Football Culture', desc:'Edo State has produced Super Eagles legends including John Obi Mikel, Victor Moses, and Osaze Odemwingie.' },
+              { icon:'🧒', title:'U17–U20 Showcase', desc:'The Premier Edition gives Edo\'s most gifted youth players (U17–U20) their biggest competitive stage yet.' },
+              { icon:'🏙️', title:'Modern Infrastructure', desc:'Excellent road networks, hotels, and facilities across all 18 LGAs making travel and logistics seamless.' },
+              { icon:'🌿', title:'All 18 LGAs Represented', desc:'Every Local Government Area in Edo State sends one team — making this a true celebration of the whole state.' },
             ].map(item => (
               <div key={item.title} className="card" style={{padding:28}}>
                 <div style={{fontSize:'2.5rem',marginBottom:14}}>{item.icon}</div>
