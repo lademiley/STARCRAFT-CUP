@@ -123,9 +123,6 @@ export default function Navbar() {
 
           {/* Live indicator + Auth */}
           <div className="nav-right">
-            <Link to="/live-scores" className="live-btn">
-              <span className="live-dot"></span> LIVE
-            </Link>
             {isAdmin ? (
               <>
                 <Link to="/admin/dashboard" className="btn btn-admin btn-sm">🛡️ Admin</Link>
