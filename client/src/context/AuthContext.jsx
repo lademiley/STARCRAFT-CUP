@@ -4,8 +4,8 @@ const AuthContext = createContext(null)
 
 // Admin credentials (in production these would be verified server-side)
 const ADMIN_CREDENTIALS = {
-  email: 'admin@starcraft2027.com',
-  password: 'SC2027@Admin',
+  email: 'admin@starcraft2026.com',
+  password: 'SC2026@Admin',
   name: 'Super Admin',
   role: 'superadmin',
 }
