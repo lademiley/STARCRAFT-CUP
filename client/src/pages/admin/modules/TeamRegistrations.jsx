@@ -1,274 +1,305 @@
-import React, { useState, useEffect } from 'react'
-import { c, StatCard, Badge, Modal, ModuleHeader } from './shared'
+import React, { useState, useEffect, useCallback } from 'react'
+import { c, StatCard, SectionCard, Badge, Table, Modal, FormField, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-function StatusBadge({ status }) {
-  const map = {
-    pending:  { label: 'Pending Review', color: '#F59E0B' },
-    approved: { label: 'Approved',       color: '#22C55E' },
-    rejected: { label: 'Rejected',       color: '#EF4444' },
-  }
-  const s = map[status] || map.pending
-  return <Badge label={s.label} color={s.color} />
+const STATUS_COLOR = {
+  pending:  '#F59E0B',
+  approved: '#22C55E',
+  rejected: '#EF4444',
 }
 
+const fmt = iso => iso ? new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
+
 export default function TeamRegistrations() {
-  const [regs, setRegs] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all')
-  const [actionLoading, setActionLoading] = useState(null)
-  const [toast, setToast] = useState('')
-  const [detail, setDetail] = useState(null)   // registration to view in modal
-  const [noteModal, setNoteModal] = useState(null) // { id, action }
-  const [note, setNote] = useState('')
+  const [registrations, setRegistrations] = useState([])
+  const [loading, setLoading]             = useState(true)
+  const [error, setError]                 = useState(null)
+  const [search, setSearch]               = useState('')
+  const [filter, setFilter]               = useState('all')
+  const [selected, setSelected]           = useState(null)   // registration being reviewed
+  const [modal, setModal]                 = useState(null)   // 'view' | 'approve' | 'reject'
+  const [note, setNote]                   = useState('')
+  const [saving, setSaving]               = useState(false)
 
-  const load = () => {
+  const load = useCallback(async () => {
     setLoading(true)
-    fetch('/api/teams/registrations')
-      .then(r => r.ok ? r.json() : { registrations: [] })
-      .then(d => { setRegs(d.registrations || []); setLoading(false) })
-      .catch(() => setLoading(false))
-  }
-
-  useEffect(() => { load() }, [])
-
-  const showToast = msg => { setToast(msg); setTimeout(() => setToast(''), 3500) }
-
-  const openAction = (id, action) => { setNote(''); setNoteModal({ id, action }) }
-
-  const submitAction = async () => {
-    const { id, action } = noteModal
-    setActionLoading(id + '_' + action)
-    setNoteModal(null)
-    const res = await fetch(`/api/teams/registrations/${id}/${action}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note }),
-    })
-    if (res.ok) {
-      load()
-      showToast(action === 'approve' ? '✅ Team registration approved!' : '❌ Registration rejected.')
+    setError(null)
+    try {
+      const res = await fetch('/api/teams/registrations')
+      if (!res.ok) throw new Error('Failed to load registrations')
+      const data = await res.json()
+      setRegistrations(data.registrations || [])
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
     }
-    setActionLoading(null)
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  const openView    = reg => { setSelected(reg); setNote(''); setModal('view') }
+  const openApprove = reg => { setSelected(reg); setNote(''); setModal('approve') }
+  const openReject  = reg => { setSelected(reg); setNote(''); setModal('reject') }
+  const closeModal  = ()  => { setModal(null); setSelected(null); setNote('') }
+
+  const doAction = async action => {
+    if (!selected) return
+    if (action === 'reject' && !note.trim()) {
+      alert('Please provide a rejection reason before confirming.')
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/teams/registrations/${selected.id}/${action}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note }),
+      })
+      if (!res.ok) throw new Error('Action failed')
+      await load()
+      closeModal()
+    } catch (e) {
+      alert(e.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const filtered = filter === 'all' ? regs : regs.filter(r => r.status === filter)
-  const pendingCount   = regs.filter(r => r.status === 'pending').length
-  const approvedCount  = regs.filter(r => r.status === 'approved').length
-  const rejectedCount  = regs.filter(r => r.status === 'rejected').length
+  const pending  = registrations.filter(r => r.status === 'pending').length
+  const approved = registrations.filter(r => r.status === 'approved').length
+  const rejected = registrations.filter(r => r.status === 'rejected').length
+
+  const q = search.toLowerCase()
+  const filtered = registrations.filter(r =>
+    (filter === 'all' || r.status === filter) &&
+    ((r.teamName || '').toLowerCase().includes(q) ||
+     (r.repName  || '').toLowerCase().includes(q) ||
+     (r.city     || '').toLowerCase().includes(q) ||
+     (r.ref      || '').toLowerCase().includes(q))
+  )
 
   return (
-    <div style={{ position: 'relative' }}>
-      <ModuleHeader title="Team Registrations" subtitle="Review and approve teams applying to participate in StarCraft Cup 2026" />
+    <div>
+      <ModuleHeader
+        title="Team Registrations"
+        subtitle="Review and approve new team applications for StarCraft Cup 2026"
+        action="Refresh"
+        onAction={load}
+        count={registrations.length}
+      />
 
-      {/* Toast */}
-      {toast && (
-        <div style={{ position: 'fixed', top: 24, right: 24, background: '#1a1a1a', border: '1px solid rgba(212,175,55,0.4)', borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontSize: '0.85rem', color: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.6)' }}>
-          {toast}
-        </div>
-      )}
-
-      {/* Stats */}
+      {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
-        <StatCard label="Total Applications" value={regs.length} icon="📋" color="#3B82F6" />
-        <StatCard label="Pending Review" value={pendingCount} icon="⏳" color="#F59E0B" change={pendingCount > 0 ? 'Needs action' : 'All reviewed'} />
-        <StatCard label="Approved" value={approvedCount} icon="✅" color="#22C55E" />
-        <StatCard label="Rejected" value={rejectedCount} icon="❌" color="#EF4444" />
+        <StatCard label="Total Submitted"  value={registrations.length} icon="📋" color="#3B82F6" />
+        <StatCard label="Pending Review"   value={pending}              icon="⏳" color="#F59E0B" />
+        <StatCard label="Approved"         value={approved}             icon="✅" color="#22C55E" />
+        <StatCard label="Rejected"         value={rejected}             icon="❌" color="#EF4444" />
       </div>
 
-      {/* Filter tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        {[['all','All'], ['pending','Pending'], ['approved','Approved'], ['rejected','Rejected']].map(([v, l]) => (
-          <button key={v} onClick={() => setFilter(v)} style={{ padding: '8px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: '0.78rem', background: filter === v ? '#D4AF37' : 'rgba(255,255,255,0.06)', color: filter === v ? '#000' : 'rgba(255,255,255,0.6)', transition: 'all 200ms' }}>
-            {l}{v === 'pending' && pendingCount > 0 ? ` (${pendingCount})` : ''}
-          </button>
-        ))}
-        <button onClick={load} style={{ marginLeft: 'auto', padding: '8px 14px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.78rem' }}>🔄 Refresh</button>
-      </div>
-
-      {loading && <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: 40 }}>Loading registrations…</p>}
-
-      {!loading && filtered.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '60px 24px', background: 'rgba(255,255,255,0.02)', borderRadius: 14, border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize: '3rem', marginBottom: 12 }}>📭</div>
-          <p style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>No {filter !== 'all' ? filter : ''} registrations yet.</p>
-          <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.82rem' }}>Team applications submitted via the Register page will appear here.</p>
-        </div>
-      )}
-
-      {filtered.map(reg => (
-        <div key={reg.id} style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: reg.status === 'pending' ? '1px solid rgba(245,158,11,0.35)' : reg.status === 'approved' ? '1px solid rgba(34,197,94,0.25)' : '1px solid rgba(239,68,68,0.2)',
-          borderRadius: 14, marginBottom: 16, overflow: 'hidden',
-        }}>
-          {/* Card header */}
-          <div style={{ padding: '18px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
-                <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '1.05rem', color: '#fff' }}>⚽ {reg.teamName}</span>
-                <StatusBadge status={reg.status} />
-              </div>
-              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', marginBottom: 2 }}>
-                Ref: <strong style={{ color: '#D4AF37' }}>{reg.ref}</strong>
-                {reg.city && <span style={{ marginLeft: 12 }}>📍 {reg.city}</span>}
-                {reg.coach && <span style={{ marginLeft: 12 }}>👔 Coach: {reg.coach}</span>}
-              </div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>
-                Rep: <strong style={{ color: 'rgba(255,255,255,0.65)' }}>{reg.repName}</strong> · {reg.repEmail}
-                {reg.repPhone && ` · ${reg.repPhone}`}
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.28)', marginTop: 3 }}>
-                Submitted: {new Date(reg.submittedAt).toLocaleString('en-NG')}
-                {reg.reviewedAt && ` · Reviewed: ${new Date(reg.reviewedAt).toLocaleString('en-NG')}`}
-              </div>
-              {reg.reviewNote && (
-                <div style={{ marginTop: 6, fontSize: '0.75rem', color: reg.status === 'approved' ? '#4ade80' : '#f87171', fontStyle: 'italic' }}>
-                  Note: {reg.reviewNote}
-                </div>
-              )}
-            </div>
-            <div style={{ display: 'flex', gap: 8, flexShrink: 0, alignItems: 'center', flexWrap: 'wrap' }}>
-              <button onClick={() => setDetail(reg)} style={{ ...c.btn, ...c.btnGhost, fontSize: '0.75rem', padding: '7px 14px' }}>👁️ View Details</button>
-              {reg.status === 'pending' && (
-                <>
-                  <button onClick={() => openAction(reg.id, 'approve')} disabled={!!actionLoading} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid rgba(34,197,94,0.4)', background: 'rgba(34,197,94,0.15)', color: '#22C55E', fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: '0.78rem', cursor: 'pointer' }}>
-                    {actionLoading === reg.id + '_approve' ? '…' : '✅ Approve'}
-                  </button>
-                  <button onClick={() => openAction(reg.id, 'reject')} disabled={!!actionLoading} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.1)', color: '#EF4444', fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: '0.78rem', cursor: 'pointer' }}>
-                    {actionLoading === reg.id + '_reject' ? '…' : '❌ Reject'}
-                  </button>
-                </>
-              )}
-            </div>
+      {/* Table */}
+      <SectionCard title="📋 All Applications">
+        {error && (
+          <div style={{ padding: '12px 16px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, color: '#f87171', marginBottom: 16, fontSize: '0.83rem' }}>
+            ⚠️ {error} — <button onClick={load} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.83rem', padding: 0 }}>Retry</button>
           </div>
+        )}
 
-          {/* Quick stats row */}
-          <div style={{ padding: '10px 22px', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-            {[
-              ['Kit Colors', reg.homeColors || '—'],
-              ['Year Founded', reg.yearFounded || '—'],
-              ['Players Listed', `${(reg.players || []).length}`],
-            ].map(([k, v]) => (
-              <div key={k} style={{ fontSize: '0.75rem' }}>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>{k}: </span>
-                <span style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>{v}</span>
-              </div>
-            ))}
+        <ActionRow>
+          <SearchBar value={search} onChange={setSearch} placeholder="Search team, rep, city, ref…" />
+          <select value={filter} onChange={e => setFilter(e.target.value)} style={c.select}>
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </ActionRow>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem' }}>
+            ⏳ Loading registrations…
           </div>
-        </div>
-      ))}
-
-      {/* Detail Modal */}
-      {detail && (
-        <Modal title={`📋 Registration Details — ${detail.teamName}`} onClose={() => setDetail(null)}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {/* Status */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <StatusBadge status={detail.status} />
-              <span style={{ fontSize: '0.72rem', color: '#D4AF37', fontWeight: 700 }}>{detail.ref}</span>
-            </div>
-
-            {/* Team details */}
-            <div style={{ ...c.card, padding: '16px 20px' }}>
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: 1, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 12 }}>Team Details</div>
-              {[
-                ['Team Name', detail.teamName],
-                ['City / LGA', detail.city || '—'],
-                ['Year Founded', detail.yearFounded || '—'],
-                ['Head Coach', detail.coach || '—'],
-                ['Kit Colors', detail.homeColors || '—'],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.82rem' }}>
-                  <span style={{ color: 'rgba(255,255,255,0.45)' }}>{k}</span>
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{v}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Rep details */}
-            <div style={{ ...c.card, padding: '16px 20px' }}>
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: 1, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 12 }}>Representative</div>
-              {[
-                ['Name', detail.repName],
-                ['Email', detail.repEmail],
-                ['Phone', detail.repPhone || '—'],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.82rem' }}>
-                  <span style={{ color: 'rgba(255,255,255,0.45)' }}>{k}</span>
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{v}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Competition history */}
-            {detail.competitionHistory && (
-              <div style={{ ...c.card, padding: '16px 20px' }}>
-                <div style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: 1, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 10 }}>Competition History</div>
-                <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.6 }}>{detail.competitionHistory}</p>
-              </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '48px 0', color: 'rgba(255,255,255,0.3)' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>📭</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: 6 }}>No registrations yet</div>
+            <div style={{ fontSize: '0.75rem' }}>New team applications will appear here once submitted.</div>
+          </div>
+        ) : (
+          <Table
+            cols={['Ref', 'Team Name', 'City', 'Coach', 'Rep', 'Players', 'Submitted', 'Status', 'Actions']}
+            rows={filtered}
+            renderRow={(r, i) => (
+              <tr key={r.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
+                <td style={{ ...c.td, fontFamily: 'monospace', fontSize: '0.72rem', color: '#D4AF37' }}>{r.ref}</td>
+                <td style={{ ...c.td, fontWeight: 600 }}>{r.teamName}</td>
+                <td style={{ ...c.td, fontSize: '0.75rem' }}>{r.city || '—'}</td>
+                <td style={{ ...c.td, fontSize: '0.75rem' }}>{r.coach || '—'}</td>
+                <td style={{ ...c.td, fontSize: '0.75rem' }}>
+                  <div>{r.repName || '—'}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.68rem' }}>{r.repEmail}</div>
+                </td>
+                <td style={{ ...c.td, textAlign: 'center' }}>{r.players?.length ?? 0}</td>
+                <td style={{ ...c.td, fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>{fmt(r.submittedAt)}</td>
+                <td style={c.td}>
+                  <Badge label={r.status.charAt(0).toUpperCase() + r.status.slice(1)} color={STATUS_COLOR[r.status]} />
+                </td>
+                <td style={c.td}>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    <button onClick={() => openView(r)} style={{ ...c.btn, ...c.btnGhost, padding: '4px 10px', fontSize: '0.7rem' }}>👁 View</button>
+                    {r.status === 'pending' && (
+                      <>
+                        <button onClick={() => openApprove(r)} style={{ ...c.btn, padding: '4px 10px', fontSize: '0.7rem', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>✅ Approve</button>
+                        <button onClick={() => openReject(r)}  style={{ ...c.btn, ...c.btnDanger, padding: '4px 10px', fontSize: '0.7rem' }}>❌ Reject</button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
             )}
+          />
+        )}
+      </SectionCard>
 
-            {/* Players */}
-            {detail.players?.length > 0 && (
-              <div style={{ ...c.card, padding: '16px 20px' }}>
-                <div style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: 1, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 12 }}>
-                  Players Listed ({detail.players.length})
-                </div>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr>
-                        {['#', 'Name', 'Age', 'Position', 'Jersey'].map(h => (
-                          <th key={h} style={{ ...c.th, fontSize: '0.65rem' }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detail.players.map((p, i) => (
-                        <tr key={i}>
-                          <td style={c.td}>{i + 1}</td>
-                          <td style={{ ...c.td, fontWeight: 600 }}>{p.name || '—'}</td>
-                          <td style={c.td}>{p.age || '—'}</td>
-                          <td style={c.td}>{p.position || '—'}</td>
-                          <td style={c.td}>{p.jersey ? `#${p.jersey}` : '—'}</td>
-                        </tr>
+      {/* ── View Detail Modal ── */}
+      {modal === 'view' && selected && (
+        <Modal title={`📋 ${selected.teamName}`} onClose={closeModal}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+            <InfoRow label="Reference" value={<span style={{ fontFamily: 'monospace', color: '#D4AF37' }}>{selected.ref}</span>} />
+            <InfoRow label="Status"    value={<Badge label={selected.status.charAt(0).toUpperCase() + selected.status.slice(1)} color={STATUS_COLOR[selected.status]} />} />
+            <InfoRow label="City"           value={selected.city || '—'} />
+            <InfoRow label="Year Founded"   value={selected.yearFounded || '—'} />
+            <InfoRow label="Head Coach"     value={selected.coach || '—'} />
+            <InfoRow label="Home Kit"       value={selected.homeColors || '—'} />
+            <InfoRow label="Representative" value={selected.repName || '—'} />
+            <InfoRow label="Rep Email"      value={selected.repEmail} />
+            <InfoRow label="Rep Phone"      value={selected.repPhone || '—'} />
+            <InfoRow label="Submitted"      value={fmt(selected.submittedAt)} />
+            {selected.reviewedAt && <InfoRow label="Reviewed" value={fmt(selected.reviewedAt)} />}
+          </div>
+
+          {selected.competitionHistory && (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Competition History</div>
+              <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, background: 'rgba(255,255,255,0.04)', padding: '10px 14px', borderRadius: 8 }}>
+                {selected.competitionHistory}
+              </div>
+            </div>
+          )}
+
+          {/* Squad list */}
+          {selected.players?.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+                Squad — {selected.players.length} Players
+              </div>
+              <div style={{ maxHeight: 180, overflowY: 'auto', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid rgba(255,255,255,0.07)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                      {['#', 'Name', 'Position', 'Age'].map(h => (
+                        <th key={h} style={{ ...c.th, padding: '8px 12px' }}>{h}</th>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selected.players.map((p, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                        <td style={{ ...c.td, padding: '7px 12px', width: 32, color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>{idx + 1}</td>
+                        <td style={{ ...c.td, padding: '7px 12px', fontWeight: 600 }}>{p.name || '—'}</td>
+                        <td style={{ ...c.td, padding: '7px 12px' }}><Badge label={p.position || '—'} color="#3B82F6" /></td>
+                        <td style={{ ...c.td, padding: '7px 12px' }}>{p.age || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            </div>
+          )}
+
+          {selected.reviewNote && (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Admin Note</div>
+              <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.04)', padding: '10px 14px', borderRadius: 8, fontStyle: 'italic' }}>
+                {selected.reviewNote}
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+            {selected.status === 'pending' && (
+              <>
+                <button onClick={() => setModal('approve')} style={{ ...c.btn, padding: '7px 16px', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>✅ Approve</button>
+                <button onClick={() => setModal('reject')}  style={{ ...c.btn, ...c.btnDanger }}>❌ Reject</button>
+              </>
             )}
+            <button onClick={closeModal} style={{ ...c.btn, ...c.btnGhost }}>Close</button>
           </div>
         </Modal>
       )}
 
-      {/* Approve / Reject confirmation modal with note */}
-      {noteModal && (
-        <Modal title={noteModal.action === 'approve' ? '✅ Approve Registration' : '❌ Reject Registration'} onClose={() => setNoteModal(null)}>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.88rem', marginBottom: 16 }}>
-            {noteModal.action === 'approve'
-              ? 'Approving this application will allow the team to participate in StarCraft Cup 2026. You can add an optional note (e.g. next steps, payment info).'
-              : 'Rejecting this application will notify the team. Please add a reason so they can address the issue.'}
+      {/* ── Approve Modal ── */}
+      {modal === 'approve' && selected && (
+        <Modal title="✅ Approve Registration" onClose={closeModal}>
+          <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.65)', marginBottom: 16 }}>
+            You are approving <strong style={{ color: '#fff' }}>{selected.teamName}</strong> ({selected.ref}) for StarCraft Cup 2026. An optional note will be saved with the decision.
           </p>
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: 'rgba(255,255,255,0.45)', letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 8 }}>
-              {noteModal.action === 'approve' ? 'Note (optional)' : 'Rejection Reason'}
-            </label>
+          <FormField label="Admin Note (optional)">
             <textarea
+              style={{ ...c.input, minHeight: 80, resize: 'vertical' }}
               value={note}
               onChange={e => setNote(e.target.value)}
-              placeholder={noteModal.action === 'approve' ? 'e.g. Please make payment of ₦25,000 within 7 days…' : 'e.g. Incomplete player information provided…'}
-              style={{ ...c.input, minHeight: 90, resize: 'vertical' }}
+              placeholder="e.g. Team meets all eligibility criteria."
             />
-          </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-            <button onClick={() => setNoteModal(null)} style={{ ...c.btn, ...c.btnGhost }}>Cancel</button>
-            <button onClick={submitAction} style={{ ...c.btn, ...(noteModal.action === 'approve' ? c.btnPrimary : c.btnDanger), padding: '10px 22px' }}>
-              {noteModal.action === 'approve' ? '✅ Confirm Approval' : '❌ Confirm Rejection'}
+          </FormField>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button onClick={closeModal} style={{ ...c.btn, ...c.btnGhost }} disabled={saving}>Cancel</button>
+            <button
+              onClick={() => doAction('approve')}
+              disabled={saving}
+              style={{ ...c.btn, background: 'linear-gradient(135deg,#22C55E,#15803D)', color: '#fff', opacity: saving ? 0.6 : 1 }}
+            >
+              {saving ? 'Saving…' : '✅ Confirm Approval'}
             </button>
           </div>
         </Modal>
       )}
+
+      {/* ── Reject Modal ── */}
+      {modal === 'reject' && selected && (
+        <Modal title="❌ Reject Registration" onClose={closeModal}>
+          <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.65)', marginBottom: 16 }}>
+            You are rejecting <strong style={{ color: '#fff' }}>{selected.teamName}</strong> ({selected.ref}). Please provide a reason — this will be stored with the record.
+          </p>
+          <FormField label="Rejection Reason">
+            <textarea
+              style={{ ...c.input, minHeight: 80, resize: 'vertical' }}
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              placeholder="e.g. Incomplete squad list — fewer than 11 players submitted."
+            />
+          </FormField>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button onClick={closeModal} style={{ ...c.btn, ...c.btnGhost }} disabled={saving}>Cancel</button>
+            <button
+              onClick={() => doAction('reject')}
+              disabled={saving}
+              style={{ ...c.btn, ...c.btnDanger, opacity: saving ? 0.6 : 1 }}
+            >
+              {saving ? 'Saving…' : '❌ Confirm Rejection'}
+            </button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// Small helper for the detail modal
+function InfoRow({ label, value }) {
+  return (
+    <div>
+      <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.85)' }}>{value}</div>
     </div>
   )
 }

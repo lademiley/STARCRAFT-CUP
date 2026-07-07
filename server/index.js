@@ -197,14 +197,14 @@ app.post('/api/teams/register', (req, res) => {
 })
 
 // Admin: get all team registrations
-app.get('/api/teams/registrations', (req, res) => {
+app.get('/api/teams/registrations', requireAuth, (req, res) => {
   const all = [...teamRegistrations.values()]
     .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
   res.json({ registrations: all })
 })
 
 // Admin: approve a team registration
-app.patch('/api/teams/registrations/:id/approve', (req, res) => {
+app.patch('/api/teams/registrations/:id/approve', requireAuth, (req, res) => {
   const reg = teamRegistrations.get(req.params.id)
   if (!reg) return res.status(404).json({ error: 'Registration not found' })
   reg.status = 'approved'
@@ -216,7 +216,7 @@ app.patch('/api/teams/registrations/:id/approve', (req, res) => {
 })
 
 // Admin: reject a team registration
-app.patch('/api/teams/registrations/:id/reject', (req, res) => {
+app.patch('/api/teams/registrations/:id/reject', requireAuth, (req, res) => {
   const reg = teamRegistrations.get(req.params.id)
   if (!reg) return res.status(404).json({ error: 'Registration not found' })
   reg.status = 'rejected'

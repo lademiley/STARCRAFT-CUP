@@ -26,6 +26,7 @@ import AuditLogs from './modules/AuditLogs'
 import WebsiteSettings from './modules/WebsiteSettings'
 import RolePermissions from './modules/RolePermissions'
 import TeamManagerDashboard from './modules/TeamManagerDashboard'
+import TeamRegistrations from './modules/TeamRegistrations'
 
 const MENU = [
   {
@@ -38,6 +39,7 @@ const MENU = [
     category: 'Tournament',
     items: [
       { id: 'teams', label: 'Team Management', icon: '🏆' },
+      { id: 'registrations', label: 'Team Registrations', icon: '📝' },
       { id: 'players', label: 'Player Management', icon: '👤' },
       { id: 'fixtures', label: 'Fixture Generator', icon: '📅' },
       { id: 'results', label: 'Match Results', icon: '⚽' },
@@ -91,6 +93,7 @@ const MENU = [
 const MODULE_MAP = {
   analytics: DashboardAnalytics,
   teams: TeamManagement,
+  registrations: TeamRegistrations,
   players: PlayerManagement,
   fixtures: FixtureGenerator,
   results: MatchResults,
