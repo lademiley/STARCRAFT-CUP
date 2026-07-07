@@ -179,6 +179,75 @@ app.post('/api/teams/register', (req, res) => {
   })
 })
 
+// ---------- Auth middleware ----------
+function requireAuth(req, res, next) {
+  if (!req.session.userId || !req.session.userEmail) {
+    return res.status(401).json({ error: 'Not authenticated' })
+  }
+  next()
+}
+
+// ---------- In-memory orders store ----------
+const orders = new Map() // orderId -> { id, userId, userEmail, userName, items, total, ref, status, createdAt, confirmedAt }
+
+// Create order (fan submits after bank transfer)
+app.post('/api/orders', requireAuth, (req, res) => {
+  const { items, total, ref } = req.body
+  if (!items || !total || !ref) {
+    return res.status(400).json({ error: 'Missing order details' })
+  }
+  const user = users.get(req.session.userEmail)
+  const order = {
+    id: Date.now().toString(),
+    userId: req.session.userId,
+    userEmail: req.session.userEmail,
+    userName: user?.name || 'Fan',
+    items,
+    total,
+    ref,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    confirmedAt: null,
+  }
+  orders.set(order.id, order)
+  console.log('[Order]', { ref, total, email: order.userEmail })
+  res.status(201).json({ success: true, order })
+})
+
+// Get current user's orders
+app.get('/api/orders/my', requireAuth, (req, res) => {
+  const myOrders = [...orders.values()]
+    .filter(o => o.userId === req.session.userId)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ orders: myOrders })
+})
+
+// Admin: get all orders
+app.get('/api/orders', (req, res) => {
+  const allOrders = [...orders.values()].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ orders: allOrders })
+})
+
+// Admin: confirm a payment
+app.patch('/api/orders/:id/confirm', (req, res) => {
+  const order = orders.get(req.params.id)
+  if (!order) return res.status(404).json({ error: 'Order not found' })
+  order.status = 'confirmed'
+  order.confirmedAt = new Date().toISOString()
+  orders.set(order.id, order)
+  console.log('[Order Confirmed]', order.ref, '->', order.userEmail)
+  res.json({ success: true, order })
+})
+
+// Admin: reject / cancel an order
+app.patch('/api/orders/:id/reject', (req, res) => {
+  const order = orders.get(req.params.id)
+  if (!order) return res.status(404).json({ error: 'Order not found' })
+  order.status = 'rejected'
+  orders.set(order.id, order)
+  res.json({ success: true, order })
+})
+
 // ---------- Generic error handler ----------
 app.use((err, req, res, next) => {
   console.error('[Error]', err.message)

@@ -58,8 +58,6 @@ export default function Tickets() {
   const [selectedMatch, setSelectedMatch] = useState(null)
   const [selectedTier, setSelectedTier] = useState('vip')
   const [qty, setQty] = useState(1)
-  const [orderPlaced, setOrderPlaced] = useState(false)
-  const [orderRef, setOrderRef] = useState('')
 
   const addToCart = () => {
     if (!selectedMatch) return
@@ -84,30 +82,134 @@ export default function Tickets() {
 
   const cartTotal = cart.reduce((sum, item) => sum + getPrice(item.tier, item.fixture.round) * item.qty, 0)
 
-  const handleCheckout = () => {
-    const ref = `SCT-${Date.now().toString(36).toUpperCase().slice(-6)}`
-    setOrderRef(ref)
-    setOrderPlaced(true)
-    setCart([])
+  // Payment states: null | 'bank' | 'submitted'
+  const [payStep, setPayStep] = useState(null)
+  const [payRef] = useState(() => `SCT-${Date.now().toString(36).toUpperCase().slice(-6)}`)
+  const [submitting, setSubmitting] = useState(false)
+  const [payError, setPayError] = useState('')
+
+  const BANK = {
+    name: 'First Bank Nigeria',
+    accountName: 'StarCraft Cup 2026 Tournament Committee',
+    accountNumber: '3085762491',
   }
 
-  if (orderPlaced) {
+  const handleCheckout = () => setPayStep('bank')
+
+  const handleSubmitPayment = async () => {
+    setSubmitting(true)
+    setPayError('')
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ items: cart, total: cartTotal, ref: payRef }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setPayError(data.error || 'Failed to submit'); setSubmitting(false); return }
+      setCart([])
+      setPayStep('submitted')
+    } catch {
+      setPayError('Network error — please try again')
+    }
+    setSubmitting(false)
+  }
+
+  if (payStep === 'bank') {
     return (
       <div style={styles.page}>
-        <div style={{...styles.card, maxWidth: 520, margin: '60px auto', textAlign: 'center', padding: '48px 40px'}}>
-          <div style={{fontSize: '4rem', marginBottom: 16}}>🎉</div>
-          <h2 style={{color: 'var(--gold)', marginBottom: 8}}>Booking Confirmed!</h2>
-          <p style={{color: 'rgba(255,255,255,0.6)', marginBottom: 28}}>
-            Your tickets have been reserved, {user?.name}. Check your email for the e-ticket.
-          </p>
-          <div style={{background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 12, padding: '20px', marginBottom: 28}}>
-            <div style={{fontFamily: 'var(--font-secondary)', fontSize: '0.75rem', letterSpacing: '1px', color: 'var(--gold)', marginBottom: 8, textTransform: 'uppercase'}}>Booking Reference</div>
-            <div style={{fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 900, letterSpacing: 4}}>{orderRef}</div>
+        <div style={{ maxWidth: 560, margin: '0 auto', padding: '100px 24px 60px' }}>
+          <div style={{ ...styles.card, padding: '40px' }}>
+            <div style={{ textAlign: 'center', marginBottom: 28 }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🏦</div>
+              <h2 style={{ color: 'var(--gold)', marginBottom: 6 }}>Bank Transfer</h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
+                Transfer the exact amount below to our official account, then click "I've Paid" to submit your order.
+              </p>
+            </div>
+
+            {/* Bank details */}
+            <div style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 12, padding: '24px', marginBottom: 24 }}>
+              <div style={{ fontFamily: 'var(--font-secondary)', fontSize: '0.72rem', letterSpacing: '2px', color: 'rgba(212,175,55,0.7)', textTransform: 'uppercase', marginBottom: 16 }}>
+                🏦 Official Tournament Account
+              </div>
+              {[
+                ['Bank', BANK.name],
+                ['Account Name', BANK.accountName],
+                ['Account Number', BANK.accountNumber],
+              ].map(([k, v]) => (
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', gap: 12 }}>
+                  <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', flexShrink: 0 }}>{k}</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, textAlign: 'right', wordBreak: 'break-word' }}>{v}</span>
+                </div>
+              ))}
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0 0', gap: 12 }}>
+                <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>Payment Reference</span>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--gold)', fontWeight: 900, letterSpacing: 2 }}>{payRef}</span>
+              </div>
+            </div>
+
+            {/* Amount */}
+            <div style={{ background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-secondary)', fontWeight: 700, fontSize: '0.85rem' }}>AMOUNT TO TRANSFER</span>
+              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.6rem', color: 'var(--gold)', fontWeight: 900 }}>₦{cartTotal.toLocaleString()}</span>
+            </div>
+
+            {/* Order summary */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontFamily: 'var(--font-secondary)', fontSize: '0.72rem', letterSpacing: '1px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 10 }}>Order Summary</div>
+              {cart.map((item, i) => {
+                const price = getPrice(item.tier, item.fixture.round)
+                return (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.6)' }}>{item.fixture.homeTeam} vs {item.fixture.awayTeam} · {item.tier.toUpperCase()} × {item.qty}</span>
+                    <span style={{ color: 'var(--gold)', fontWeight: 700 }}>₦{(price * item.qty).toLocaleString()}</span>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div style={{ background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 24, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+              ⚠️ Use <strong style={{ color: '#F59E0B' }}>{payRef}</strong> as the payment description/narration so our team can match your payment. QR code tickets will be sent to <strong style={{ color: 'var(--white)' }}>{user?.email}</strong> and appear in your profile once confirmed.
+            </div>
+
+            {payError && <div style={{ color: '#ff6b6b', fontSize: '0.85rem', marginBottom: 16, textAlign: 'center' }}>{payError}</div>}
+
+            <button onClick={handleSubmitPayment} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 10 }} disabled={submitting}>
+              {submitting ? 'Submitting…' : "✅ I've Made the Payment"}
+            </button>
+            <button onClick={() => setPayStep(null)} className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>
+              ← Back to Basket
+            </button>
           </div>
-          <button onClick={() => setOrderPlaced(false)} className="btn btn-primary" style={{width: '100%', justifyContent: 'center', marginBottom: 12}}>
-            Buy More Tickets
-          </button>
-          <Link to="/" className="btn btn-secondary" style={{width: '100%', justifyContent: 'center'}}>Back to Home</Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (payStep === 'submitted') {
+    return (
+      <div style={styles.page}>
+        <div style={{ maxWidth: 520, margin: '0 auto', padding: '100px 24px 60px' }}>
+          <div style={{ ...styles.card, padding: '48px 40px', textAlign: 'center' }}>
+            <div style={{ fontSize: '4rem', marginBottom: 16 }}>⏳</div>
+            <h2 style={{ color: 'var(--gold)', marginBottom: 8 }}>Order Submitted!</h2>
+            <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: 24 }}>
+              Your order has been received. Once our team confirms your bank transfer, your QR code ticket(s) will appear in your profile and be sent to <strong style={{ color: 'var(--white)' }}>{user?.email}</strong>.
+            </p>
+            <div style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 12, padding: '20px', marginBottom: 28 }}>
+              <div style={{ fontFamily: 'var(--font-secondary)', fontSize: '0.72rem', letterSpacing: '1px', color: 'var(--gold)', marginBottom: 8, textTransform: 'uppercase' }}>Reference Number</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 900, letterSpacing: 4 }}>{payRef}</div>
+              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>Keep this for your records</div>
+            </div>
+            <Link to="/profile" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 10 }}>
+              📋 View My Profile & Tickets
+            </Link>
+            <button onClick={() => setPayStep(null)} className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>
+              Buy More Tickets
+            </button>
+          </div>
         </div>
       </div>
     )

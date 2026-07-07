@@ -134,9 +134,7 @@ export default function Navbar() {
             ) : user ? (
               <>
                 <Link to="/tickets" className="btn btn-primary btn-sm">🎫 Buy Tickets</Link>
-                <span style={{fontFamily:'var(--font-secondary)',fontSize:'0.78rem',color:'rgba(255,255,255,0.6)',maxWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-                  {user.name}
-                </span>
+                <Link to="/profile" className="btn btn-secondary btn-sm" title={user.name}>👤 My Tickets</Link>
                 <button onClick={logout} className="btn btn-secondary btn-sm">Logout</button>
               </>
             ) : (
