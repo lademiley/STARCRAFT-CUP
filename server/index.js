@@ -18,11 +18,13 @@ const replitOriginPattern = /^https:\/\/.+\.(replit\.dev|repl\.co)(:\d+)?$/
 
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin (curl, server-to-server) only in dev
-    if (!origin && !isProd) return cb(null, true)
+    // No origin = same-origin proxy request (Vite dev server) — always allow
+    if (!origin) return cb(null, true)
     if (allowedOrigins.includes(origin)) return cb(null, true)
-    // Allow Replit preview domains in dev
-    if (!isProd && origin && replitOriginPattern.test(origin)) return cb(null, true)
+    // Always allow Replit preview/deployment domains
+    if (replitOriginPattern.test(origin)) return cb(null, true)
+    // Allow everything in development
+    if (!isProd) return cb(null, true)
     cb(new Error('Not allowed by CORS'))
   },
   credentials: true
