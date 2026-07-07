@@ -20,6 +20,36 @@ export function AuthProvider({ children }) {
   })
   const [loading, setLoading] = useState(false)
 
+  // Restore session on page load
+  useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.user) setUser(data.user) })
+      .catch(() => {})
+  }, [])
+
+  const login = async (email, password) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (!res.ok) return { success: false, error: data.error || 'Login failed' }
+      setUser(data.user)
+      return { success: true }
+    } catch {
+      return { success: false, error: 'Network error — please try again' }
+    }
+  }
+
+  const logout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {})
+    setUser(null)
+  }
+
   const adminLogin = (email, password) => {
     if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
       const adminData = {
@@ -43,7 +73,7 @@ export function AuthProvider({ children }) {
   const isAdmin = !!admin && admin.role === 'superadmin'
 
   return (
-    <AuthContext.Provider value={{ user, setUser, admin, isAdmin, adminLogin, adminLogout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout, admin, isAdmin, adminLogin, adminLogout, loading }}>
       {children}
     </AuthContext.Provider>
   )

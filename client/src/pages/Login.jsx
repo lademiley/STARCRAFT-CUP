@@ -1,10 +1,27 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '', twofa: '' })
-  const [step, setStep] = useState(1)
+  const [form, setForm] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    const result = await login(form.email, form.password)
+    setLoading(false)
+    if (result.success) {
+      navigate('/')
+    } else {
+      setError(result.error || 'Invalid email or password')
+    }
+  }
 
   return (
     <div className="auth-page">
@@ -23,66 +40,73 @@ export default function Login() {
           <h2 style={{textAlign:'center',marginBottom:6,color:'var(--white)'}}>Welcome Back</h2>
           <p style={{textAlign:'center',color:'rgba(255,255,255,0.5)',marginBottom:32}}>Sign in to your StarCraft Cup account</p>
 
-          {step === 1 && (
-            <form onSubmit={e=>{e.preventDefault();setStep(2)}} style={{display:'flex',flexDirection:'column',gap:4}}>
-              <div className="form-group">
-                <label>Email Address</label>
-                <input type="email" className="form-control" placeholder="your@email.com" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required />
-              </div>
-              <div className="form-group">
-                <label>Password</label>
-                <div style={{position:'relative'}}>
-                  <input type={showPass?'text':'password'} className="form-control" placeholder="Enter your password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} required style={{paddingRight:48}} />
-                  <button type="button" onClick={()=>setShowPass(!showPass)} style={{position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',color:'rgba(255,255,255,0.5)',cursor:'pointer',fontSize:'0.85rem'}}>
-                    {showPass?'🙈':'👁'}
-                  </button>
-                </div>
-              </div>
-              <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
-                <Link to="#" style={{fontSize:'0.85rem',color:'var(--gold)'}}>Forgot Password?</Link>
-              </div>
-              <button type="submit" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:16}}>Continue →</button>
-
-              <div className="divider-text"><span>or sign in with</span></div>
-
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:16}}>
-                <button type="button" className="btn btn-secondary" style={{justifyContent:'center',gap:8}}>
-                  <span>G</span> Google
-                </button>
-                <button type="button" className="btn btn-secondary" style={{justifyContent:'center',gap:8}}>
-                  <span>f</span> Facebook
-                </button>
-              </div>
-
-              <p style={{textAlign:'center',marginTop:24,fontSize:'0.9rem',color:'rgba(255,255,255,0.5)'}}>
-                Don't have an account?{' '}
-                <Link to="/register" style={{color:'var(--gold)',fontWeight:700}}>Register →</Link>
-              </p>
-            </form>
-          )}
-
-          {step === 2 && (
-            <div>
-              <div style={{textAlign:'center',padding:'20px 0',marginBottom:20}}>
-                <div style={{fontSize:'3rem',marginBottom:12}}>🔐</div>
-                <h3 style={{color:'var(--gold)',marginBottom:8}}>Two-Factor Authentication</h3>
-                <p style={{color:'rgba(255,255,255,0.6)',fontSize:'0.9rem'}}>Enter the 6-digit code sent to <strong style={{color:'var(--white)'}}>{form.email || 'your email'}</strong></p>
-              </div>
-              <div className="form-group">
-                <label>Verification Code</label>
-                <input type="text" className="form-control" placeholder="000000" maxLength={6} value={form.twofa} onChange={e=>setForm({...form,twofa:e.target.value})} style={{textAlign:'center',letterSpacing:'8px',fontSize:'1.5rem',fontFamily:'var(--font-heading)'}} />
-              </div>
-              <button className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:12}} onClick={()=>window.location.href='/'}>
-                Verify & Sign In
-              </button>
-              <button className="btn btn-secondary btn-sm" style={{width:'100%',justifyContent:'center'}} onClick={()=>setStep(1)}>
-                ← Back
-              </button>
-              <p style={{textAlign:'center',marginTop:16,fontSize:'0.85rem',color:'rgba(255,255,255,0.4)'}}>
-                Didn't receive a code? <button style={{background:'none',border:'none',color:'var(--gold)',cursor:'pointer',fontSize:'0.85rem'}}>Resend</button>
-              </p>
+          {error && (
+            <div style={{background:'rgba(139,14,18,0.4)',border:'1px solid rgba(212,175,55,0.3)',borderRadius:8,padding:'12px 16px',marginBottom:20,color:'#ff6b6b',fontSize:'0.9rem',textAlign:'center'}}>
+              {error}
             </div>
           )}
+
+          <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:4}}>
+            <div className="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="your@email.com"
+                value={form.email}
+                onChange={e=>setForm({...form,email:e.target.value})}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <div style={{position:'relative'}}>
+                <input
+                  type={showPass?'text':'password'}
+                  className="form-control"
+                  placeholder="Enter your password"
+                  value={form.password}
+                  onChange={e=>setForm({...form,password:e.target.value})}
+                  required
+                  style={{paddingRight:48}}
+                />
+                <button
+                  type="button"
+                  onClick={()=>setShowPass(!showPass)}
+                  style={{position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',color:'rgba(255,255,255,0.5)',cursor:'pointer',fontSize:'0.85rem'}}
+                >
+                  {showPass?'🙈':'👁'}
+                </button>
+              </div>
+            </div>
+            <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
+              <Link to="#" style={{fontSize:'0.85rem',color:'var(--gold)'}}>Forgot Password?</Link>
+            </div>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{width:'100%',justifyContent:'center',marginBottom:16}}
+              disabled={loading}
+            >
+              {loading ? 'Signing in…' : 'Sign In →'}
+            </button>
+
+            <div className="divider-text"><span>or sign in with</span></div>
+
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:16}}>
+              <button type="button" className="btn btn-secondary" style={{justifyContent:'center',gap:8}}>
+                <span>G</span> Google
+              </button>
+              <button type="button" className="btn btn-secondary" style={{justifyContent:'center',gap:8}}>
+                <span>f</span> Facebook
+              </button>
+            </div>
+
+            <p style={{textAlign:'center',marginTop:24,fontSize:'0.9rem',color:'rgba(255,255,255,0.5)'}}>
+              Don't have an account?{' '}
+              <Link to="/register" style={{color:'var(--gold)',fontWeight:700}}>Register →</Link>
+            </p>
+          </form>
         </div>
       </div>
 
