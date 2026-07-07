@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -19,6 +22,8 @@ import Volunteers from './pages/Volunteers'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import AdminLogin from './pages/AdminLogin'
+import AdminDashboard from './pages/admin/AdminDashboard'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -26,34 +31,55 @@ function ScrollToTop() {
   return null
 }
 
+// Layout wrapper for public pages (with Navbar + Footer)
+function PublicLayout({ children }) {
+  return (
+    <>
+      <Navbar />
+      <main>{children}</main>
+      <Footer />
+    </>
+  )
+}
+
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <Navbar />
-      <main>
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/tournament" element={<Tournament />} />
-          <Route path="/teams" element={<Teams />} />
-          <Route path="/players" element={<Players />} />
-          <Route path="/fixtures" element={<Fixtures />} />
-          <Route path="/live-scores" element={<LiveScores />} />
-          <Route path="/league-table" element={<LeagueTable />} />
-          <Route path="/statistics" element={<Statistics />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/sponsors" element={<Sponsors />} />
-          <Route path="/media-center" element={<MediaCenter />} />
-          <Route path="/volunteers" element={<Volunteers />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* Admin routes — no Navbar/Footer */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Public routes — with Navbar + Footer */}
+          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+          <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+          <Route path="/tournament" element={<PublicLayout><Tournament /></PublicLayout>} />
+          <Route path="/teams" element={<PublicLayout><Teams /></PublicLayout>} />
+          <Route path="/players" element={<PublicLayout><Players /></PublicLayout>} />
+          <Route path="/fixtures" element={<PublicLayout><Fixtures /></PublicLayout>} />
+          <Route path="/live-scores" element={<PublicLayout><LiveScores /></PublicLayout>} />
+          <Route path="/league-table" element={<PublicLayout><LeagueTable /></PublicLayout>} />
+          <Route path="/statistics" element={<PublicLayout><Statistics /></PublicLayout>} />
+          <Route path="/gallery" element={<PublicLayout><Gallery /></PublicLayout>} />
+          <Route path="/news" element={<PublicLayout><News /></PublicLayout>} />
+          <Route path="/sponsors" element={<PublicLayout><Sponsors /></PublicLayout>} />
+          <Route path="/media-center" element={<PublicLayout><MediaCenter /></PublicLayout>} />
+          <Route path="/volunteers" element={<PublicLayout><Volunteers /></PublicLayout>} />
+          <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+          <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+          <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
         </Routes>
-      </main>
-      <Footer />
-    </Router>
+      </Router>
+    </AuthProvider>
   )
 }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -39,6 +40,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const location = useLocation()
+  const { isAdmin, adminLogout } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -77,7 +79,6 @@ export default function Navbar() {
                   aria-expanded={link.sub ? activeDropdown === link.label : undefined}
                   onFocus={() => link.sub && setActiveDropdown(link.label)}
                   onBlur={(e) => {
-                    // Close dropdown only when focus leaves the entire nav-item
                     if (!e.currentTarget.closest('li')?.contains(e.relatedTarget)) {
                       setActiveDropdown(null)
                     }
@@ -106,7 +107,6 @@ export default function Navbar() {
                           if (e.key === 'Escape') setActiveDropdown(null)
                         }}
                         onBlur={(e) => {
-                          // Close if focus leaves dropdown entirely
                           if (idx === link.sub.length - 1 && !e.currentTarget.closest('.dropdown')?.contains(e.relatedTarget)) {
                             setActiveDropdown(null)
                           }
@@ -126,8 +126,18 @@ export default function Navbar() {
             <Link to="/live-scores" className="live-btn">
               <span className="live-dot"></span> LIVE
             </Link>
-            <Link to="/login" className="btn btn-secondary btn-sm">Login</Link>
-            <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
+            {isAdmin ? (
+              <>
+                <Link to="/admin/dashboard" className="btn btn-admin btn-sm">🛡️ Admin</Link>
+                <button onClick={adminLogout} className="btn btn-secondary btn-sm">Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn btn-secondary btn-sm">Login</Link>
+                <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
+                <Link to="/admin/login" className="btn btn-admin-ghost btn-sm" title="Admin Portal">🛡️</Link>
+              </>
+            )}
           </div>
 
           {/* Hamburger */}
@@ -151,8 +161,18 @@ export default function Navbar() {
             </div>
           ))}
           <div className="mobile-auth">
-            <Link to="/login" className="btn btn-secondary" style={{width:'100%',justifyContent:'center',marginBottom:12}}>Login</Link>
-            <Link to="/register" className="btn btn-primary" style={{width:'100%',justifyContent:'center'}}>Register Team</Link>
+            {isAdmin ? (
+              <>
+                <Link to="/admin/dashboard" className="btn btn-admin" style={{width:'100%',justifyContent:'center',marginBottom:12}}>🛡️ Admin Dashboard</Link>
+                <button onClick={adminLogout} className="btn btn-secondary" style={{width:'100%',justifyContent:'center'}}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn btn-secondary" style={{width:'100%',justifyContent:'center',marginBottom:12}}>Login</Link>
+                <Link to="/register" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:12}}>Register Team</Link>
+                <Link to="/admin/login" className="btn btn-admin-ghost" style={{width:'100%',justifyContent:'center'}}>🛡️ Admin Portal</Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -232,7 +252,7 @@ export default function Navbar() {
           transition: all 200ms ease;
         }
         .dropdown-item:hover { color: var(--gold); background: rgba(212,175,55,0.08); }
-        .nav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .live-btn {
           display: flex; align-items: center; gap: 6px;
           padding: 6px 14px;
@@ -245,6 +265,45 @@ export default function Navbar() {
           transition: all 300ms ease;
         }
         .live-btn:hover { background: rgba(220,38,38,0.3); }
+
+        /* Admin button styles */
+        .btn-admin {
+          padding: 6px 14px;
+          background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(140,106,18,0.3));
+          border: 1px solid rgba(212,175,55,0.4);
+          border-radius: 8px;
+          font-family: var(--font-secondary);
+          font-size: 0.72rem; font-weight: 800;
+          letter-spacing: 0.5px; color: #D4AF37;
+          text-transform: uppercase;
+          transition: all 300ms ease;
+          cursor: pointer;
+          text-decoration: none;
+          display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn-admin:hover {
+          background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(140,106,18,0.4));
+          border-color: rgba(212,175,55,0.7);
+          box-shadow: 0 0 16px rgba(212,175,55,0.2);
+        }
+        .btn-admin-ghost {
+          padding: 6px 10px;
+          background: rgba(212,175,55,0.06);
+          border: 1px solid rgba(212,175,55,0.2);
+          border-radius: 8px;
+          font-size: 0.85rem;
+          color: rgba(212,175,55,0.6);
+          transition: all 300ms ease;
+          cursor: pointer;
+          text-decoration: none;
+          display: inline-flex; align-items: center;
+        }
+        .btn-admin-ghost:hover {
+          background: rgba(212,175,55,0.15);
+          border-color: rgba(212,175,55,0.4);
+          color: #D4AF37;
+        }
+
         .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
         .hamburger span {
           display: block; width: 24px; height: 2px;
@@ -281,7 +340,7 @@ export default function Navbar() {
         .mobile-sub-link:hover { color: var(--gold); }
         .mobile-auth { margin-top: 32px; }
         @media (max-width: 1024px) {
-          .nav-links, .nav-right .btn { display: none; }
+          .nav-links, .nav-right .btn, .nav-right .btn-admin, .nav-right .btn-admin-ghost { display: none; }
           .hamburger { display: flex; margin-left: auto; }
           .live-btn { display: flex; }
         }
