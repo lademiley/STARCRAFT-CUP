@@ -24,14 +24,14 @@ export default function Statistics() {
         <div className="container">
           <div className="grid-4">
             {[
-              { label:'Total Goals', value:89, icon:'⚽', sub:'Across 18 matches' },
-              { label:'Avg Goals/Match', value:'4.9', icon:'📊', sub:'Highest in tournament history' },
-              { label:'Clean Sheets', value:11, icon:'🧤', sub:'By all goalkeepers' },
-              { label:'Yellow Cards', value:34, icon:'🟨', sub:'Tournament total' },
-              { label:'Red Cards', value:3, icon:'🟥', sub:'Tournament total' },
-              { label:'Corners', value:156, icon:'🚩', sub:'Both teams combined' },
-              { label:'Penalties', value:8, icon:'🎯', sub:'6 scored, 2 missed' },
-              { label:'MVP Votes Cast', value:'12,400', icon:'⭐', sub:'Fan votes received' },
+              { label:'Total Goals', value:0, icon:'⚽', sub:'Across 0 matches' },
+              { label:'Avg Goals/Match', value:'0.0', icon:'📊', sub:'Tournament average' },
+              { label:'Clean Sheets', value:0, icon:'🧤', sub:'By all goalkeepers' },
+              { label:'Yellow Cards', value:0, icon:'🟨', sub:'Tournament total' },
+              { label:'Red Cards', value:0, icon:'🟥', sub:'Tournament total' },
+              { label:'Corners', value:0, icon:'🚩', sub:'Both teams combined' },
+              { label:'Penalties', value:0, icon:'🎯', sub:'0 scored, 0 missed' },
+              { label:'MVP Votes Cast', value:'0', icon:'⭐', sub:'Fan votes received' },
             ].map(s => (
               <div key={s.label} className="card" style={{padding:24,textAlign:'center'}}>
                 <div style={{fontSize:'1.8rem',marginBottom:8}}>{s.icon}</div>
