@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
 import { sponsors } from '../data/mockData'
+import { useContent } from '../context/ContentContext'
 
 export default function Sponsors() {
+  const pageContent = useContent('sponsors')
+  const hero = pageContent?.hero || { title: 'Our Sponsors', subtitle: 'The partners who make StarCraft Cup 2027 possible' }
+  const benefits = pageContent?.benefits || []
+  const packages = pageContent?.packages || []
   const [showForm, setShowForm] = useState(false)
   const [bioSponsor, setBioSponsor] = useState(null)
 
@@ -10,8 +15,11 @@ export default function Sponsors() {
       <section className="page-hero">
         <div className="container">
           <div className="breadcrumb">Home <span>›</span> Sponsors</div>
-          <h1>Our <span className="text-gold">Sponsors</span></h1>
-          <p>The partners who make StarCraft Cup 2027 possible</p>
+          <h1>
+            {hero.title.split(' ').slice(0, -1).join(' ')}{' '}
+            <span className="text-gold">{hero.title.split(' ').slice(-1)[0]}</span>
+          </h1>
+          <p>{hero.subtitle}</p>
         </div>
       </section>
 
@@ -142,14 +150,7 @@ export default function Sponsors() {
             <div className="divider" />
           </div>
           <div className="grid-3">
-            {[
-              { icon:'👥', title:'Massive Reach', desc:'Direct access to 47,500+ match attendees and 200,000+ social media followers across Nigeria.' },
-              { icon:'📺', title:'Broadcast Coverage', desc:'Brand visibility on Supersport, Channels TV, and Silverbird Television throughout the tournament.' },
-              { icon:'🏆', title:'Brand Association', desc:"Associate your brand with excellence, youth development, and Nigeria's brightest football talent." },
-              { icon:'🤝', title:'Community Goodwill', desc:'Build deep community goodwill by investing in the development of sport in Edo State.' },
-              { icon:'📱', title:'Digital Exposure', desc:'Prominent placement on website, social media, email campaigns, and official tournament app.' },
-              { icon:'🎖️', title:'Exclusive Access', desc:'VIP match tickets, access to players and coaches, and exclusive sponsor events.' },
-            ].map(b => (
+            {benefits.map(b => (
               <div key={b.title} className="card" style={{padding:28}}>
                 <div style={{fontSize:'2.5rem',marginBottom:14}}>{b.icon}</div>
                 <h4 style={{color:'var(--gold)',marginBottom:8}}>{b.title}</h4>
@@ -172,18 +173,14 @@ export default function Sponsors() {
 
           {/* Packages */}
           <div className="grid-3" style={{marginBottom:48}}>
-            {[
-              { tier:'Platinum', price:'₦5,000,000', color:'var(--gold)', perks:['Main shirt logo','TV broadcast mentions','10 VIP tickets per match','Full digital package','Exclusive sponsor event'] },
-              { tier:'Gold', price:'₦2,000,000', color:'#FFD700', perks:['Shirt sleeve logo','Match programme full page','6 VIP tickets per match','Social media features','Sponsor networking'] },
-              { tier:'Silver', price:'₦750,000', color:'#c0c0c0', perks:['Perimeter board advertising','Match programme half page','4 tickets per match','Website logo placement','Newsletter mention'] },
-            ].map((p,i) => (
+            {packages.map((p,i) => (
               <div key={p.tier} className="card" style={{padding:32,textAlign:'center',borderColor:i===0?'rgba(212,175,55,0.6)':'',position:'relative'}}>
                 {i===0 && <div className="ribbon">MOST POPULAR</div>}
                 <div style={{fontSize:'2.5rem',marginBottom:8}}>{i===0?'🥇':i===1?'🥈':'🥉'}</div>
                 <h3 style={{color:p.color,marginBottom:4}}>{p.tier}</h3>
                 <div style={{fontFamily:'var(--font-heading)',fontSize:'2rem',fontWeight:900,color:'var(--white)',margin:'16px 0 24px'}}>{p.price}</div>
                 <ul style={{list:'none',display:'flex',flexDirection:'column',gap:10,marginBottom:28,textAlign:'left'}}>
-                  {p.perks.map(perk => (
+                  {(typeof p.perks === 'string' ? p.perks.split('\n') : p.perks).filter(Boolean).map(perk => (
                     <li key={perk} style={{display:'flex',gap:10,alignItems:'center',fontSize:'0.85rem',color:'rgba(255,255,255,0.75)'}}>
                       <span style={{color:p.color}}>✦</span>{perk}
                     </li>

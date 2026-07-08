@@ -654,6 +654,68 @@ let siteContent = {
       { name: 'Mrs. Chidinma Eze', role: 'Digital Media Manager', email: 'digital@starcraftcup.ng', phone: '+234 813 456 7890' },
     ],
   },
+
+  news: {
+    hero: {
+      title: 'News & Updates',
+      subtitle: 'Latest tournament news, press releases, match reports, and interviews',
+    },
+    categories: ['Tournament Updates', 'Match Reports', 'Press Releases', 'Statistics', 'Awards', 'Interviews'],
+  },
+
+  sponsors: {
+    hero: {
+      title: 'Our Sponsors',
+      subtitle: 'The partners who make StarCraft Cup 2027 possible',
+    },
+    benefits: [
+      { icon: '👥', title: 'Massive Reach', desc: 'Direct access to 47,500+ match attendees and 200,000+ social media followers across Nigeria.' },
+      { icon: '📺', title: 'Broadcast Coverage', desc: 'Brand visibility on Supersport, Channels TV, and Silverbird Television throughout the tournament.' },
+      { icon: '🏆', title: 'Brand Association', desc: "Associate your brand with excellence, youth development, and Nigeria's brightest football talent." },
+      { icon: '🤝', title: 'Community Goodwill', desc: 'Build deep community goodwill by investing in the development of sport in Edo State.' },
+      { icon: '📱', title: 'Digital Exposure', desc: 'Prominent placement on website, social media, email campaigns, and official tournament app.' },
+      { icon: '🎖️', title: 'Exclusive Access', desc: 'VIP match tickets, access to players and coaches, and exclusive sponsor events.' },
+    ],
+    packages: [
+      { tier: 'Platinum', price: '₦5,000,000', color: '#D4AF37', perks: 'Main shirt logo\nTV broadcast mentions\n10 VIP tickets per match\nFull digital package\nExclusive sponsor event' },
+      { tier: 'Gold', price: '₦2,000,000', color: '#FFD700', perks: 'Shirt sleeve logo\nMatch programme full page\n6 VIP tickets per match\nSocial media features\nSponsor networking' },
+      { tier: 'Silver', price: '₦750,000', color: '#c0c0c0', perks: 'Perimeter board advertising\nMatch programme half page\n4 tickets per match\nWebsite logo placement\nNewsletter mention' },
+    ],
+  },
+
+  volunteers: {
+    hero: {
+      title: 'Be a Volunteer',
+      subtitle: 'Join our team of passionate volunteers and be part of football history',
+    },
+    benefits: [
+      { icon: '🏆', title: 'Be Part of History', desc: "Help organize Edo State's greatest football tournament." },
+      { icon: '🎓', title: 'Learn & Grow', desc: 'Gain event management skills and sports industry experience.' },
+      { icon: '🤝', title: 'Network', desc: 'Connect with football professionals, media, and corporate sponsors.' },
+      { icon: '🎁', title: 'Exclusive Benefits', desc: 'Free tournament merchandise, meals, and access to all matches.' },
+      { icon: '📜', title: 'Certificate', desc: 'Receive an official volunteer certificate and reference letter.' },
+      { icon: '⚽', title: 'Football Access', desc: 'Behind-the-scenes access including training sessions and player areas.' },
+      { icon: '👥', title: 'Community', desc: 'Join a family of passionate football lovers from across Edo State.' },
+      { icon: '💼', title: 'Career Boost', desc: 'Build your CV with a prestigious sports event management credential.' },
+    ],
+    roles: [
+      { role: 'Match Day Steward', slots: '40', desc: 'Manage crowd flow, assist fans with seating, and ensure a safe match environment.', requirements: '18+, physically fit, team player' },
+      { role: 'Media & Photography', slots: '12', desc: 'Assist the media team with photography, video, and social media content creation.', requirements: 'Photography experience preferred' },
+      { role: 'Registration Desk', slots: '20', desc: 'Manage team and fan registration, handle ticketing, and provide information.', requirements: 'Customer service skills, organized' },
+      { role: 'Medical Support', slots: '8', desc: 'Assist medical personnel with first aid, logistics, and player welfare.', requirements: 'First aid certification preferred' },
+      { role: 'Transportation Coordinator', slots: '15', desc: 'Coordinate team transport, logistics, and driver management across venues.', requirements: "Valid driver's license, local knowledge" },
+      { role: 'Hospitality & VIP Host', slots: '10', desc: 'Manage VIP areas, sponsor hospitality, and ensure top-tier guest experience.', requirements: 'Presentable, fluent in English' },
+      { role: 'Technical & IT Support', slots: '6', desc: 'Support live streaming, scoring systems, and technical equipment setup.', requirements: 'IT skills required' },
+      { role: 'Community Ambassador', slots: '25', desc: 'Represent the tournament in communities, promote matches, and engage fans.', requirements: 'Outgoing personality, social media savvy' },
+    ],
+    training: [
+      { date: 'March 10, 2027', session: 'Orientation & Welcome Day', location: 'Oredo LGA Civic Centre' },
+      { date: 'March 12, 2027', session: 'Role-Specific Training', location: 'University of Benin' },
+      { date: 'March 14, 2027', session: 'Venue Walkthrough & Simulation', location: 'Samuel Ogbemudia Stadium' },
+      { date: 'March 16, 2027', session: 'First Aid & Emergency Procedures', location: 'Oredo LGA Health Centre' },
+      { date: 'March 18, 2027', session: 'Final Briefing & Kit Distribution', location: 'University of Benin Bowl' },
+    ],
+  },
 }
 
 // Public: anyone can fetch a page's content (public site renders from this)
@@ -717,6 +779,21 @@ const CONTENT_SCHEMAS = {
     downloads: isShapeArray({ icon: isStr, file: isStr, type: isStr, size: isStr }),
     contacts: isShapeArray({ name: isStr, role: isStr, email: isStr, phone: isStr }),
   },
+  news: {
+    hero: { title: isStr, subtitle: isStr },
+    categories: isStrArray,
+  },
+  sponsors: {
+    hero: { title: isStr, subtitle: isStr },
+    benefits: isShapeArray({ icon: isStr, title: isStr, desc: isStr }),
+    packages: isShapeArray({ tier: isStr, price: isStr, color: isStr, perks: isStr }),
+  },
+  volunteers: {
+    hero: { title: isStr, subtitle: isStr },
+    benefits: isShapeArray({ icon: isStr, title: isStr, desc: isStr }),
+    roles: isShapeArray({ role: isStr, slots: isStr, desc: isStr, requirements: isStr }),
+    training: isShapeArray({ date: isStr, session: isStr, location: isStr }),
+  },
 }
 
 function validateContent(page, content) {
@@ -725,6 +802,13 @@ function validateContent(page, content) {
   if (!content || typeof content !== 'object' || Array.isArray(content)) return 'content must be an object'
   for (const [section, fields] of Object.entries(schema)) {
     const value = content[section]
+    // Section schema is a direct validator function (e.g. isStrArray, isShapeArray result)
+    // meaning the section itself is an array/primitive — validate it directly.
+    if (typeof fields === 'function') {
+      if (!fields(value)) return `Missing or invalid section "${section}"`
+      continue
+    }
+    // Section schema is an object map of field → validator
     if (!value || typeof value !== 'object' || Array.isArray(value)) return `Missing or invalid section "${section}"`
     for (const [field, check] of Object.entries(fields)) {
       if (!check(value[field])) return `Invalid field "${section}.${field}"`

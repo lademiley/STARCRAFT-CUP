@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { news } from '../data/mockData'
 import cupImg from '../assets/cup.png'
-
-const categories = ['All', 'Tournament Updates', 'Match Reports', 'Press Releases', 'Statistics', 'Awards', 'Interviews']
+import { useContent } from '../context/ContentContext'
 
 const bgColors = ['linear-gradient(135deg,#4A090B,#8B0E12)','linear-gradient(135deg,#1a0a00,#5c3010)','linear-gradient(135deg,#00192a,#005a8e)','linear-gradient(135deg,#0a1a00,#2e5c0a)','linear-gradient(135deg,#1a001a,#5c0a5c)','linear-gradient(135deg,#001a1a,#0a5c5c)']
 
 export default function News() {
+  const pageContent = useContent('news')
+  const hero = pageContent?.hero || { title: 'News & Updates', subtitle: 'Latest tournament news, press releases, match reports, and interviews' }
+  const categories = ['All', ...(pageContent?.categories || ['Tournament Updates', 'Match Reports', 'Press Releases', 'Statistics', 'Awards', 'Interviews'])]
   const [filter, setFilter] = useState('All')
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(null)
@@ -58,8 +60,11 @@ export default function News() {
       <section className="page-hero">
         <div className="container">
           <div className="breadcrumb">Home <span>›</span> News</div>
-          <h1>News & <span className="text-gold">Updates</span></h1>
-          <p>Latest tournament news, press releases, match reports, and interviews</p>
+          <h1>
+            {hero.title.split(' ').slice(0, -1).join(' ')}{' '}
+            <span className="text-gold">{hero.title.split(' ').slice(-1)[0]}</span>
+          </h1>
+          <p>{hero.subtitle}</p>
         </div>
       </section>
 

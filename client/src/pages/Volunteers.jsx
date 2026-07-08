@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
+import { useContent } from '../context/ContentContext'
 
 export default function Volunteers() {
+  const pageContent = useContent('volunteers')
+  const hero = pageContent?.hero || { title: 'Be a Volunteer', subtitle: 'Join our team of passionate volunteers and be part of football history' }
+  const benefits = pageContent?.benefits || []
+  const roles = pageContent?.roles || []
+  const training = pageContent?.training || []
   const [submitted, setSubmitted] = useState(false)
 
   return (
@@ -8,8 +14,11 @@ export default function Volunteers() {
       <section className="page-hero">
         <div className="container">
           <div className="breadcrumb">Home <span>›</span> Volunteers</div>
-          <h1>Be a <span className="text-gold">Volunteer</span></h1>
-          <p>Join our team of passionate volunteers and be part of football history</p>
+          <h1>
+            {hero.title.split(' ').slice(0, -1).join(' ')}{' '}
+            <span className="text-gold">{hero.title.split(' ').slice(-1)[0]}</span>
+          </h1>
+          <p>{hero.subtitle}</p>
         </div>
       </section>
 
@@ -22,16 +31,7 @@ export default function Volunteers() {
             <div className="divider" />
           </div>
           <div className="grid-4">
-            {[
-              { icon:'🏆', title:'Be Part of History', desc:'Help organize Edo State\'s greatest football tournament.' },
-              { icon:'🎓', title:'Learn & Grow', desc:'Gain event management skills and sports industry experience.' },
-              { icon:'🤝', title:'Network', desc:'Connect with football professionals, media, and corporate sponsors.' },
-              { icon:'🎁', title:'Exclusive Benefits', desc:'Free tournament merchandise, meals, and access to all matches.' },
-              { icon:'📜', title:'Certificate', desc:'Receive an official volunteer certificate and reference letter.' },
-              { icon:'⚽', title:'Football Access', desc:'Behind-the-scenes access including training sessions and player areas.' },
-              { icon:'👥', title:'Community', desc:'Join a family of passionate football lovers from across Edo State.' },
-              { icon:'💼', title:'Career Boost', desc:'Build your CV with a prestigious sports event management credential.' },
-            ].map(b => (
+            {benefits.map(b => (
               <div key={b.title} className="card" style={{padding:24,textAlign:'center'}}>
                 <div style={{fontSize:'2rem',marginBottom:10}}>{b.icon}</div>
                 <h4 style={{color:'var(--gold)',marginBottom:6,fontSize:'0.95rem'}}>{b.title}</h4>
@@ -51,16 +51,7 @@ export default function Volunteers() {
             <div className="divider" />
           </div>
           <div className="grid-3">
-            {[
-              { role:'Match Day Steward', slots:40, desc:'Manage crowd flow, assist fans with seating, and ensure a safe match environment.', requirements:'18+, physically fit, team player' },
-              { role:'Media & Photography', slots:12, desc:'Assist the media team with photography, video, and social media content creation.', requirements:'Photography experience preferred' },
-              { role:'Registration Desk', slots:20, desc:'Manage team and fan registration, handle ticketing, and provide information.', requirements:'Customer service skills, organized' },
-              { role:'Medical Support', slots:8, desc:'Assist medical personnel with first aid, logistics, and player welfare.', requirements:'First aid certification preferred' },
-              { role:'Transportation Coordinator', slots:15, desc:'Coordinate team transport, logistics, and driver management across venues.', requirements:'Valid driver\'s license, local knowledge' },
-              { role:'Hospitality & VIP Host', slots:10, desc:'Manage VIP areas, sponsor hospitality, and ensure top-tier guest experience.', requirements:'Presentable, fluent in English' },
-              { role:'Technical & IT Support', slots:6, desc:'Support live streaming, scoring systems, and technical equipment setup.', requirements:'IT skills required' },
-              { role:'Community Ambassador', slots:25, desc:'Represent the tournament in communities, promote matches, and engage fans.', requirements:'Outgoing personality, social media savvy' },
-            ].map(r => (
+            {roles.map(r => (
               <div key={r.role} className="card" style={{padding:24}}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
                   <h4 style={{color:'var(--gold)'}}>{r.role}</h4>
@@ -85,13 +76,7 @@ export default function Volunteers() {
               <h2>Training Schedule</h2>
               <p style={{marginBottom:24}}>All accepted volunteers will undergo a structured training programme to prepare them for their roles.</p>
               <div style={{display:'flex',flexDirection:'column',gap:12}}>
-                {[
-                  { date:'March 10, 2027', session:'Orientation & Welcome Day', location:'Oredo LGA Civic Centre' },
-                  { date:'March 12, 2027', session:'Role-Specific Training', location:'University of Benin' },
-                  { date:'March 14, 2027', session:'Venue Walkthrough & Simulation', location:'Samuel Ogbemudia Stadium' },
-                  { date:'March 16, 2027', session:'First Aid & Emergency Procedures', location:'Oredo LGA Health Centre' },
-                  { date:'March 18, 2027', session:'Final Briefing & Kit Distribution', location:'University of Benin Bowl' },
-                ].map(t => (
+                {training.map(t => (
                   <div key={t.date} className="card" style={{padding:'14px 20px',display:'flex',gap:16,alignItems:'flex-start'}}>
                     <div style={{fontFamily:'var(--font-heading)',fontSize:'0.85rem',fontWeight:700,color:'var(--gold)',minWidth:100}}>{t.date}</div>
                     <div>
