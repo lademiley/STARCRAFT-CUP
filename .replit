@@ -45,3 +45,4 @@ externalPort = 3002
 
 [userenv.shared]
 ADMIN_EMAIL = "admin@starcraft2026.com"
+ADMIN_PASSWORD = "SC@UPMyRmge!9"
