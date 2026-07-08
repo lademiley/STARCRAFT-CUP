@@ -25,6 +25,7 @@ import PaymentSettings from './modules/PaymentSettings'
 import Merchandise from './modules/Merchandise'
 import AuditLogs from './modules/AuditLogs'
 import WebsiteSettings from './modules/WebsiteSettings'
+import HomePageEditor from './modules/HomePageEditor'
 import RolePermissions from './modules/RolePermissions'
 import TeamManagerDashboard from './modules/TeamManagerDashboard'
 import TeamRegistrations from './modules/TeamRegistrations'
@@ -66,6 +67,7 @@ const MENU = [
   {
     category: 'Content',
     items: [
+      { id: 'homeEditor', label: 'Home Page Editor', icon: '🏠' },
       { id: 'news', label: 'News & Blog CMS', icon: '📰' },
       { id: 'gallery', label: 'Gallery Management', icon: '🖼️' },
     ]
@@ -117,6 +119,7 @@ const MODULE_MAP = {
   notifications: Notifications,
   audit: AuditLogs,
   settings: WebsiteSettings,
+  homeEditor: HomePageEditor,
   roles: RolePermissions,
 }
 

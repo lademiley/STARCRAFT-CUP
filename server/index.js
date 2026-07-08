@@ -477,6 +477,127 @@ app.get('/api/users', (req, res) => {
   res.json({ users: allUsers })
 })
 
+// ---------- Site Content (admin-editable page copy, starting with Home) ----------
+// Keyed by page slug so this can grow to about/tournament/etc. without changing shape.
+let siteContent = {
+  home: {
+    hero: {
+      badge: '🏆 Official Tournament',
+      titleLine1: 'STARCRAFT',
+      titleLine2: 'CUP 2026',
+      subtitle: 'Premier Youth Football Tournament • U17–U20 • Edo State, Nigeria',
+      location: '📍 Edo State, Nigeria',
+      venue: '🏟️ Ugbowo Campus Main Bowl',
+      dates: '📅 Dec 1 – 20, 2026',
+    },
+    overview: {
+      eyebrow: 'About the Tournament',
+      heading: "Edo State's Premier U17–U20 Football Competition",
+      paragraph1: 'The StarCraft Cup 2026 — Premier Edition — is Edo State\'s most ambitious youth football tournament, bringing together 20 teams from all 18 LGAs, the tournament host, and the defending champion to compete for glory and a share of ₦10 million in prizes.',
+      paragraph2: 'Played across two iconic Edo State venues — Ugbowo Campus Main Bowl and Ogbemudia Main Bowl — from December 1 to 20, 2026, the tournament is designed to unearth the next generation of Nigerian football stars at U17–U20 level.',
+      features: ['20 LGA Teams', 'U17–U20 Age Group', '4 Groups of 5', '₦10M Prize Pool', 'Two World-class Venues', 'Dec 1–20, 2026'],
+      infoCard: [
+        { label: 'Edition', value: 'Premier Edition — 2026' },
+        { label: 'Location', value: 'Edo State, Nigeria' },
+        { label: 'Age Group', value: 'U17 – U20' },
+        { label: 'Group Venue', value: 'Ugbowo Campus Main Bowl' },
+        { label: 'Final Venue', value: 'Ogbemudia Main Bowl' },
+        { label: 'Format', value: '4 Groups of 5 → Knockout' },
+        { label: 'Teams', value: '20 (18 LGAs + Host + Champion)' },
+        { label: 'Dates', value: 'Dec 1 – 20, 2026' },
+      ],
+    },
+    hostCity: {
+      eyebrow: 'Venue',
+      heading: 'Host State: Edo State, Nigeria',
+      subheading: 'A land of culture, history, and deep football passion',
+      cards: [
+        { icon: '🏛️', title: 'Historical Legacy', desc: 'Edo State is home to the ancient Benin Kingdom, one of the oldest and most sophisticated civilisations in Africa.' },
+        { icon: '🏟️', title: 'Two World-Class Venues', desc: 'Ugbowo Campus Main Bowl (10,000) hosts group/knockout matches; Ogbemudia Main Bowl (20,000) crowns the champion.' },
+        { icon: '⚽', title: 'Football Culture', desc: 'Edo State has produced Super Eagles legends including John Obi Mikel, Victor Moses, and Osaze Odemwingie.' },
+        { icon: '🧒', title: 'U17–U20 Showcase', desc: 'The Premier Edition gives Edo\'s most gifted youth players (U17–U20) their biggest competitive stage yet.' },
+        { icon: '🏙️', title: 'Modern Infrastructure', desc: 'Excellent road networks, hotels, and facilities across all 18 LGAs making travel and logistics seamless.' },
+        { icon: '🌿', title: 'All 18 LGAs Represented', desc: 'Every Local Government Area in Edo State sends one team — making this a true celebration of the whole state.' },
+      ],
+    },
+    testimonials: {
+      eyebrow: 'Voices',
+      heading: 'What People Are Saying',
+      items: [
+        { quote: 'This is the best-organized grassroots football tournament I have ever attended. The level of professionalism is outstanding.', name: 'Chief Osaro Idehen', role: 'Football Fan, Benin City' },
+        { quote: 'The StarCraft Cup has given our boys a platform to shine. This tournament can change lives and produce the next Super Eagles stars.', name: 'Coach Victor Ihejirika', role: 'Head Coach, Oredo United' },
+        { quote: "As a sponsor, I'm proud to be associated with an event that promotes youth development and community pride in Edo State.", name: 'Mrs. Grace Akhimienro', role: 'Corporate Sponsor' },
+      ],
+    },
+    newsletter: {
+      heading: 'Stay in the Loop',
+      text: 'Get match alerts, team news, and exclusive tournament updates delivered to your inbox.',
+    },
+  },
+}
+
+// Public: anyone can fetch a page's content (public site renders from this)
+app.get('/api/content/:page', (req, res) => {
+  const page = siteContent[req.params.page]
+  if (!page) return res.status(404).json({ error: 'Unknown page' })
+  res.json({ page: req.params.page, content: page })
+})
+
+// Strict per-page schemas so a malformed admin payload can never reach the
+// public site and crash rendering (e.g. .map() on a missing array).
+const isStr = v => typeof v === 'string'
+const isStrArray = v => Array.isArray(v) && v.every(isStr)
+const isShapeArray = shape => v => Array.isArray(v) && v.every(item =>
+  item && typeof item === 'object' && Object.keys(shape).every(k => isStr(item[k]))
+)
+const CONTENT_SCHEMAS = {
+  home: {
+    hero: { badge: isStr, titleLine1: isStr, titleLine2: isStr, subtitle: isStr, location: isStr, venue: isStr, dates: isStr },
+    overview: {
+      eyebrow: isStr, heading: isStr, paragraph1: isStr, paragraph2: isStr,
+      features: isStrArray,
+      infoCard: isShapeArray({ label: isStr, value: isStr }),
+    },
+    hostCity: {
+      eyebrow: isStr, heading: isStr, subheading: isStr,
+      cards: isShapeArray({ icon: isStr, title: isStr, desc: isStr }),
+    },
+    testimonials: {
+      eyebrow: isStr, heading: isStr,
+      items: isShapeArray({ quote: isStr, name: isStr, role: isStr }),
+    },
+    newsletter: { heading: isStr, text: isStr },
+  },
+}
+
+function validateContent(page, content) {
+  const schema = CONTENT_SCHEMAS[page]
+  if (!schema) return 'No validation schema for this page'
+  if (!content || typeof content !== 'object' || Array.isArray(content)) return 'content must be an object'
+  for (const [section, fields] of Object.entries(schema)) {
+    const value = content[section]
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return `Missing or invalid section "${section}"`
+    for (const [field, check] of Object.entries(fields)) {
+      if (!check(value[field])) return `Invalid field "${section}.${field}"`
+    }
+  }
+  return null
+}
+
+// Admin: replace a page's content wholesale. We only accept pages that already
+// exist in siteContent so this can't be used to inject arbitrary new keys, and
+// we validate the full shape so a bad payload can never reach the public site.
+app.put('/api/content/:page', requireAdmin, (req, res) => {
+  const key = req.params.page
+  if (!siteContent[key]) return res.status(404).json({ error: 'Unknown page' })
+  const { content } = req.body
+  const validationError = validateContent(key, content)
+  if (validationError) return res.status(400).json({ error: validationError })
+  siteContent[key] = content
+  console.log(`[SiteContent] "${key}" page updated by admin`)
+  res.json({ success: true, page: key, content: siteContent[key] })
+})
+
 // ---------- Payment Settings ----------
 // Stores admin-configurable payment methods shown to fans on the Tickets page
 let paymentSettings = {

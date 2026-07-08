@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { AuthProvider } from './context/AuthContext'
+import { ContentProvider } from './context/ContentContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -48,6 +49,7 @@ function PublicLayout({ children }) {
 function App() {
   return (
     <AuthProvider>
+      <ContentProvider>
       <Router>
         <ScrollToTop />
         <Routes>
@@ -85,6 +87,7 @@ function App() {
           <Route path="/team-dashboard" element={<TeamDashboard />} />
         </Routes>
       </Router>
+      </ContentProvider>
     </AuthProvider>
   )
 }

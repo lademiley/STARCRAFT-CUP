@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { teams, players, fixtures, news, sponsors, tournamentStats } from '../data/mockData'
+import { useContent } from '../context/ContentContext'
 
 // Countdown Timer
 function Countdown() {
@@ -69,6 +70,8 @@ function Particles() {
 }
 
 export default function Home() {
+  const home = useContent('home')
+  const { hero, overview, hostCity, testimonials, newsletter } = home
   const [activeTab, setActiveTab] = useState('upcoming')
   const upcoming = fixtures.filter(f=>f.status==='upcoming').slice(0,3)
   const completed = fixtures.filter(f=>f.status==='completed').slice(0,3)
@@ -81,18 +84,18 @@ export default function Home() {
         <Particles />
         <div className="hero-bg" />
         <div className="container hero-content">
-          <div className="hero-badge"><span className="badge badge-gold">🏆 Official Tournament</span></div>
+          <div className="hero-badge"><span className="badge badge-gold">{hero.badge}</span></div>
           <h1 className="hero-title">
-            <span className="text-shimmer">STARCRAFT</span>
-            <br /><span style={{color:'#fff'}}>CUP 2026</span>
+            <span className="text-shimmer">{hero.titleLine1}</span>
+            <br /><span style={{color:'#fff'}}>{hero.titleLine2}</span>
           </h1>
-          <p className="hero-sub">Premier Youth Football Tournament • U17–U20 • Edo State, Nigeria</p>
+          <p className="hero-sub">{hero.subtitle}</p>
           <div className="hero-info">
-            <div className="hero-info-item"><span>📍</span><span>Edo State, Nigeria</span></div>
+            <div className="hero-info-item"><span>{hero.location}</span></div>
             <div className="hero-divider" />
-            <div className="hero-info-item"><span>🏟️</span><span>Ugbowo Campus Main Bowl</span></div>
+            <div className="hero-info-item"><span>{hero.venue}</span></div>
             <div className="hero-divider" />
-            <div className="hero-info-item"><span>📅</span><span>Dec 1 – 20, 2026</span></div>
+            <div className="hero-info-item"><span>{hero.dates}</span></div>
           </div>
           <Countdown />
           <div className="hero-ctas">
@@ -136,12 +139,12 @@ export default function Home() {
         <div className="container">
           <div className="overview-grid">
             <div className="overview-text">
-              <span className="eyebrow">About the Tournament</span>
-              <h2>Edo State's Premier U17–U20 Football Competition</h2>
-              <p style={{marginBottom:16}}>The StarCraft Cup 2026 — Premier Edition — is Edo State's most ambitious youth football tournament, bringing together 20 teams from all 18 LGAs, the tournament host, and the defending champion to compete for glory and a share of ₦10 million in prizes.</p>
-              <p style={{marginBottom:24}}>Played across two iconic Edo State venues — Ugbowo Campus Main Bowl and Ogbemudia Main Bowl — from December 1 to 20, 2026, the tournament is designed to unearth the next generation of Nigerian football stars at U17–U20 level.</p>
+              <span className="eyebrow">{overview.eyebrow}</span>
+              <h2>{overview.heading}</h2>
+              <p style={{marginBottom:16}}>{overview.paragraph1}</p>
+              <p style={{marginBottom:24}}>{overview.paragraph2}</p>
               <div className="overview-features">
-                {['20 LGA Teams','U17–U20 Age Group','4 Groups of 5','₦10M Prize Pool','Two World-class Venues','Dec 1–20, 2026'].map(f => (
+                {overview.features.map(f => (
                   <div key={f} className="feature-chip">✦ {f}</div>
                 ))}
               </div>
@@ -151,19 +154,10 @@ export default function Home() {
               <div className="card glass-panel" style={{padding:0,overflow:'visible'}}>
                 <div style={{padding:'28px 28px 0',borderBottom:'1px solid rgba(212,175,55,0.15)',paddingBottom:20}}>
                   <h4 style={{color:'var(--gold)',marginBottom:16,fontFamily:'var(--font-heading)',letterSpacing:'1px'}}>🏆 Tournament Info</h4>
-                  {[
-                    ['Edition','Premier Edition — 2026'],
-                    ['Location','Edo State, Nigeria'],
-                    ['Age Group','U17 – U20'],
-                    ['Group Venue','Ugbowo Campus Main Bowl'],
-                    ['Final Venue','Ogbemudia Main Bowl'],
-                    ['Format','4 Groups of 5 → Knockout'],
-                    ['Teams','20 (18 LGAs + Host + Champion)'],
-                    ['Dates','Dec 1 – 20, 2026'],
-                  ].map(([k,v]) => (
-                    <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
-                      <span style={{fontSize:'0.85rem',color:'rgba(255,255,255,0.5)'}}>{k}</span>
-                      <span style={{fontSize:'0.85rem',fontWeight:600,color:'var(--white)'}}>{v}</span>
+                  {overview.infoCard.map(({label,value}) => (
+                    <div key={label} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
+                      <span style={{fontSize:'0.85rem',color:'rgba(255,255,255,0.5)'}}>{label}</span>
+                      <span style={{fontSize:'0.85rem',fontWeight:600,color:'var(--white)'}}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -379,20 +373,13 @@ export default function Home() {
       <section className="section">
         <div className="container">
           <div className="section-header">
-            <span className="eyebrow">Venue</span>
-            <h2>Host State: Edo State, Nigeria</h2>
-            <p>A land of culture, history, and deep football passion</p>
+            <span className="eyebrow">{hostCity.eyebrow}</span>
+            <h2>{hostCity.heading}</h2>
+            <p>{hostCity.subheading}</p>
             <div className="divider" />
           </div>
           <div className="grid-3">
-            {[
-              { icon:'🏛️', title:'Historical Legacy', desc:'Edo State is home to the ancient Benin Kingdom, one of the oldest and most sophisticated civilisations in Africa.' },
-              { icon:'🏟️', title:'Two World-Class Venues', desc:'Ugbowo Campus Main Bowl (10,000) hosts group/knockout matches; Ogbemudia Main Bowl (20,000) crowns the champion.' },
-              { icon:'⚽', title:'Football Culture', desc:'Edo State has produced Super Eagles legends including John Obi Mikel, Victor Moses, and Osaze Odemwingie.' },
-              { icon:'🧒', title:'U17–U20 Showcase', desc:'The Premier Edition gives Edo\'s most gifted youth players (U17–U20) their biggest competitive stage yet.' },
-              { icon:'🏙️', title:'Modern Infrastructure', desc:'Excellent road networks, hotels, and facilities across all 18 LGAs making travel and logistics seamless.' },
-              { icon:'🌿', title:'All 18 LGAs Represented', desc:'Every Local Government Area in Edo State sends one team — making this a true celebration of the whole state.' },
-            ].map(item => (
+            {hostCity.cards.map(item => (
               <div key={item.title} className="card" style={{padding:28}}>
                 <div style={{fontSize:'2.5rem',marginBottom:14}}>{item.icon}</div>
                 <h4 style={{color:'var(--gold)',marginBottom:8}}>{item.title}</h4>
@@ -407,16 +394,12 @@ export default function Home() {
       <section className="section section-dark">
         <div className="container">
           <div className="section-header">
-            <span className="eyebrow">Voices</span>
-            <h2>What People Are Saying</h2>
+            <span className="eyebrow">{testimonials.eyebrow}</span>
+            <h2>{testimonials.heading}</h2>
             <div className="divider" />
           </div>
           <div className="grid-3">
-            {[
-              { quote:"This is the best-organized grassroots football tournament I have ever attended. The level of professionalism is outstanding.", name:"Chief Osaro Idehen", role:"Football Fan, Benin City" },
-              { quote:"The StarCraft Cup has given our boys a platform to shine. This tournament can change lives and produce the next Super Eagles stars.", name:"Coach Victor Ihejirika", role:"Head Coach, Oredo United" },
-              { quote:"As a sponsor, I'm proud to be associated with an event that promotes youth development and community pride in Edo State.", name:"Mrs. Grace Akhimienro", role:"Corporate Sponsor" },
-            ].map(t => (
+            {testimonials.items.map(t => (
               <div key={t.name} className="card glass-panel" style={{padding:28}}>
                 <div style={{fontSize:'2rem',color:'var(--gold)',marginBottom:12,fontFamily:'Georgia'}}>❝</div>
                 <p style={{fontSize:'0.95rem',fontStyle:'italic',lineHeight:1.7,color:'rgba(255,255,255,0.85)',marginBottom:20}}>{t.quote}</p>
@@ -436,8 +419,8 @@ export default function Home() {
           <div className="newsletter-box card glass-panel">
             <div style={{textAlign:'center',maxWidth:560,margin:'0 auto'}}>
               <span style={{fontSize:'3rem'}}>📧</span>
-              <h2 style={{margin:'16px 0 8px'}}>Stay in the Loop</h2>
-              <p style={{marginBottom:32}}>Get match alerts, team news, and exclusive tournament updates delivered to your inbox.</p>
+              <h2 style={{margin:'16px 0 8px'}}>{newsletter.heading}</h2>
+              <p style={{marginBottom:32}}>{newsletter.text}</p>
               <div style={{display:'flex',gap:12,flexWrap:'wrap',justifyContent:'center'}}>
                 <input type="email" placeholder="Enter your email address" className="form-control" style={{flex:1,minWidth:250,maxWidth:380}} />
                 <button className="btn btn-primary">Subscribe Now</button>
