@@ -3,6 +3,7 @@ import { sponsors } from '../data/mockData'
 
 export default function Sponsors() {
   const [showForm, setShowForm] = useState(false)
+  const [bioSponsor, setBioSponsor] = useState(null)
 
   return (
     <div>
@@ -34,15 +35,35 @@ export default function Sponsors() {
                   <div>
                     <span className="badge" style={{background:'rgba(212,175,55,0.2)',color:'var(--gold)',border:'1px solid rgba(212,175,55,0.4)',marginBottom:12,display:'inline-block',fontSize:'0.65rem',fontWeight:700,padding:'4px 14px',borderRadius:30}}>PLATINUM SPONSOR</span>
                     <h3 className="sponsor-card-title" style={{color:'var(--gold)',marginBottom:8}}>{s.name}</h3>
-                    <p style={{color:'rgba(255,255,255,0.7)',marginBottom:16}}>{s.description}</p>
+                    <p className="sponsor-card-desc" style={{color:'rgba(255,255,255,0.7)',marginBottom:16}}>{s.description}</p>
                   </div>
-                  <a href={s.website} className="btn btn-secondary btn-sm">Visit Website →</a>
+                  <div className="sponsor-card-actions">
+                    <a href={s.website} className="btn btn-secondary btn-sm">Visit Website →</a>
+                    {s.bio && (
+                      <button type="button" className="btn btn-secondary btn-sm" onClick={() => setBioSponsor(s)}>Read More →</button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Sponsor Bio Modal */}
+      {bioSponsor && (
+        <div className="sponsor-bio-overlay" onClick={() => setBioSponsor(null)}>
+          <div className="card sponsor-bio-modal" onClick={e => e.stopPropagation()}>
+            <button type="button" className="sponsor-bio-close" aria-label="Close" onClick={() => setBioSponsor(null)}>×</button>
+            {bioSponsor.image
+              ? <img src={bioSponsor.image} alt={bioSponsor.name} className="sponsor-bio-img" />
+              : <div className="sponsor-bio-emoji">{bioSponsor.logo}</div>}
+            <span className="badge" style={{background:'rgba(212,175,55,0.2)',color:'var(--gold)',border:'1px solid rgba(212,175,55,0.4)',marginBottom:12,display:'inline-block',fontSize:'0.65rem',fontWeight:700,padding:'4px 14px',borderRadius:30}}>PLATINUM SPONSOR</span>
+            <h3 style={{color:'var(--gold)',marginBottom:12}}>{bioSponsor.name}</h3>
+            <p style={{color:'rgba(255,255,255,0.8)',lineHeight:1.7}}>{bioSponsor.bio}</p>
+          </div>
+        </div>
+      )}
 
       {/* Gold */}
       <section className="section section-dark">
@@ -211,7 +232,7 @@ export default function Sponsors() {
       <style>{`
         .eyebrow { font-family: var(--font-secondary); font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 12px; }
 
-        .platinum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 28px; align-items: stretch; }
+        .platinum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 28px; align-items: stretch; }
         .sponsor-card-lg { display: flex; overflow: hidden; height: 100%; min-height: 220px; }
         .sponsor-logo-area { width: 190px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .platinum-bg { background: linear-gradient(135deg,rgba(140,106,18,0.3),rgba(212,175,55,0.08)); }
@@ -219,6 +240,15 @@ export default function Sponsors() {
         .sponsor-logo-img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .sponsor-card-body { flex: 1; min-width: 0; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
         .sponsor-card-title { font-size: clamp(1.05rem, 2vw, 1.4rem); line-height: 1.25; word-break: break-word; overflow-wrap: break-word; }
+        .sponsor-card-desc { font-size: 0.9rem; line-height: 1.5; }
+        .sponsor-card-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+        .sponsor-bio-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 1000; }
+        .sponsor-bio-modal { position: relative; max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 36px; text-align: center; }
+        .sponsor-bio-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: rgba(255,255,255,0.6); font-size: 1.6rem; line-height: 1; cursor: pointer; }
+        .sponsor-bio-close:hover { color: var(--gold); }
+        .sponsor-bio-img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin: 0 auto 20px; display: block; border: 3px solid rgba(212,175,55,0.5); }
+        .sponsor-bio-emoji { font-size: 4rem; margin-bottom: 20px; }
 
         @media (max-width: 900px) {
           .platinum-grid { grid-template-columns: 1fr; }
@@ -227,6 +257,7 @@ export default function Sponsors() {
           .sponsor-card-lg { flex-direction: column; min-height: 0; }
           .sponsor-logo-area { width: 100%; height: 160px; }
           .sponsor-card-body { padding: 24px; }
+          .sponsor-bio-modal { padding: 28px 20px; }
         }
       `}</style>
     </div>
