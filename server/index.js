@@ -617,9 +617,9 @@ let siteContent = {
     },
     info: [
       { icon: '📍', label: 'Office Address', value: 'Oredo LGA Secretariat, Ring Road, Benin City, Edo State, Nigeria' },
-      { icon: '📞', label: 'Phone Numbers', value: '+234 800 STARCRAFT\n+234 811 234 5678' },
+      { icon: '📞', label: 'Phone Numbers', value: '+2348155576539\n+2348056042784\n+2347056445844' },
       { icon: '✉️', label: 'Email', value: 'info@starcraftcup.ng\npress@starcraftcup.ng' },
-      { icon: '💬', label: 'WhatsApp', value: '+234 811 234 5678' },
+      { icon: '💬', label: 'WhatsApp', value: '+2349077575347' },
     ],
     faq: [
       { q: 'How do I register my team?', a: 'Click "Register Team" on the home page or visit our team registration page. Registration costs ₦25,000 per team and is open until February 15, 2027.' },

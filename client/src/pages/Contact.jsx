@@ -22,9 +22,9 @@ export default function Contact() {
               <div style={{display:'flex',flexDirection:'column',gap:16,marginBottom:36}}>
                 {[
                   { icon:'📍', label:'Office Address', value:'Oredo LGA Secretariat, Ring Road, Benin City, Edo State, Nigeria' },
-                  { icon:'📞', label:'Phone Numbers', value:'+234 800 STARCRAFT\n+234 811 234 5678' },
+                  { icon:'📞', label:'Phone Numbers', value:'+2348155576539\n+2348056042784\n+2347056445844' },
                   { icon:'✉️', label:'Email', value:'info@starcraftcup.ng\npress@starcraftcup.ng' },
-                  { icon:'💬', label:'WhatsApp', value:'+234 811 234 5678' },
+                  { icon:'💬', label:'WhatsApp', value:'+2349077575347' },
                 ].map(c => (
                   <div key={c.label} className="card" style={{padding:'20px 24px',display:'flex',gap:16}}>
                     <div style={{fontSize:'1.8rem',flexShrink:0}}>{c.icon}</div>
