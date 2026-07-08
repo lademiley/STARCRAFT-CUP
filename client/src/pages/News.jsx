@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { news } from '../data/mockData'
+import cupImg from '../assets/cup.png'
 
 const categories = ['All', 'Tournament Updates', 'Match Reports', 'Press Releases', 'Statistics', 'Awards', 'Interviews']
 
@@ -76,7 +77,7 @@ export default function News() {
           {filtered.length > 0 && (
             <div className="card featured-article" onClick={()=>setSelected(filtered[0].id)} style={{marginBottom:32,cursor:'pointer'}}>
               <div className="fa-img" style={{background:bgColors[0]}}>
-                <span style={{fontSize:'5rem',opacity:0.4}}>⚽</span>
+                <img src={cupImg} alt="StarCraft Cup trophy" style={{height:'80%',maxHeight:260,width:'auto',objectFit:'contain'}} />
                 <div className="fa-overlay">
                   <span className="badge badge-gold">{filtered[0].category}</span>
                   <div style={{marginTop:8,fontFamily:'var(--font-secondary)',fontSize:'0.8rem',color:'rgba(255,255,255,0.6)'}}>FEATURED STORY</div>
