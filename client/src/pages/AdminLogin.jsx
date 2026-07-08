@@ -40,14 +40,6 @@ export default function AdminLogin() {
           <p style={styles.subtitle}>StarCraft Cup 2026 — Restricted Access</p>
         </div>
 
-        {/* Hint */}
-        <div style={styles.hint}>
-          <span style={{ color: '#D4AF37', fontWeight: 700 }}>Demo Credentials</span><br />
-          <small style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace' }}>
-            admin@starcraft2026.com &nbsp;|&nbsp; SC2026@Admin
-          </small>
-        </div>
-
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.field}>
             <label style={styles.label}>Email Address</label>
@@ -155,16 +147,6 @@ const styles = {
     color: 'rgba(255,255,255,0.4)',
     letterSpacing: 1,
     textTransform: 'uppercase',
-  },
-  hint: {
-    background: 'rgba(212,175,55,0.06)',
-    border: '1px solid rgba(212,175,55,0.15)',
-    borderRadius: 10,
-    padding: '10px 14px',
-    marginBottom: 24,
-    fontSize: '0.8rem',
-    textAlign: 'center',
-    fontFamily: "'Poppins', sans-serif",
   },
   form: { display: 'flex', flexDirection: 'column', gap: 18 },
   field: { display: 'flex', flexDirection: 'column', gap: 6 },

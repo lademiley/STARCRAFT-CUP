@@ -122,10 +122,13 @@ app.post('/api/auth/login', (req, res) => {
 })
 
 // ---------- Admin auth ----------
-// Admin credentials mirrored from the frontend demo login. In production this
-// should live in a real user/roles table with hashed passwords.
-const ADMIN_EMAIL = 'admin@starcraft2026.com'
-const ADMIN_PASSWORD_HASH = hashPassword('SC2026@Admin')
+// Admin credentials loaded from environment variables. Set ADMIN_EMAIL and
+// ADMIN_PASSWORD in your environment secrets before deploying to production.
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@starcraft2026.com'
+const ADMIN_PASSWORD_HASH = hashPassword(process.env.ADMIN_PASSWORD || 'SC2026@Admin')
+if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+  console.warn('[WARN] ADMIN_EMAIL / ADMIN_PASSWORD are not set — using insecure defaults. Set them via environment secrets.')
+}
 
 app.post('/api/auth/admin-login', (req, res) => {
   const { email, password } = req.body
@@ -446,13 +449,13 @@ app.get('/api/orders/my', requireAuth, (req, res) => {
 })
 
 // Admin: get all orders
-app.get('/api/orders', (req, res) => {
+app.get('/api/orders', requireAdmin, (req, res) => {
   const allOrders = [...orders.values()].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   res.json({ orders: allOrders })
 })
 
 // Admin: confirm a payment
-app.patch('/api/orders/:id/confirm', (req, res) => {
+app.patch('/api/orders/:id/confirm', requireAdmin, (req, res) => {
   const order = orders.get(req.params.id)
   if (!order) return res.status(404).json({ error: 'Order not found' })
   order.status = 'confirmed'
@@ -463,7 +466,7 @@ app.patch('/api/orders/:id/confirm', (req, res) => {
 })
 
 // Admin: reject / cancel an order
-app.patch('/api/orders/:id/reject', (req, res) => {
+app.patch('/api/orders/:id/reject', requireAdmin, (req, res) => {
   const order = orders.get(req.params.id)
   if (!order) return res.status(404).json({ error: 'Order not found' })
   order.status = 'rejected'
@@ -472,7 +475,7 @@ app.patch('/api/orders/:id/reject', (req, res) => {
 })
 
 // Admin: list all registered users (strip password hashes)
-app.get('/api/users', (req, res) => {
+app.get('/api/users', requireAdmin, (req, res) => {
   const allUsers = [...users.values()].map(({ passwordHash, ...safe }) => safe)
   res.json({ users: allUsers })
 })
