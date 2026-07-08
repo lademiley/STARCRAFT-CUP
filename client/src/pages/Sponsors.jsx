@@ -162,7 +162,9 @@ export default function Sponsors() {
           <div className="grid-3">
             {benefits.map(b => (
               <div key={b.title} className="card" style={{padding:28}}>
-                <div style={{fontSize:'2.5rem',marginBottom:14}}>{b.icon}</div>
+                {b.image
+                  ? <img src={b.image} alt={b.title} style={{width:'3rem',height:'3rem',objectFit:'contain',marginBottom:14}} />
+                  : <div style={{fontSize:'2.5rem',marginBottom:14}}>{b.icon}</div>}
                 <h4 style={{color:'var(--gold)',marginBottom:8}}>{b.title}</h4>
                 <p style={{fontSize:'0.9rem',color:'rgba(255,255,255,0.7)'}}>{b.desc}</p>
               </div>

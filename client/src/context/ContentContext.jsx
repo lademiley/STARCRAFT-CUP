@@ -64,12 +64,12 @@ const FALLBACK = {
   sponsors: {
     hero: { title: 'Our Sponsors', subtitle: 'The partners who make StarCraft Cup 2027 possible' },
     benefits: [
-      { icon: '👥', title: 'Massive Reach', desc: 'Direct access to 47,500+ match attendees and 200,000+ social media followers across Nigeria.' },
-      { icon: '📺', title: 'Broadcast Coverage', desc: 'Brand visibility on Supersport, Channels TV, and Silverbird Television throughout the tournament.' },
-      { icon: '🏆', title: 'Brand Association', desc: "Associate your brand with excellence, youth development, and Nigeria's brightest football talent." },
-      { icon: '🤝', title: 'Community Goodwill', desc: 'Build deep community goodwill by investing in the development of sport in Edo State.' },
-      { icon: '📱', title: 'Digital Exposure', desc: 'Prominent placement on website, social media, email campaigns, and official tournament app.' },
-      { icon: '🎖️', title: 'Exclusive Access', desc: 'VIP match tickets, access to players and coaches, and exclusive sponsor events.' },
+      { icon: '👥', image: '/sponsors/benefit-reach.png', title: 'Massive Reach', desc: 'Direct access to 47,500+ match attendees and 200,000+ social media followers across Nigeria.' },
+      { icon: '📺', image: '/sponsors/benefit-broadcast.png', title: 'Broadcast Coverage', desc: 'Brand visibility on Supersport, Channels TV, and Silverbird Television throughout the tournament.' },
+      { icon: '🏆', image: '/sponsors/benefit-trophy.png', title: 'Brand Association', desc: "Associate your brand with excellence, youth development, and Nigeria's brightest football talent." },
+      { icon: '🤝', image: '/sponsors/benefit-community.png', title: 'Community Goodwill', desc: 'Build deep community goodwill by investing in the development of sport in Edo State.' },
+      { icon: '📱', image: '/sponsors/benefit-digital.png', title: 'Digital Exposure', desc: 'Prominent placement on website, social media, email campaigns, and official tournament app.' },
+      { icon: '🎖️', image: '/sponsors/benefit-exclusive.png', title: 'Exclusive Access', desc: 'VIP match tickets, access to players and coaches, and exclusive sponsor events.' },
     ],
     packages: [
       { tier: 'Platinum', price: '₦5,000,000', color: '#D4AF37', perks: 'Main shirt logo\nTV broadcast mentions\n10 VIP tickets per match\nFull digital package\nExclusive sponsor event' },
