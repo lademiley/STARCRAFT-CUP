@@ -39,7 +39,9 @@ Premium football tournament website for **StarCraft Cup 2027** — a world-class
 ```bash
 npm run dev
 ```
-This starts both the Vite frontend (port 5000) and Express backend (port 3001) concurrently.
+This starts both the Vite frontend (port 5000) and Express backend (port 3001) concurrently. Run via the "Start application" workflow. Dependencies must be installed with `npm install` before first run (not committed to the repo).
+
+Note: the two 401 responses seen in the browser console on page load are expected — `AuthContext` probes `/api/auth/me` to check for an existing session and gets 401 when logged out.
 
 ## User Preferences
 - Premium, luxury aesthetic (gold + dark red)
