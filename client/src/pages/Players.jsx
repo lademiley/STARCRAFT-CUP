@@ -128,7 +128,7 @@ export default function Players() {
                 </div>
                 <div className="card" style={{padding:28}}>
                   <h3 style={{color:'var(--gold)',marginBottom:16}}>📊 Performance Breakdown</h3>
-                  {[['Shooting',82],['Passing',76],['Dribbling',79],['Defending',58],['Physical',85],['Pace',88]].map(([attr,val]) => (
+                  {[['Shooting',0],['Passing',0],['Dribbling',0],['Defending',0],['Physical',0],['Pace',0]].map(([attr,val]) => (
                     <div key={attr} style={{marginBottom:14}}>
                       <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
                         <span style={{fontSize:'0.85rem',fontFamily:'var(--font-secondary)',fontWeight:600}}>{attr}</span>
