@@ -136,9 +136,9 @@ export const sponsors = {
     { name: 'First Bank Nigeria',    logo: '🏦', image: '/firstbank-logo.jpeg', description: 'Official Banking Partner', website: '#' },
   ],
   gold: [
-    { name: 'MTN Nigeria',    logo: '📶', description: 'Official Telecommunications Partner', website: '#' },
-    { name: 'Dangote Group',  logo: '🏭', description: 'Official Corporate Sponsor', website: '#' },
-    { name: 'Zenith Bank',    logo: '💳', description: 'Official Financial Services Partner', website: '#' },
+    { name: 'MTN Nigeria',    logo: '📶', image: '/mtn-logo.jpeg',        description: 'Official Telecommunications Partner', website: '#' },
+    { name: 'Dangote Group',  logo: '🏭', image: '/dangote-logo.jpeg',    description: 'Official Corporate Sponsor', website: '#' },
+    { name: 'Zenith Bank',    logo: '💳', image: '/zenith-bank-logo.jpeg', description: 'Official Financial Services Partner', website: '#' },
   ],
   silver: [
     { name: 'Indomie Nigeria', logo: '🍜', description: 'Official Food Partner', website: '#' },

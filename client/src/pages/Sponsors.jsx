@@ -84,7 +84,9 @@ export default function Sponsors() {
             {sponsors.gold.map(s => (
               <div key={s.name} className="card" style={{padding:0,overflow:'hidden'}}>
                 <div style={{height:120,background:'linear-gradient(135deg,rgba(140,106,18,0.3),rgba(212,175,55,0.1))',display:'flex',alignItems:'center',justifyContent:'center',borderBottom:'1px solid rgba(212,175,55,0.15)'}}>
-                  <span style={{fontSize:'3rem'}}>{s.logo}</span>
+                  {s.image
+                    ? <img src={s.image} alt={s.name} style={{height:90,width:90,objectFit:'contain',borderRadius:8}} />
+                    : <span style={{fontSize:'3rem'}}>{s.logo}</span>}
                 </div>
                 <div style={{padding:20}}>
                   <span className="badge badge-gold" style={{marginBottom:10,display:'inline-block',fontSize:'0.6rem'}}>GOLD SPONSOR</span>
