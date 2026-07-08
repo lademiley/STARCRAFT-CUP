@@ -135,7 +135,11 @@ export default function Sponsors() {
           <div style={{display:'flex',justifyContent:'center',flexWrap:'wrap',gap:20}}>
             {sponsors.official.map(s => (
               <div key={s.name} className="card" style={{padding:'20px 28px',display:'flex',alignItems:'center',gap:14,minWidth:200}}>
-                <img src="/sponsors/official-partner-badge.png" alt={s.name} style={{width:'2.5rem',height:'2.5rem',objectFit:'contain',flexShrink:0}} />
+                {s.image
+                  ? <div style={{width:56,height:56,borderRadius:14,background:'rgba(255,255,255,0.92)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,padding:8,boxShadow:'0 4px 14px rgba(0,0,0,0.25)'}}>
+                      <img src={s.image} alt={s.name} style={{width:'100%',height:'100%',objectFit:'contain'}} />
+                    </div>
+                  : <span style={{fontSize:'2rem',flexShrink:0}}>{s.logo}</span>}
                 <div>
                   <div style={{fontWeight:700,fontSize:'0.9rem'}}>{s.name}</div>
                   <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.5)'}}>{s.description}</div>

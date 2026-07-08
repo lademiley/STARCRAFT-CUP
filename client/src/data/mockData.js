@@ -147,10 +147,10 @@ export const sponsors = {
     { name: 'Globacom',        logo: '📱', image: '/sponsors/globacom-logo.png', description: 'Media & Technology Partner', website: '#' },
   ],
   official: [
-    { name: 'Nigeria Football Federation', logo: '⚽', description: 'Official Football Governing Body', website: '#' },
-    { name: 'University of Benin',         logo: '🎓', description: 'Official Host Institution', website: '#' },
-    { name: 'Supersport',                  logo: '📺', description: 'Official Broadcast Partner', website: '#' },
-    { name: 'Channels TV',                 logo: '🎙️', description: 'Official Media Partner', website: '#' },
+    { name: 'Nigeria Football Federation', logo: '⚽', image: '/sponsors/nff-logo.png',        description: 'Official Football Governing Body', website: '#' },
+    { name: 'University of Benin',         logo: '🎓', image: '/sponsors/uniben-logo.png',     description: 'Official Host Institution', website: '#' },
+    { name: 'Supersport',                  logo: '📺', image: '/sponsors/supersport-logo.png', description: 'Official Broadcast Partner', website: '#' },
+    { name: 'Channels TV',                 logo: '🎙️', image: '/sponsors/channelstv-logo.png', description: 'Official Media Partner', website: '#' },
   ]
 }
 
