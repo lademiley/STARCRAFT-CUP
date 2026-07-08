@@ -20,11 +20,27 @@ export function AuthProvider({ children }) {
   })
   const [loading, setLoading] = useState(false)
 
-  // Restore session on page load
+  // Restore session on page load — also re-verify any locally-remembered admin
+  // session against the backend, since a stale sessionStorage entry (e.g. from
+  // before the backend admin session existed, or after the cookie expired)
+  // would otherwise leave the UI showing "logged in" while every admin API
+  // call 403s with "Admin access required".
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.user) setUser(data.user) })
+      .then(data => {
+        if (data?.user) setUser(data.user)
+        if (data?.admin) {
+          const adminData = { ...data.admin, loginAt: new Date().toISOString() }
+          sessionStorage.setItem('sc_admin', JSON.stringify(adminData))
+          setAdmin(adminData)
+        } else if (sessionStorage.getItem('sc_admin')) {
+          // Local admin flag exists but backend disagrees — clear it so the
+          // user is prompted to log in again instead of hitting silent 403s.
+          sessionStorage.removeItem('sc_admin')
+          setAdmin(null)
+        }
+      })
       .catch(() => {})
   }, [])
 
