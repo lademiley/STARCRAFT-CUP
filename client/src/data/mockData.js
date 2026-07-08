@@ -141,10 +141,10 @@ export const sponsors = {
     { name: 'Zenith Bank',    logo: '💳', image: '/zenith-bank-logo.jpeg', description: 'Official Financial Services Partner', website: '#' },
   ],
   silver: [
-    { name: 'Indomie Nigeria', logo: '🍜', description: 'Official Food Partner', website: '#' },
-    { name: 'Pepsi Nigeria',   logo: '🥤', description: 'Official Beverage Partner', website: '#' },
-    { name: 'UBA Bank',        logo: '🏪', description: 'Banking Support Partner', website: '#' },
-    { name: 'Globacom',        logo: '📱', description: 'Media & Technology Partner', website: '#' },
+    { name: 'Indomie Nigeria', logo: '🍜', image: '/sponsors/indomie-logo.png',  description: 'Official Food Partner', website: '#' },
+    { name: 'Pepsi Nigeria',   logo: '🥤', image: '/sponsors/pepsi-logo.png',    description: 'Official Beverage Partner', website: '#' },
+    { name: 'UBA Bank',        logo: '🏪', image: '/sponsors/uba-logo.png',      description: 'Banking Support Partner', website: '#' },
+    { name: 'Globacom',        logo: '📱', image: '/sponsors/globacom-logo.png', description: 'Media & Technology Partner', website: '#' },
   ],
   official: [
     { name: 'Nigeria Football Federation', logo: '⚽', description: 'Official Football Governing Body', website: '#' },

@@ -110,7 +110,9 @@ export default function Sponsors() {
           <div className="grid-4">
             {sponsors.silver.map(s => (
               <div key={s.name} className="card" style={{padding:24,textAlign:'center'}}>
-                <img src="/sponsors/silver-partner-badge.png" alt={s.name} style={{width:'3rem',height:'3rem',objectFit:'contain',marginBottom:10}} />
+                {s.image
+                  ? <img src={s.image} alt={s.name} style={{width:'3rem',height:'3rem',objectFit:'contain',marginBottom:10,display:'inline-block'}} />
+                  : <div style={{fontSize:'2.5rem',marginBottom:10}}>{s.logo}</div>}
                 <span className="badge" style={{background:'rgba(192,192,192,0.1)',color:'#c0c0c0',border:'1px solid rgba(192,192,192,0.25)',marginBottom:10,display:'inline-block',fontSize:'0.6rem',fontWeight:700,padding:'3px 12px',borderRadius:30}}>SILVER</span>
                 <h4 style={{color:'var(--white)',marginBottom:4,fontSize:'0.9rem'}}>{s.name}</h4>
                 <p style={{fontSize:'0.8rem',color:'rgba(255,255,255,0.5)'}}>{s.description}</p>
