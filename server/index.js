@@ -240,29 +240,126 @@ app.get('/api/teams/registrations/by-ref/:ref', (req, res) => {
   if (expected.length !== provided.length || !crypto.timingSafeEqual(expected, provided)) {
     return res.status(403).json({ error: 'Invalid access token' })
   }
+  // Backfill id/photoUrl on players added before per-player edit/photo/delete existed.
+  // id and photoUrl are backfilled independently so a player missing only one of them
+  // isn't skipped. Node's single-threaded event loop means this synchronous read-modify-write
+  // cannot interleave with another request, so generated ids stay stable across concurrent loads.
+  let changed = false
+  found.players = found.players.map(p => {
+    let next = p
+    if (!next.id) { changed = true; next = { id: crypto.randomBytes(6).toString('hex'), ...next } }
+    if (next.photoUrl == null) { changed = true; next = { ...next, photoUrl: '' } }
+    return next
+  })
+  if (changed) teamRegistrations.set(found.id, found)
   // Strip token before sending to client
   const { dashboardToken: _t, ...safe } = found
   res.json({ registration: safe })
 })
+
+// Shared token check for team-rep self-service routes
+function checkDashboardToken(reg, token) {
+  const expected = Buffer.from(reg.dashboardToken)
+  const provided = Buffer.from((token || '').padEnd(reg.dashboardToken.length, '\0').slice(0, reg.dashboardToken.length))
+  return expected.length === provided.length && crypto.timingSafeEqual(expected, provided)
+}
+
+const MAX_SQUAD_SIZE = 22
 
 // Team rep: add a player — authenticated by ref + dashboardToken in body
 app.patch('/api/teams/registrations/by-ref/:ref/players', (req, res) => {
   const { token, player } = req.body
   const reg = [...teamRegistrations.values()].find(r => r.ref === req.params.ref)
   if (!reg) return res.status(404).json({ error: 'Registration not found' })
-  const expected = Buffer.from(reg.dashboardToken)
-  const provided  = Buffer.from((token || '').padEnd(reg.dashboardToken.length, '\0').slice(0, reg.dashboardToken.length))
-  if (expected.length !== provided.length || !crypto.timingSafeEqual(expected, provided)) {
-    return res.status(403).json({ error: 'Invalid access token' })
-  }
+  if (!checkDashboardToken(reg, token)) return res.status(403).json({ error: 'Invalid access token' })
   if (reg.status === 'rejected') return res.status(400).json({ error: 'Cannot modify a rejected registration' })
-  if (reg.players.length >= 18) return res.status(400).json({ error: 'Maximum squad size of 18 reached' })
+  if (reg.players.length >= MAX_SQUAD_SIZE) return res.status(400).json({ error: `Maximum squad size of ${MAX_SQUAD_SIZE} reached` })
   if (!player || !player.name || !player.name.trim()) return res.status(400).json({ error: 'Player name is required' })
-  reg.players = [...reg.players, player]
+  const newPlayer = { id: crypto.randomBytes(6).toString('hex'), name: player.name, age: player.age || '', position: player.position || '', jersey: player.jersey || '', photoUrl: '' }
+  reg.players = [...reg.players, newPlayer]
   teamRegistrations.set(reg.id, reg)
   console.log('[TeamReg AddPlayer]', reg.ref, player.name)
   const { dashboardToken: _t, ...safe } = reg
   res.json({ success: true, registration: safe })
+})
+
+// Team rep: edit an existing player's profile — authenticated by ref + dashboardToken
+app.patch('/api/teams/registrations/by-ref/:ref/players/:playerId', (req, res) => {
+  const { token, player } = req.body
+  const reg = [...teamRegistrations.values()].find(r => r.ref === req.params.ref)
+  if (!reg) return res.status(404).json({ error: 'Registration not found' })
+  if (!checkDashboardToken(reg, token)) return res.status(403).json({ error: 'Invalid access token' })
+  if (reg.status === 'rejected') return res.status(400).json({ error: 'Cannot modify a rejected registration' })
+  const idx = reg.players.findIndex(p => p.id === req.params.playerId)
+  if (idx === -1) return res.status(404).json({ error: 'Player not found' })
+  if (!player || !player.name || !player.name.trim()) return res.status(400).json({ error: 'Player name is required' })
+  reg.players[idx] = {
+    ...reg.players[idx],
+    name: player.name,
+    age: player.age || '',
+    position: player.position || '',
+    jersey: player.jersey || '',
+  }
+  teamRegistrations.set(reg.id, reg)
+  console.log('[TeamReg EditPlayer]', reg.ref, player.name)
+  const { dashboardToken: _t, ...safe } = reg
+  res.json({ success: true, registration: safe })
+})
+
+// Team rep: remove a player — authenticated by ref + dashboardToken
+app.delete('/api/teams/registrations/by-ref/:ref/players/:playerId', (req, res) => {
+  const token = req.query.token || ''
+  const reg = [...teamRegistrations.values()].find(r => r.ref === req.params.ref)
+  if (!reg) return res.status(404).json({ error: 'Registration not found' })
+  if (!checkDashboardToken(reg, token)) return res.status(403).json({ error: 'Invalid access token' })
+  if (reg.status === 'rejected') return res.status(400).json({ error: 'Cannot modify a rejected registration' })
+  const idx = reg.players.findIndex(p => p.id === req.params.playerId)
+  if (idx === -1) return res.status(404).json({ error: 'Player not found' })
+  const [removed] = reg.players.splice(idx, 1)
+  if (removed.photoUrl) {
+    fs.unlink(path.join(playerUploadsDir, path.basename(removed.photoUrl)), () => {})
+  }
+  teamRegistrations.set(reg.id, reg)
+  console.log('[TeamReg RemovePlayer]', reg.ref, removed.name)
+  const { dashboardToken: _t, ...safe } = reg
+  res.json({ success: true, registration: safe })
+})
+
+// ---------- Player profile photo uploads ----------
+const playerUploadsDir = path.join(__dirname, 'uploads', 'players')
+fs.mkdirSync(playerUploadsDir, { recursive: true })
+app.use('/uploads/players', express.static(playerUploadsDir, {
+  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}))
+const playerPhotoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+})
+
+// Team rep: upload/replace a player's profile photo — authenticated by ref + dashboardToken
+app.post('/api/teams/registrations/by-ref/:ref/players/:playerId/photo', (req, res) => {
+  playerPhotoUpload.single('photo')(req, res, err => {
+    if (err) return res.status(400).json({ error: err.message })
+    const reg = [...teamRegistrations.values()].find(r => r.ref === req.params.ref)
+    if (!reg) return res.status(404).json({ error: 'Registration not found' })
+    if (!checkDashboardToken(reg, req.body.token)) return res.status(403).json({ error: 'Invalid access token' })
+    if (reg.status === 'rejected') return res.status(400).json({ error: 'Cannot modify a rejected registration' })
+    const idx = reg.players.findIndex(p => p.id === req.params.playerId)
+    if (idx === -1) return res.status(404).json({ error: 'Player not found' })
+    if (!req.file) return res.status(400).json({ error: 'No photo uploaded' })
+    // Sniff real file signature rather than trusting client-supplied MIME/extension.
+    const ext = detectImageExt(req.file.buffer)
+    if (!ext) return res.status(400).json({ error: 'Only JPG, PNG, WEBP and GIF images are allowed' })
+    const oldUrl = reg.players[idx].photoUrl
+    const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+    fs.writeFileSync(path.join(playerUploadsDir, filename), req.file.buffer)
+    reg.players[idx] = { ...reg.players[idx], photoUrl: `/uploads/players/${filename}` }
+    teamRegistrations.set(reg.id, reg)
+    if (oldUrl) fs.unlink(path.join(playerUploadsDir, path.basename(oldUrl)), () => {})
+    console.log('[TeamReg PlayerPhoto]', reg.ref, reg.players[idx].name)
+    const { dashboardToken: _t, ...safe } = reg
+    res.json({ success: true, registration: safe })
+  })
 })
 
 // Admin: get all team registrations

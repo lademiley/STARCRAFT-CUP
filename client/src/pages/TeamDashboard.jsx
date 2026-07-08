@@ -13,6 +13,7 @@ function usePaymentSettings() {
 }
 
 const POSITIONS = ['Goalkeeper','Defender','Midfielder','Forward','Winger','Striker','Sweeper','Libero']
+const MAX_SQUAD_SIZE = 22
 
 const emptyPlayer = () => ({ name: '', age: '', position: '', jersey: '' })
 
@@ -61,11 +62,14 @@ export default function TeamDashboard() {
   const [tab, setTab]                   = useState('status')         // 'status' | 'squad'
   const paymentSettings                 = usePaymentSettings()
 
-  // Add-player form
+  // Add/edit player form
   const [showForm, setShowForm]         = useState(false)
+  const [editingId, setEditingId]       = useState(null) // null = adding, else editing this player's id
   const [playerForm, setPlayerForm]     = useState(emptyPlayer())
   const [formError, setFormError]       = useState('')
   const [saving, setSaving]             = useState(false)
+  const [uploadingId, setUploadingId]   = useState(null) // player id currently uploading a photo
+  const [photoError, setPhotoError]     = useState('')
 
   const load = useCallback(async () => {
     if (!ref) { setError('No registration reference provided.'); setLoading(false); return }
@@ -95,7 +99,28 @@ export default function TeamDashboard() {
 
   const pf = k => e => setPlayerForm(p => ({ ...p, [k]: e.target.value }))
 
-  const addPlayer = async () => {
+  const startAdd = () => {
+    setEditingId(null)
+    setPlayerForm(emptyPlayer())
+    setFormError('')
+    setShowForm(true)
+  }
+
+  const startEdit = (player) => {
+    setEditingId(player.id)
+    setPlayerForm({ name: player.name || '', age: player.age || '', position: player.position || '', jersey: player.jersey || '' })
+    setFormError('')
+    setShowForm(true)
+  }
+
+  const cancelForm = () => {
+    setShowForm(false)
+    setEditingId(null)
+    setFormError('')
+    setPlayerForm(emptyPlayer())
+  }
+
+  const savePlayer = async () => {
     setFormError('')
     if (!playerForm.name.trim()) { setFormError('Player name is required.'); return }
     if (!playerForm.position)    { setFormError('Position is required.'); return }
@@ -103,22 +128,61 @@ export default function TeamDashboard() {
       setFormError('Please enter a valid age (15–45).')
       return
     }
-    if (reg.players.length >= 18) { setFormError('Maximum squad size is 18 players.'); return }
+    if (!editingId && reg.players.length >= MAX_SQUAD_SIZE) {
+      setFormError(`Maximum squad size is ${MAX_SQUAD_SIZE} players.`)
+      return
+    }
     setSaving(true)
     try {
-      const res = await fetch(`/api/teams/registrations/by-ref/${encodeURIComponent(ref)}/players`, {
+      const url = editingId
+        ? `/api/teams/registrations/by-ref/${encodeURIComponent(ref)}/players/${editingId}`
+        : `/api/teams/registrations/by-ref/${encodeURIComponent(ref)}/players`
+      const res = await fetch(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, player: playerForm }),
       })
-      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed to add player.') }
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed to save player.') }
       await load()
-      setPlayerForm(emptyPlayer())
-      setShowForm(false)
+      cancelForm()
     } catch (e) {
       setFormError(e.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const removePlayer = async (player) => {
+    if (!window.confirm(`Remove ${player.name} from the squad?`)) return
+    try {
+      const res = await fetch(`/api/teams/registrations/by-ref/${encodeURIComponent(ref)}/players/${player.id}?token=${encodeURIComponent(token)}`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed to remove player.') }
+      await load()
+    } catch (e) {
+      setPhotoError(e.message)
+    }
+  }
+
+  const uploadPhoto = async (player, file) => {
+    if (!file) return
+    setPhotoError('')
+    setUploadingId(player.id)
+    try {
+      const fd = new FormData()
+      fd.append('token', token)
+      fd.append('photo', file)
+      const res = await fetch(`/api/teams/registrations/by-ref/${encodeURIComponent(ref)}/players/${player.id}/photo`, {
+        method: 'POST',
+        body: fd,
+      })
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed to upload photo.') }
+      await load()
+    } catch (e) {
+      setPhotoError(e.message)
+    } finally {
+      setUploadingId(null)
     }
   }
 
@@ -156,7 +220,7 @@ export default function TeamDashboard() {
   }
 
   const cfg    = STATUS_CFG[reg.status] || STATUS_CFG.pending
-  const canAdd = reg.status !== 'rejected' && reg.players.length < 18
+  const canAdd = reg.status !== 'rejected' && reg.players.length < MAX_SQUAD_SIZE
   const activeMethods = paymentSettings?.methods?.filter(m => m.enabled) || []
   const payRef = `REG-${reg.teamName.replace(/\s+/g,'').toUpperCase().slice(0,6)}`
 
@@ -400,23 +464,29 @@ export default function TeamDashboard() {
             <div style={s.card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <div>
-                  <div style={s.cardTitle}>👥 Squad — {reg.players.length} / 18 Players</div>
+                  <div style={s.cardTitle}>👥 Squad — {reg.players.length} / {MAX_SQUAD_SIZE} Players</div>
                   <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Min 11 required for tournament participation</div>
                 </div>
                 {canAdd && !showForm && (
-                  <button onClick={() => setShowForm(true)} style={s.btnPrimary}>
+                  <button onClick={startAdd} style={s.btnPrimary}>
                     + Add Player
                   </button>
                 )}
                 {!canAdd && reg.status !== 'rejected' && (
-                  <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>Squad full (18/18)</span>
+                  <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>Squad full ({MAX_SQUAD_SIZE}/{MAX_SQUAD_SIZE})</span>
                 )}
               </div>
 
-              {/* Add player form */}
+              {photoError && (
+                <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: '10px 14px', color: '#f87171', fontSize: '0.82rem', marginBottom: 16 }}>{photoError}</div>
+              )}
+
+              {/* Add / edit player form */}
               {showForm && (
                 <div style={{ background: 'rgba(212,175,55,0.05)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
-                  <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.85rem', color: '#D4AF37', marginBottom: 16, fontWeight: 700 }}>New Player Details</div>
+                  <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.85rem', color: '#D4AF37', marginBottom: 16, fontWeight: 700 }}>
+                    {editingId ? 'Edit Player Details' : 'New Player Details'}
+                  </div>
                   {formError && (
                     <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, padding: '10px 14px', color: '#f87171', fontSize: '0.82rem', marginBottom: 12 }}>{formError}</div>
                   )}
@@ -442,8 +512,10 @@ export default function TeamDashboard() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                    <button onClick={() => { setShowForm(false); setFormError(''); setPlayerForm(emptyPlayer()) }} style={s.btnGhost} disabled={saving}>Cancel</button>
-                    <button onClick={addPlayer} style={s.btnPrimary} disabled={saving}>{saving ? 'Adding…' : '✅ Add to Squad'}</button>
+                    <button onClick={cancelForm} style={s.btnGhost} disabled={saving}>Cancel</button>
+                    <button onClick={savePlayer} style={s.btnPrimary} disabled={saving}>
+                      {saving ? 'Saving…' : editingId ? '✅ Save Changes' : '✅ Add to Squad'}
+                    </button>
                   </div>
                 </div>
               )}
@@ -460,23 +532,64 @@ export default function TeamDashboard() {
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr>
-                        {['#', 'Name', 'Position', 'Age', 'Jersey'].map(h => (
+                        {['#', 'Photo', 'Name', 'Position', 'Age', 'Jersey', ''].map(h => (
                           <th key={h} style={s.th}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {reg.players.map((p, i) => (
-                        <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
-                          <td style={{ ...s.td, color: 'rgba(255,255,255,0.3)', width: 32 }}>{i + 1}</td>
-                          <td style={{ ...s.td, fontWeight: 600 }}>{p.name}</td>
-                          <td style={s.td}>
-                            <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: 20, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.25)', color: '#60a5fa', fontSize: '0.72rem', fontWeight: 700 }}>{p.position || '—'}</span>
-                          </td>
-                          <td style={s.td}>{p.age || '—'}</td>
-                          <td style={{ ...s.td, color: '#D4AF37', fontWeight: 700 }}>{p.jersey ? `#${p.jersey}` : '—'}</td>
-                        </tr>
-                      ))}
+                      {reg.players.map((p, i) => {
+                        const canEdit = reg.status !== 'rejected'
+                        const inputId = `player-photo-${p.id}`
+                        return (
+                          <tr key={p.id || i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
+                            <td style={{ ...s.td, color: 'rgba(255,255,255,0.3)', width: 32 }}>{i + 1}</td>
+                            <td style={s.td}>
+                              <label
+                                htmlFor={canEdit ? inputId : undefined}
+                                style={{
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  width: 40, height: 40, borderRadius: '50%', overflow: 'hidden',
+                                  background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)',
+                                  cursor: canEdit ? 'pointer' : 'default', position: 'relative', flexShrink: 0,
+                                }}
+                                title={canEdit ? 'Click to upload/replace photo' : ''}
+                              >
+                                {uploadingId === p.id ? (
+                                  <span style={{ fontSize: '0.9rem' }}>⏳</span>
+                                ) : p.photoUrl ? (
+                                  <img src={p.photoUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                  <span style={{ fontSize: '1rem', opacity: 0.5 }}>👤</span>
+                                )}
+                                {canEdit && (
+                                  <input
+                                    id={inputId}
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    style={{ display: 'none' }}
+                                    onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) uploadPhoto(p, f) }}
+                                  />
+                                )}
+                              </label>
+                            </td>
+                            <td style={{ ...s.td, fontWeight: 600 }}>{p.name}</td>
+                            <td style={s.td}>
+                              <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: 20, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.25)', color: '#60a5fa', fontSize: '0.72rem', fontWeight: 700 }}>{p.position || '—'}</span>
+                            </td>
+                            <td style={s.td}>{p.age || '—'}</td>
+                            <td style={{ ...s.td, color: '#D4AF37', fontWeight: 700 }}>{p.jersey ? `#${p.jersey}` : '—'}</td>
+                            <td style={{ ...s.td, textAlign: 'right', whiteSpace: 'nowrap' }}>
+                              {canEdit && p.id && (
+                                <>
+                                  <button onClick={() => startEdit(p)} style={{ ...s.btnGhost, padding: '4px 10px', fontSize: '0.7rem', marginRight: 6 }}>✏️ Edit</button>
+                                  <button onClick={() => removePlayer(p)} style={{ ...s.btnGhost, padding: '4px 10px', fontSize: '0.7rem', color: '#f87171', borderColor: 'rgba(239,68,68,0.25)' }}>🗑️</button>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -488,10 +601,10 @@ export default function TeamDashboard() {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                       <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>Squad strength</span>
-                      <span style={{ fontSize: '0.72rem', color: reg.players.length >= 11 ? '#22C55E' : '#F59E0B' }}>{reg.players.length}/18 players</span>
+                      <span style={{ fontSize: '0.72rem', color: reg.players.length >= 11 ? '#22C55E' : '#F59E0B' }}>{reg.players.length}/{MAX_SQUAD_SIZE} players</span>
                     </div>
                     <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${(reg.players.length / 18) * 100}%`, background: reg.players.length >= 11 ? 'linear-gradient(90deg,#22C55E,#16a34a)' : 'linear-gradient(90deg,#F59E0B,#d97706)', borderRadius: 99, transition: 'width 500ms ease' }} />
+                      <div style={{ height: '100%', width: `${(reg.players.length / MAX_SQUAD_SIZE) * 100}%`, background: reg.players.length >= 11 ? 'linear-gradient(90deg,#22C55E,#16a34a)' : 'linear-gradient(90deg,#F59E0B,#d97706)', borderRadius: 99, transition: 'width 500ms ease' }} />
                     </div>
                   </div>
                   <span style={{ fontSize: '0.75rem', color: reg.players.length >= 11 ? '#4ade80' : '#fbbf24', fontWeight: 700 }}>
