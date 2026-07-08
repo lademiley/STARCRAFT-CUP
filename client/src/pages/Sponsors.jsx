@@ -22,16 +22,20 @@ export default function Sponsors() {
             <h2>Platinum Sponsors</h2>
             <div className="divider" />
           </div>
-          <div className="grid-2">
+          <div className="platinum-grid">
             {sponsors.platinum.map(s => (
               <div key={s.name} className="card sponsor-card-lg">
                 <div className="sponsor-logo-area platinum-bg">
-                  <span style={{fontSize:'4rem'}}>{s.logo}</span>
+                  {s.image
+                    ? <img src={s.image} alt={s.name} className="sponsor-logo-img" />
+                    : <span className="sponsor-logo-emoji">{s.logo}</span>}
                 </div>
-                <div style={{padding:28}}>
-                  <span className="badge" style={{background:'rgba(212,175,55,0.2)',color:'var(--gold)',border:'1px solid rgba(212,175,55,0.4)',marginBottom:12,display:'inline-block',fontSize:'0.65rem',fontWeight:700,padding:'4px 14px',borderRadius:30}}>PLATINUM SPONSOR</span>
-                  <h3 style={{color:'var(--gold)',marginBottom:8}}>{s.name}</h3>
-                  <p style={{color:'rgba(255,255,255,0.7)',marginBottom:16}}>{s.description}</p>
+                <div className="sponsor-card-body">
+                  <div>
+                    <span className="badge" style={{background:'rgba(212,175,55,0.2)',color:'var(--gold)',border:'1px solid rgba(212,175,55,0.4)',marginBottom:12,display:'inline-block',fontSize:'0.65rem',fontWeight:700,padding:'4px 14px',borderRadius:30}}>PLATINUM SPONSOR</span>
+                    <h3 className="sponsor-card-title" style={{color:'var(--gold)',marginBottom:8}}>{s.name}</h3>
+                    <p style={{color:'rgba(255,255,255,0.7)',marginBottom:16}}>{s.description}</p>
+                  </div>
                   <a href={s.website} className="btn btn-secondary btn-sm">Visit Website →</a>
                 </div>
               </div>
@@ -206,10 +210,24 @@ export default function Sponsors() {
 
       <style>{`
         .eyebrow { font-family: var(--font-secondary); font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 12px; }
-        .sponsor-card-lg { display: flex; overflow: hidden; }
-        .sponsor-logo-area { width: 200px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+        .platinum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 28px; align-items: stretch; }
+        .sponsor-card-lg { display: flex; overflow: hidden; height: 100%; min-height: 220px; }
+        .sponsor-logo-area { width: 190px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .platinum-bg { background: linear-gradient(135deg,rgba(140,106,18,0.3),rgba(212,175,55,0.08)); }
-        @media (max-width:768px) { .sponsor-card-lg { flex-direction: column; } .sponsor-logo-area { width: 100%; height: 120px; } }
+        .sponsor-logo-emoji { font-size: 4rem; line-height: 1; }
+        .sponsor-logo-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .sponsor-card-body { flex: 1; min-width: 0; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
+        .sponsor-card-title { font-size: clamp(1.05rem, 2vw, 1.4rem); line-height: 1.25; word-break: break-word; overflow-wrap: break-word; }
+
+        @media (max-width: 900px) {
+          .platinum-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 560px) {
+          .sponsor-card-lg { flex-direction: column; min-height: 0; }
+          .sponsor-logo-area { width: 100%; height: 160px; }
+          .sponsor-card-body { padding: 24px; }
+        }
       `}</style>
     </div>
   )
