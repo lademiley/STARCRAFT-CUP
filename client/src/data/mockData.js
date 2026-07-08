@@ -14,29 +14,29 @@ export const editions = [
 // ── 20 Teams — 18 LGAs + Host XI + Defending Champion ────
 export const teams = [
   // GROUP A
-  { id: 1,  name: 'Akoko-Edo Panthers',    shortName: 'AKP', logo: '🐆', lga: 'Akoko-Edo',      coach: 'Gabriel Alagbe',    group: 'A', played: 4, won: 3, draw: 1, lost: 0, gf: 10, ga: 3,  gd: 7,   points: 10, form: ['W','W','D','W'], color: '#D4AF37' },
-  { id: 2,  name: 'Egor United',           shortName: 'EGU', logo: '🔥', lga: 'Egor',           coach: 'Emeka Olokor',      group: 'A', played: 4, won: 2, draw: 1, lost: 1, gf: 7,  ga: 5,  gd: 2,   points: 7,  form: ['W','D','L','W'], color: '#3B82F6' },
-  { id: 3,  name: 'Esan Central FC',       shortName: 'ESC', logo: '⭐', lga: 'Esan Central',   coach: 'Chidi Nwosu',       group: 'A', played: 4, won: 1, draw: 2, lost: 1, gf: 5,  ga: 6,  gd: -1,  points: 5,  form: ['D','W','D','L'], color: '#10B981' },
-  { id: 4,  name: 'Esan North Stars',      shortName: 'ENS', logo: '🌠', lga: 'Esan North-East', coach: 'Osaro Akhigbe',    group: 'A', played: 4, won: 1, draw: 1, lost: 2, gf: 4,  ga: 7,  gd: -3,  points: 4,  form: ['L','W','L','D'], color: '#8B5CF6' },
-  { id: 5,  name: 'Esan South FC',         shortName: 'ESS', logo: '🌊', lga: 'Esan South-East', coach: 'Festus Agbamu',    group: 'A', played: 4, won: 0, draw: 1, lost: 3, gf: 2,  ga: 9,  gd: -7,  points: 1,  form: ['L','L','D','L'], color: '#EF4444' },
+  { id: 1,  name: 'Akoko-Edo Panthers',    shortName: 'AKP', logo: '🐆', lga: 'Akoko-Edo',      coach: 'Gabriel Alagbe',    group: 'A', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#D4AF37' },
+  { id: 2,  name: 'Egor United',           shortName: 'EGU', logo: '🔥', lga: 'Egor',           coach: 'Emeka Olokor',      group: 'A', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#3B82F6' },
+  { id: 3,  name: 'Esan Central FC',       shortName: 'ESC', logo: '⭐', lga: 'Esan Central',   coach: 'Chidi Nwosu',       group: 'A', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#10B981' },
+  { id: 4,  name: 'Esan North Stars',      shortName: 'ENS', logo: '🌠', lga: 'Esan North-East', coach: 'Osaro Akhigbe',    group: 'A', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#8B5CF6' },
+  { id: 5,  name: 'Esan South FC',         shortName: 'ESS', logo: '🌊', lga: 'Esan South-East', coach: 'Festus Agbamu',    group: 'A', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#EF4444' },
   // GROUP B
-  { id: 6,  name: 'Esan West Rangers',     shortName: 'EWR', logo: '🦅', lga: 'Esan West',      coach: 'Dickson Owie',      group: 'B', played: 4, won: 3, draw: 0, lost: 1, gf: 9,  ga: 4,  gd: 5,   points: 9,  form: ['W','L','W','W'], color: '#F97316' },
-  { id: 7,  name: 'Etsako Central FC',     shortName: 'ETC', logo: '🏰', lga: 'Etsako Central', coach: 'Sunday Omotosho',   group: 'B', played: 4, won: 2, draw: 2, lost: 0, gf: 8,  ga: 3,  gd: 5,   points: 8,  form: ['W','D','W','D'], color: '#EC4899' },
-  { id: 8,  name: 'Etsako East United',    shortName: 'EEU', logo: '🦆', lga: 'Etsako East',    coach: 'John Ochuko',       group: 'B', played: 4, won: 2, draw: 0, lost: 2, gf: 6,  ga: 6,  gd: 0,   points: 6,  form: ['W','L','W','L'], color: '#14B8A6' },
-  { id: 9,  name: 'Etsako West FC',        shortName: 'ETW', logo: '🛡️', lga: 'Etsako West',    coach: 'Peter Aigbe',       group: 'B', played: 4, won: 1, draw: 1, lost: 2, gf: 5,  ga: 7,  gd: -2,  points: 4,  form: ['D','W','L','L'], color: '#6366F1' },
-  { id: 10, name: 'Igueben FC',            shortName: 'IGU', logo: '⚔️', lga: 'Igueben',        coach: 'Felix Idahosa',     group: 'B', played: 4, won: 0, draw: 1, lost: 3, gf: 2,  ga: 9,  gd: -7,  points: 1,  form: ['L','D','L','L'], color: '#F59E0B' },
+  { id: 6,  name: 'Esan West Rangers',     shortName: 'EWR', logo: '🦅', lga: 'Esan West',      coach: 'Dickson Owie',      group: 'B', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#F97316' },
+  { id: 7,  name: 'Etsako Central FC',     shortName: 'ETC', logo: '🏰', lga: 'Etsako Central', coach: 'Sunday Omotosho',   group: 'B', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#EC4899' },
+  { id: 8,  name: 'Etsako East United',    shortName: 'EEU', logo: '🦆', lga: 'Etsako East',    coach: 'John Ochuko',       group: 'B', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#14B8A6' },
+  { id: 9,  name: 'Etsako West FC',        shortName: 'ETW', logo: '🛡️', lga: 'Etsako West',    coach: 'Peter Aigbe',       group: 'B', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#6366F1' },
+  { id: 10, name: 'Igueben FC',            shortName: 'IGU', logo: '⚔️', lga: 'Igueben',        coach: 'Felix Idahosa',     group: 'B', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#F59E0B' },
   // GROUP C
-  { id: 11, name: 'Ikpoba-Okha FC',        shortName: 'IKO', logo: '🏆', lga: 'Ikpoba-Okha',    coach: 'Austin Oghuvwu',    group: 'C', played: 4, won: 4, draw: 0, lost: 0, gf: 12, ga: 2,  gd: 10,  points: 12, form: ['W','W','W','W'], color: '#D4AF37' },
-  { id: 12, name: 'Oredo City FC',         shortName: 'ORC', logo: '👑', lga: 'Oredo (Host)',   coach: 'Victor Ihejirika',  group: 'C', played: 4, won: 2, draw: 1, lost: 1, gf: 8,  ga: 5,  gd: 3,   points: 7,  form: ['W','W','D','L'], color: '#84CC16' },
-  { id: 13, name: 'Orhionmwon FC',         shortName: 'ORH', logo: '🌿', lga: 'Orhionmwon',     coach: 'Mike Odalume',      group: 'C', played: 4, won: 1, draw: 2, lost: 1, gf: 5,  ga: 6,  gd: -1,  points: 5,  form: ['D','L','W','D'], color: '#06B6D4' },
-  { id: 14, name: 'Ovia North Rangers',    shortName: 'ONR', logo: '🦁', lga: 'Ovia North-East', coach: 'Emmanuel Okoro',   group: 'C', played: 4, won: 1, draw: 1, lost: 2, gf: 4,  ga: 7,  gd: -3,  points: 4,  form: ['L','W','D','L'], color: '#A78BFA' },
-  { id: 15, name: 'Ovia South United',     shortName: 'OSU', logo: '🌍', lga: 'Ovia South-West', coach: 'Bright Osifo',     group: 'C', played: 4, won: 0, draw: 0, lost: 4, gf: 1,  ga: 12, gd: -11, points: 0,  form: ['L','L','L','L'], color: '#F43F5E' },
+  { id: 11, name: 'Ikpoba-Okha FC',        shortName: 'IKO', logo: '🏆', lga: 'Ikpoba-Okha',    coach: 'Austin Oghuvwu',    group: 'C', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#D4AF37' },
+  { id: 12, name: 'Oredo City FC',         shortName: 'ORC', logo: '👑', lga: 'Oredo (Host)',   coach: 'Victor Ihejirika',  group: 'C', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#84CC16' },
+  { id: 13, name: 'Orhionmwon FC',         shortName: 'ORH', logo: '🌿', lga: 'Orhionmwon',     coach: 'Mike Odalume',      group: 'C', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#06B6D4' },
+  { id: 14, name: 'Ovia North Rangers',    shortName: 'ONR', logo: '🦁', lga: 'Ovia North-East', coach: 'Emmanuel Okoro',   group: 'C', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#A78BFA' },
+  { id: 15, name: 'Ovia South United',     shortName: 'OSU', logo: '🌍', lga: 'Ovia South-West', coach: 'Bright Osifo',     group: 'C', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#F43F5E' },
   // GROUP D
-  { id: 16, name: 'Owan East FC',          shortName: 'OWE', logo: '🦊', lga: 'Owan East',      coach: 'Richard Ebore',     group: 'D', played: 4, won: 3, draw: 1, lost: 0, gf: 11, ga: 3,  gd: 8,   points: 10, form: ['W','W','W','D'], color: '#22D3EE' },
-  { id: 17, name: 'Owan West United',      shortName: 'OWW', logo: '🌙', lga: 'Owan West',      coach: 'Samuel Oriaifo',    group: 'D', played: 4, won: 2, draw: 2, lost: 0, gf: 7,  ga: 4,  gd: 3,   points: 8,  form: ['W','D','W','D'], color: '#F9A8D4' },
-  { id: 18, name: 'Uhunmwonde FC',         shortName: 'UHU', logo: '🏔️', lga: 'Uhunmwonde',     coach: 'Kingsley Egbase',   group: 'D', played: 4, won: 1, draw: 1, lost: 2, gf: 5,  ga: 7,  gd: -2,  points: 4,  form: ['L','W','D','L'], color: '#4ADE80' },
-  { id: 19, name: 'Oredo Host XI',         shortName: 'HXI', logo: '🏠', lga: 'Host (Oredo)',   coach: 'Chief Osagie-Eweka', group: 'D', played: 4, won: 1, draw: 0, lost: 3, gf: 4,  ga: 9,  gd: -5,  points: 3,  form: ['L','W','L','L'], color: '#FB923C' },
-  { id: 20, name: 'Bendel Insurance Youth',shortName: 'BIY', logo: '🦁', lga: 'Defending 🏆',   coach: 'Godwin Enakhena',   group: 'D', played: 4, won: 0, draw: 0, lost: 4, gf: 1,  ga: 10, gd: -9,  points: 0,  form: ['L','L','L','L'], color: '#6B7280' },
+  { id: 16, name: 'Owan East FC',          shortName: 'OWE', logo: '🦊', lga: 'Owan East',      coach: 'Richard Ebore',     group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#22D3EE' },
+  { id: 17, name: 'Owan West United',      shortName: 'OWW', logo: '🌙', lga: 'Owan West',      coach: 'Samuel Oriaifo',    group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#F9A8D4' },
+  { id: 18, name: 'Uhunmwonde FC',         shortName: 'UHU', logo: '🏔️', lga: 'Uhunmwonde',     coach: 'Kingsley Egbase',   group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#4ADE80' },
+  { id: 19, name: 'Oredo Host XI',         shortName: 'HXI', logo: '🏠', lga: 'Host (Oredo)',   coach: 'Chief Osagie-Eweka', group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#FB923C' },
+  { id: 20, name: 'Bendel Insurance Youth',shortName: 'BIY', logo: '🦁', lga: 'Defending 🏆',   coach: 'Godwin Enakhena',   group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#6B7280' },
 ]
 
 // ── Players ─────────────────────────────────
@@ -196,12 +196,12 @@ export const prizeStructure = [
 export const tournamentStats = {
   totalTeams: 20,
   totalMatches: 53,   // 40 group + 4 QF + 2 SF + 2 final/3rd + 2 exhibition
-  totalGoals: 74,
-  totalAttendance: '62,000+',
-  matchesPlayed: 17,
-  avgGoalsPerMatch: 4.4,
-  topScorer: 'Chukwuemeka Obi',
-  topScorerGoals: 8,
+  totalGoals: 0,
+  totalAttendance: '0',
+  matchesPlayed: 0,
+  avgGoalsPerMatch: 0,
+  topScorer: '-',
+  topScorerGoals: 0,
   groups: 4,
   ageGroup: 'U17–U20',
   editions: ['2026', '2027', '2028', '2029', '2030'],
