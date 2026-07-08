@@ -109,10 +109,12 @@ export default function Sponsors() {
           </div>
           <div className="grid-4">
             {sponsors.silver.map(s => (
-              <div key={s.name} className="card" style={{padding:24,textAlign:'center'}}>
+              <div key={s.name} className="card" style={{padding:24,textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center'}}>
                 {s.image
-                  ? <img src={s.image} alt={s.name} style={{width:'3rem',height:'3rem',objectFit:'contain',marginBottom:10,display:'inline-block'}} />
-                  : <div style={{fontSize:'2.5rem',marginBottom:10}}>{s.logo}</div>}
+                  ? <div style={{width:76,height:76,borderRadius:16,background:'rgba(255,255,255,0.92)',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:14,padding:10,boxShadow:'0 4px 14px rgba(0,0,0,0.25)'}}>
+                      <img src={s.image} alt={s.name} style={{width:'100%',height:'100%',objectFit:'contain'}} />
+                    </div>
+                  : <div style={{fontSize:'2.5rem',marginBottom:14}}>{s.logo}</div>}
                 <span className="badge" style={{background:'rgba(192,192,192,0.1)',color:'#c0c0c0',border:'1px solid rgba(192,192,192,0.25)',marginBottom:10,display:'inline-block',fontSize:'0.6rem',fontWeight:700,padding:'3px 12px',borderRadius:30}}>SILVER</span>
                 <h4 style={{color:'var(--white)',marginBottom:4,fontSize:'0.9rem'}}>{s.name}</h4>
                 <p style={{fontSize:'0.8rem',color:'rgba(255,255,255,0.5)'}}>{s.description}</p>
