@@ -38,7 +38,6 @@ export default function Sponsors() {
                     <p className="sponsor-card-desc" style={{color:'rgba(255,255,255,0.7)',marginBottom:16}}>{s.description}</p>
                   </div>
                   <div className="sponsor-card-actions">
-                    <a href={s.website} className="btn btn-secondary btn-sm">Visit Website →</a>
                     {s.bio && (
                       <button type="button" className="btn btn-secondary btn-sm" onClick={() => setBioSponsor(s)}>Read More →</button>
                     )}
