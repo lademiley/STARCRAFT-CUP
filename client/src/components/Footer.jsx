@@ -48,9 +48,11 @@ export default function Footer() {
               <h4 className="footer-title">Contact Us</h4>
               <div className="footer-contact">
                 <p>📍 University of Benin, Ugbowo, Edo State</p>
-                <p>📞 +234 800 STARCRAFT</p>
+                <p>📞 +2348155576539</p>
+                <p>📞 +2348056042784</p>
+                <p>📞 +2347056445844</p>
                 <p>✉️ info@starcraftcup.ng</p>
-                <p>💬 WhatsApp: +234 811 234 5678</p>
+                <p>💬 WhatsApp: +2349077575347</p>
               </div>
               <h4 className="footer-title" style={{marginTop:24}}>Newsletter</h4>
               <div className="newsletter-form">
