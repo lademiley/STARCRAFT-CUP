@@ -132,8 +132,8 @@ export const sponsors = {
       website: '#',
       bio: "His Royal Majesty, the Oba of Benin, is the traditional ruler and custodian of the centuries-old Benin Kingdom. As Royal Patron of StarCraft Cup 2027, His Majesty lends the tournament the full weight of Benin's rich heritage and royal blessing, championing youth development and the preservation of culture through sport across Edo State.",
     },
-    { name: 'Edo State Government', logo: '🏛️', description: 'Official Government Patron & Host', website: '#' },
-    { name: 'First Bank Nigeria',    logo: '🏦', description: 'Official Banking Partner', website: '#' },
+    { name: 'Edo State Government', logo: '🏛️', image: '/edo-state-gov.jpeg', description: 'Official Government Patron & Host', website: '#' },
+    { name: 'First Bank Nigeria',    logo: '🏦', image: '/firstbank-logo.jpeg', description: 'Official Banking Partner', website: '#' },
   ],
   gold: [
     { name: 'MTN Nigeria',    logo: '📶', description: 'Official Telecommunications Partner', website: '#' },
