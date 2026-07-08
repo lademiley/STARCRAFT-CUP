@@ -50,22 +50,29 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
-  const adminLogin = (email, password) => {
-    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-      const adminData = {
-        email: ADMIN_CREDENTIALS.email,
-        name: ADMIN_CREDENTIALS.name,
-        role: ADMIN_CREDENTIALS.role,
-        loginAt: new Date().toISOString(),
-      }
+  const adminLogin = async (email, password) => {
+    // Establish a real backend session so admin-only API calls (gallery uploads,
+    // payment settings, team approvals, etc.) succeed instead of 401ing.
+    try {
+      const res = await fetch('/api/auth/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (!res.ok) return { success: false, error: data.error || 'Invalid admin credentials' }
+      const adminData = { ...data.admin, loginAt: new Date().toISOString() }
       sessionStorage.setItem('sc_admin', JSON.stringify(adminData))
       setAdmin(adminData)
       return { success: true }
+    } catch {
+      return { success: false, error: 'Network error — please try again' }
     }
-    return { success: false, error: 'Invalid admin credentials' }
   }
 
-  const adminLogout = () => {
+  const adminLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {})
     sessionStorage.removeItem('sc_admin')
     setAdmin(null)
   }

@@ -19,8 +19,7 @@ export default function AdminLogin() {
     e.preventDefault()
     setError('')
     setLoading(true)
-    await new Promise(r => setTimeout(r, 600)) // simulate network
-    const result = adminLogin(email, password)
+    const result = await adminLogin(email, password)
     if (result.success) {
       navigate('/admin/dashboard', { replace: true })
     } else {

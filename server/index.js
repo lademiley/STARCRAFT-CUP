@@ -2,7 +2,12 @@ import express from 'express'
 import session from 'express-session'
 import cors from 'cors'
 import crypto from 'crypto'
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = 3001
 const isProd = process.env.NODE_ENV === 'production'
@@ -116,6 +121,26 @@ app.post('/api/auth/login', (req, res) => {
   res.json({ success: true, user: safeUser, requires2FA: false })
 })
 
+// ---------- Admin auth ----------
+// Admin credentials mirrored from the frontend demo login. In production this
+// should live in a real user/roles table with hashed passwords.
+const ADMIN_EMAIL = 'admin@starcraft2026.com'
+const ADMIN_PASSWORD_HASH = hashPassword('SC2026@Admin')
+
+app.post('/api/auth/admin-login', (req, res) => {
+  const { email, password } = req.body
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' })
+  }
+  if (email !== ADMIN_EMAIL || hashPassword(password) !== ADMIN_PASSWORD_HASH) {
+    return res.status(401).json({ error: 'Invalid admin credentials' })
+  }
+  req.session.userId = 'admin'
+  req.session.userEmail = ADMIN_EMAIL
+  req.session.isAdmin = true
+  res.json({ success: true, admin: { email: ADMIN_EMAIL, name: 'Super Admin', role: 'superadmin' } })
+})
+
 app.post('/api/auth/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) return res.status(500).json({ error: 'Logout failed' })
@@ -127,6 +152,11 @@ app.post('/api/auth/logout', (req, res) => {
 app.get('/api/auth/me', (req, res) => {
   if (!req.session.userId || !req.session.userEmail) {
     return res.status(401).json({ error: 'Not authenticated' })
+  }
+  // Admin sessions aren't backed by the `users` store — handle them separately
+  // so a page reload doesn't destroy a valid admin session.
+  if (req.session.isAdmin) {
+    return res.json({ user: null, admin: { email: req.session.userEmail, name: 'Super Admin', role: 'superadmin' } })
   }
   const user = users.get(req.session.userEmail)
   if (!user) {
@@ -236,14 +266,14 @@ app.patch('/api/teams/registrations/by-ref/:ref/players', (req, res) => {
 })
 
 // Admin: get all team registrations
-app.get('/api/teams/registrations', requireAuth, (req, res) => {
+app.get('/api/teams/registrations', requireAdmin, (req, res) => {
   const all = [...teamRegistrations.values()]
     .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
   res.json({ registrations: all })
 })
 
 // Admin: approve a team registration
-app.patch('/api/teams/registrations/:id/approve', requireAuth, (req, res) => {
+app.patch('/api/teams/registrations/:id/approve', requireAdmin, (req, res) => {
   const reg = teamRegistrations.get(req.params.id)
   if (!reg) return res.status(404).json({ error: 'Registration not found' })
   reg.status = 'approved'
@@ -255,7 +285,7 @@ app.patch('/api/teams/registrations/:id/approve', requireAuth, (req, res) => {
 })
 
 // Admin: reject a team registration
-app.patch('/api/teams/registrations/:id/reject', requireAuth, (req, res) => {
+app.patch('/api/teams/registrations/:id/reject', requireAdmin, (req, res) => {
   const reg = teamRegistrations.get(req.params.id)
   if (!reg) return res.status(404).json({ error: 'Registration not found' })
   reg.status = 'rejected'
@@ -270,6 +300,15 @@ app.patch('/api/teams/registrations/:id/reject', requireAuth, (req, res) => {
 function requireAuth(req, res, next) {
   if (!req.session.userId || !req.session.userEmail) {
     return res.status(401).json({ error: 'Not authenticated' })
+  }
+  next()
+}
+
+// Admin-only routes must check the isAdmin flag, not just "any logged-in user" —
+// otherwise a regular fan/team account could call moderation or content-management endpoints.
+function requireAdmin(req, res, next) {
+  if (!req.session.userId || !req.session.userEmail || !req.session.isAdmin) {
+    return res.status(403).json({ error: 'Admin access required' })
   }
   next()
 }
@@ -366,7 +405,7 @@ app.get('/api/settings/payment', (req, res) => {
 })
 
 // Admin: update payment settings (requires authentication)
-app.put('/api/settings/payment', requireAuth, (req, res) => {
+app.put('/api/settings/payment', requireAdmin, (req, res) => {
   const { methods, footerNote } = req.body
   if (!Array.isArray(methods)) {
     return res.status(400).json({ error: 'methods must be an array' })
@@ -383,6 +422,134 @@ app.put('/api/settings/payment', requireAuth, (req, res) => {
   }
   console.log('[PaymentSettings] Updated by admin')
   res.json({ success: true, settings: paymentSettings })
+})
+
+// ---------- Gallery: albums + photo uploads ----------
+const uploadsDir = path.join(__dirname, 'uploads', 'gallery')
+fs.mkdirSync(uploadsDir, { recursive: true })
+// Serve uploads with nosniff so browsers never execute a misidentified file as
+// HTML/script even if an attacker somehow smuggled one past validation.
+app.use('/uploads/gallery', express.static(uploadsDir, {
+  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}))
+
+// Never trust the client-supplied filename/MIME type for what gets written to
+// disk — sniff the real file signature (magic bytes) and derive the extension
+// from that. This blocks disguised-extension / stored-XSS upload attacks.
+function detectImageExt(buf) {
+  if (buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) return '.png'
+  if (buf.length >= 3 && buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF) return '.jpg'
+  if (buf.length >= 6 && buf.slice(0, 3).toString('ascii') === 'GIF' && (buf.slice(3, 6).toString('ascii') === '87a' || buf.slice(3, 6).toString('ascii') === '89a')) return '.gif'
+  if (buf.length >= 12 && buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP') return '.webp'
+  return null
+}
+
+// Use memory storage so we can inspect the real bytes before ever writing to disk.
+const galleryUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024, files: 20 },
+})
+
+const eventTags = ['Opening Exhibition', 'Group Stage', 'Quarter-Final', 'Semi-Final', 'Final', 'Player Feature', 'Behind The Scenes']
+const galleryAlbums = new Map() // id -> { id, title, date, event, status, featured, photos: [{id, url, caption, uploadedAt}], createdAt }
+
+// Public: list published albums (for the public gallery page). Drafts are only
+// visible to authenticated admins, not to any logged-in fan/team account.
+app.get('/api/gallery/albums', (req, res) => {
+  const all = [...galleryAlbums.values()].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  const visible = req.session.isAdmin ? all : all.filter(a => a.status === 'Published')
+  res.json({ albums: visible })
+})
+
+// Admin: create album
+app.post('/api/gallery/albums', requireAdmin, (req, res) => {
+  const { title, date, event, status, featured } = req.body
+  if (!title || !title.trim()) return res.status(400).json({ error: 'Album title is required' })
+  const id = crypto.randomBytes(8).toString('hex')
+  const album = {
+    id,
+    title: title.trim(),
+    date: date || new Date().toISOString().split('T')[0],
+    event: eventTags.includes(event) ? event : 'Group Stage',
+    status: status === 'Published' ? 'Published' : 'Draft',
+    featured: !!featured,
+    photos: [],
+    createdAt: new Date().toISOString(),
+  }
+  galleryAlbums.set(id, album)
+  res.json({ success: true, album })
+})
+
+// Admin: update album metadata
+app.put('/api/gallery/albums/:id', requireAdmin, (req, res) => {
+  const album = galleryAlbums.get(req.params.id)
+  if (!album) return res.status(404).json({ error: 'Album not found' })
+  const { title, date, event, status, featured } = req.body
+  if (title !== undefined) album.title = String(title).trim() || album.title
+  if (date !== undefined) album.date = date
+  if (event !== undefined && eventTags.includes(event)) album.event = event
+  if (status !== undefined) album.status = status === 'Published' ? 'Published' : 'Draft'
+  if (featured !== undefined) album.featured = !!featured
+  galleryAlbums.set(album.id, album)
+  res.json({ success: true, album })
+})
+
+// Admin: delete album (also removes its photo files from disk)
+app.delete('/api/gallery/albums/:id', requireAdmin, (req, res) => {
+  const album = galleryAlbums.get(req.params.id)
+  if (!album) return res.status(404).json({ error: 'Album not found' })
+  for (const photo of album.photos) {
+    const filePath = path.join(uploadsDir, path.basename(photo.url))
+    fs.unlink(filePath, () => {})
+  }
+  galleryAlbums.delete(req.params.id)
+  res.json({ success: true })
+})
+
+// Admin: upload one or more photos into an album
+app.post('/api/gallery/albums/:id/photos', requireAdmin, (req, res) => {
+  galleryUpload.array('photos', 20)(req, res, err => {
+    if (err) return res.status(400).json({ error: err.message })
+    const album = galleryAlbums.get(req.params.id)
+    if (!album) return res.status(404).json({ error: 'Album not found' })
+    if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No photos uploaded' })
+
+    // Sniff each file's real signature — reject anything that isn't a genuine
+    // JPG/PNG/GIF/WEBP, regardless of what extension or MIME type the client sent.
+    const rejected = []
+    const newPhotos = []
+    for (const file of req.files) {
+      const ext = detectImageExt(file.buffer)
+      if (!ext) { rejected.push(file.originalname); continue }
+      const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+      fs.writeFileSync(path.join(uploadsDir, filename), file.buffer)
+      newPhotos.push({
+        id: crypto.randomBytes(8).toString('hex'),
+        url: `/uploads/gallery/${filename}`,
+        caption: '',
+        uploadedAt: new Date().toISOString(),
+      })
+    }
+    if (newPhotos.length === 0) {
+      return res.status(400).json({ error: 'No valid images found — only JPG, PNG, WEBP and GIF are allowed' })
+    }
+    album.photos = [...album.photos, ...newPhotos]
+    galleryAlbums.set(album.id, album)
+    console.log('[Gallery] Uploaded', newPhotos.length, 'photo(s) to', album.title, rejected.length ? `(rejected ${rejected.length} invalid)` : '')
+    res.json({ success: true, album, rejectedCount: rejected.length })
+  })
+})
+
+// Admin: delete a single photo from an album
+app.delete('/api/gallery/albums/:id/photos/:photoId', requireAdmin, (req, res) => {
+  const album = galleryAlbums.get(req.params.id)
+  if (!album) return res.status(404).json({ error: 'Album not found' })
+  const photo = album.photos.find(p => p.id === req.params.photoId)
+  if (!photo) return res.status(404).json({ error: 'Photo not found' })
+  fs.unlink(path.join(uploadsDir, path.basename(photo.url)), () => {})
+  album.photos = album.photos.filter(p => p.id !== req.params.photoId)
+  galleryAlbums.set(album.id, album)
+  res.json({ success: true, album })
 })
 
 // ---------- Generic error handler ----------
