@@ -74,11 +74,6 @@ export default function Register() {
     e.preventDefault()
     if (step < 3) return
     setError('')
-    const filledPlayers = form.players.filter(p => p.name.trim())
-    if (filledPlayers.length < 11) {
-      setError('Please add at least 11 players to complete your squad.')
-      return
-    }
     setShowPayment(true)
   }
 
@@ -315,6 +310,12 @@ export default function Register() {
                       </div>
                     ))}
                   </div>
+                  {form.players.filter(p => p.name.trim()).length < 11 && (
+                    <div style={{ padding: '12px 16px', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 10, marginBottom: 14, fontSize: '0.83rem', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>⚠️</span>
+                      You have {form.players.filter(p => p.name.trim()).length} of 11 required players. You can add more players from your team dashboard after registration.
+                    </div>
+                  )}
                   <div style={{ padding: 16, background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 12, marginBottom: 20, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
                     By submitting, you confirm all information is accurate and your team agrees to abide by StarCraft Cup 2026 Rules & Regulations.
                   </div>
