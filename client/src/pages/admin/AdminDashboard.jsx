@@ -26,6 +26,10 @@ import Merchandise from './modules/Merchandise'
 import AuditLogs from './modules/AuditLogs'
 import WebsiteSettings from './modules/WebsiteSettings'
 import HomePageEditor from './modules/HomePageEditor'
+import AboutPageEditor from './modules/AboutPageEditor'
+import TournamentPageEditor from './modules/TournamentPageEditor'
+import ContactPageEditor from './modules/ContactPageEditor'
+import MediaCenterEditor from './modules/MediaCenterEditor'
 import RolePermissions from './modules/RolePermissions'
 import TeamManagerDashboard from './modules/TeamManagerDashboard'
 import TeamRegistrations from './modules/TeamRegistrations'
@@ -68,6 +72,10 @@ const MENU = [
     category: 'Content',
     items: [
       { id: 'homeEditor', label: 'Home Page Editor', icon: '🏠' },
+      { id: 'aboutEditor', label: 'About Page Editor', icon: '📖' },
+      { id: 'tournamentEditor', label: 'Tournament Page Editor', icon: '🏆' },
+      { id: 'contactEditor', label: 'Contact Page Editor', icon: '📞' },
+      { id: 'mediaCenterEditor', label: 'Media Center Editor', icon: '📡' },
       { id: 'news', label: 'News & Blog CMS', icon: '📰' },
       { id: 'gallery', label: 'Gallery Management', icon: '🖼️' },
     ]
@@ -120,6 +128,10 @@ const MODULE_MAP = {
   audit: AuditLogs,
   settings: WebsiteSettings,
   homeEditor: HomePageEditor,
+  aboutEditor: AboutPageEditor,
+  tournamentEditor: TournamentPageEditor,
+  contactEditor: ContactPageEditor,
+  mediaCenterEditor: MediaCenterEditor,
   roles: RolePermissions,
 }
 

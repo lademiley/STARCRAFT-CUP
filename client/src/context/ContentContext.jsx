@@ -78,6 +78,11 @@ export function ContentProvider({ children }) {
 
   useEffect(() => {
     loadPage('home').finally(() => setLoading(false))
+    // Pre-load other editable pages so editors open instantly
+    loadPage('about')
+    loadPage('tournament')
+    loadPage('contact')
+    loadPage('mediacenter')
   }, [loadPage])
 
   // Admin dashboard calls this after a successful save so it can push the

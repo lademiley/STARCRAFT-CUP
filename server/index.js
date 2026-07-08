@@ -537,6 +537,123 @@ let siteContent = {
       text: 'Get match alerts, team news, and exclusive tournament updates delivered to your inbox.',
     },
   },
+
+  about: {
+    hero: {
+      title: 'About StarCraft Cup',
+      subtitle: "The story, vision, and mission behind Edo State's premier youth football tournament",
+    },
+    story: {
+      eyebrow: 'Our Story',
+      heading: 'About StarCraft Cup',
+      p1: 'The StarCraft Cup is a premier youth football tournament organized by the Oredo Local Government Area Football Board in partnership with the Edo State Sports Commission and the Edo State Government.',
+      p2: 'Founded to unearth and develop raw U17–U20 talent from every community across Edo State, the tournament brings together one team from each of the state\'s 18 Local Government Areas, the tournament host, and the defending champion — 20 teams competing for glory on a world-class stage.',
+      p3: 'The 2026 Premier Edition marks the founding of a competition designed to grow annually, creating a direct pathway for Edo\'s finest young players to reach professional football.',
+    },
+    motto: {
+      heading: 'Tournament Motto',
+      quote: 'Building Champions, Uniting Communities',
+      text: 'Every match is a step toward excellence. Every player is a potential legend. Every community in Edo State is part of the legacy.',
+    },
+    vision: { heading: 'Vision', text: 'To become the most prestigious youth football tournament in Nigeria, producing world-class U17–U20 players, fostering community development, and elevating Edo State as a centre of sporting excellence across all five annual editions from 2026 to 2030.' },
+    mission: { heading: 'Mission', text: 'To discover, develop, and promote youth football talent (ages U17–U20) from all 18 LGAs in Edo State through a structured, transparent, and world-class tournament that creates opportunities, employment, and community pride.' },
+    values: [
+      'Excellence — in every aspect of organization',
+      'Integrity — fair play and transparency',
+      'Inclusion — all 18 LGAs represented',
+      'Innovation — world-class production standards',
+      'Community — football for the people of Edo',
+    ],
+    objectives: [
+      { icon: '🌍', title: 'Talent Discovery', desc: 'Identify and develop the next generation of Nigerian football stars from all 18 LGAs in Edo State, providing a structured U17–U20 competitive platform.' },
+      { icon: '💰', title: 'Economic Impact', desc: 'Generate significant economic activity in Edo State through tourism, local business patronage, and job creation across all 20 match days.' },
+      { icon: '🤝', title: 'LGA Unity', desc: 'Bring all 18 Local Government Areas together under one flag — representing every Edo community through the universal language of football.' },
+      { icon: '🏟️', title: 'Infrastructure Development', desc: 'Maximize and sustain both the Ugbowo Campus Main Bowl and Ogbemudia Main Bowl for long-term community benefit and future editions.' },
+      { icon: '📺', title: 'Media Visibility', desc: 'Showcase Edo State youth talent to national and international audiences through broadcast, social media coverage, and the Dec 19 media tour.' },
+      { icon: '🌱', title: 'Youth Development', desc: 'Provide structured pathways for U17–U20 players to grow, compete, and progress — with scouting opportunities and the StarCraft Elite XI training program.' },
+    ],
+  },
+
+  tournament: {
+    hero: {
+      title: 'The Tournament',
+      subtitle: 'Competition format, schedule, rules, venues, and prize structure',
+    },
+    rules: [
+      { rule: 'Players must be aged U17 to U20 (born between 2006 and 2009).' },
+      { rule: 'Each team must register a squad of 18 players with valid NIN or student ID.' },
+      { rule: 'Players must have verifiable ties to the LGA they represent.' },
+      { rule: 'Matches are 90 minutes (two halves of 45 minutes).' },
+      { rule: 'Knockout matches level at full time proceed to extra time (30 mins), then penalty shootout.' },
+      { rule: 'A player receiving 2 yellow cards in the tournament is suspended for one match.' },
+      { rule: 'A player receiving a red card is suspended for a minimum of one match.' },
+      { rule: 'Teams must arrive at the venue at least 60 minutes before kickoff.' },
+      { rule: 'All disputes are resolved by the Tournament Technical Committee.' },
+      { rule: 'Anti-doping regulations as per NADAC guidelines apply to all players.' },
+      { rule: 'The host LGA and defending champion are guaranteed automatic entry each edition.' },
+    ],
+    venues: [
+      { icon: '🏟️', name: 'Ugbowo Campus Main Bowl', capacity: '10,000', surface: 'Hybrid Grass', facilities: 'Changing rooms, Medical bay, VIP lounge, Floodlights', role: 'Group Stage, Quarter-Finals & Semi-Finals', matches: 'Dec 2–12 (Group Stage) • Dec 14 (QF) • Dec 16 (SF)' },
+      { icon: '🏆', name: 'Ogbemudia Main Bowl', capacity: '20,000', surface: 'Natural Grass', facilities: 'Full broadcast suite, Press box, VIP suites, LED screens', role: 'Grand Final & Closing Ceremony', matches: 'Dec 18 (Final + 3rd Place) • Dec 20 (Closing)' },
+    ],
+    format: {
+      eyebrow: 'Competition Format',
+      heading: 'How the Tournament Works',
+      phases: [
+        { phase: 'Group Stage', desc: '20 teams split into 4 groups of 5. Top 2 from each group advance to Quarter-Finals.' },
+        { phase: 'Quarter-Finals', desc: '8 teams compete in single-elimination knockout matches.' },
+        { phase: 'Semi-Finals', desc: '4 teams compete; winners advance to the Grand Final.' },
+        { phase: 'Third Place Play-Off', desc: 'Semi-final losers compete for the bronze medal.' },
+        { phase: 'Grand Final', desc: 'The two remaining teams compete for the StarCraft Cup and ₦5 million prize.' },
+        { phase: 'Closing Ceremony', desc: 'Awards, prize giving, and the closing exhibition match.' },
+      ],
+    },
+  },
+
+  contact: {
+    hero: {
+      title: 'Get in Touch',
+      subtitle: "We'd love to hear from you. Reach out for any enquiries.",
+    },
+    info: [
+      { icon: '📍', label: 'Office Address', value: 'Oredo LGA Secretariat, Ring Road, Benin City, Edo State, Nigeria' },
+      { icon: '📞', label: 'Phone Numbers', value: '+234 800 STARCRAFT\n+234 811 234 5678' },
+      { icon: '✉️', label: 'Email', value: 'info@starcraftcup.ng\npress@starcraftcup.ng' },
+      { icon: '💬', label: 'WhatsApp', value: '+234 811 234 5678' },
+    ],
+    faq: [
+      { q: 'How do I register my team?', a: 'Click "Register Team" on the home page or visit our team registration page. Registration costs ₦25,000 per team and is open until February 15, 2027.' },
+      { q: 'How can I buy tickets?', a: 'Tickets are available online on our website and at designated outlets across Benin City. Group/season tickets are also available.' },
+      { q: 'When does the tournament start?', a: 'The StarCraft Cup 2026 Group Stage begins on December 1, 2026, with the Grand Final on December 18, 2026.' },
+      { q: 'Who is eligible to play?', a: 'Players must be aged U17 to U20 with verifiable ties to the LGA they represent and valid NIN or student ID.' },
+    ],
+  },
+
+  mediacenter: {
+    hero: {
+      title: 'Media Center',
+      subtitle: 'Resources for press, journalists, and media organizations',
+    },
+    cards: [
+      { icon: '📋', title: 'Press Accreditation', desc: 'Apply for press credentials to access restricted areas, mixed zones, and press conferences.', cta: 'Apply Now' },
+      { icon: '📦', title: 'Media Kits', desc: 'Download comprehensive media packs containing tournament facts, stats, and backgrounders.', cta: 'Download' },
+      { icon: '📸', title: 'Press Photos', desc: 'High-resolution official photography available for editorial use by accredited media.', cta: 'Access Photos' },
+    ],
+    downloads: [
+      { icon: '🗂️', file: 'StarCraft Cup 2026 — Official Logo Pack', type: 'ZIP', size: '12.4 MB' },
+      { icon: '📏', file: 'Brand Guidelines & Style Guide', type: 'PDF', size: '4.2 MB' },
+      { icon: '📄', file: 'Tournament Fact Sheet', type: 'PDF', size: '890 KB' },
+      { icon: '📦', file: 'Media Kit 2026', type: 'PDF', size: '18.7 MB' },
+      { icon: '📸', file: 'Player Photo Pack — Group Stage', type: 'ZIP', size: '234 MB' },
+      { icon: '📰', file: 'Opening Ceremony Press Release', type: 'PDF', size: '520 KB' },
+      { icon: '📊', file: 'Tournament Infographic', type: 'PNG', size: '3.1 MB' },
+    ],
+    contacts: [
+      { name: 'Miss Blessing Osaghae', role: 'Head of Media & Communications', email: 'media@starcraftcup.ng', phone: '+234 811 234 5678' },
+      { name: 'Mr. Tony Okoye', role: 'Press Officer', email: 'press@starcraftcup.ng', phone: '+234 812 345 6789' },
+      { name: 'Mrs. Chidinma Eze', role: 'Digital Media Manager', email: 'digital@starcraftcup.ng', phone: '+234 813 456 7890' },
+    ],
+  },
 }
 
 // Public: anyone can fetch a page's content (public site renders from this)
@@ -570,6 +687,35 @@ const CONTENT_SCHEMAS = {
       items: isShapeArray({ quote: isStr, name: isStr, role: isStr }),
     },
     newsletter: { heading: isStr, text: isStr },
+  },
+  about: {
+    hero: { title: isStr, subtitle: isStr },
+    story: { eyebrow: isStr, heading: isStr, p1: isStr, p2: isStr, p3: isStr },
+    motto: { heading: isStr, quote: isStr, text: isStr },
+    vision: { heading: isStr, text: isStr },
+    mission: { heading: isStr, text: isStr },
+    values: isStrArray,
+    objectives: isShapeArray({ icon: isStr, title: isStr, desc: isStr }),
+  },
+  tournament: {
+    hero: { title: isStr, subtitle: isStr },
+    rules: isShapeArray({ rule: isStr }),
+    venues: isShapeArray({ icon: isStr, name: isStr, capacity: isStr, surface: isStr, facilities: isStr, role: isStr, matches: isStr }),
+    format: {
+      eyebrow: isStr, heading: isStr,
+      phases: isShapeArray({ phase: isStr, desc: isStr }),
+    },
+  },
+  contact: {
+    hero: { title: isStr, subtitle: isStr },
+    info: isShapeArray({ icon: isStr, label: isStr, value: isStr }),
+    faq: isShapeArray({ q: isStr, a: isStr }),
+  },
+  mediacenter: {
+    hero: { title: isStr, subtitle: isStr },
+    cards: isShapeArray({ icon: isStr, title: isStr, desc: isStr, cta: isStr }),
+    downloads: isShapeArray({ icon: isStr, file: isStr, type: isStr, size: isStr }),
+    contacts: isShapeArray({ name: isStr, role: isStr, email: isStr, phone: isStr }),
   },
 }
 
