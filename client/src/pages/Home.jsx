@@ -112,6 +112,28 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SPONSOR TICKER */}
+      {(() => {
+        const items = [
+          { tier: 'PREMIUM TIER',    names: sponsors.platinum.map(s=>s.name) },
+          { tier: 'SUPPORTING TIER', names: [...sponsors.gold, ...sponsors.silver].map(s=>s.name) },
+        ].flatMap(({ tier, names }) => names.map(name => ({ tier, name })))
+        const doubled = [...items, ...items]
+        return (
+          <div className="sponsor-ticker">
+            <div className="sponsor-ticker-track">
+              {doubled.map(({ tier, name }, i) => (
+                <span key={i} className="sponsor-ticker-item">
+                  <span className={`sponsor-ticker-tier ${tier === 'PREMIUM TIER' ? 'tier-premium' : 'tier-supporting'}`}>{tier}</span>
+                  <span className="sponsor-ticker-name">{name}</span>
+                  <span className="sponsor-ticker-sep">✦</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* STATS BAR */}
       <section className="stats-bar">
         <div className="container">
