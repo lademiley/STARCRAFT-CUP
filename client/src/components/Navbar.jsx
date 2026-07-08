@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import logo from '../assets/logo.png'
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -56,11 +57,7 @@ export default function Navbar() {
         <div className="nav-inner container">
           {/* Logo */}
           <Link to="/" className="nav-logo">
-            <div className="logo-icon">⚽</div>
-            <div className="logo-text">
-              <span className="logo-top">STARCRAFT</span>
-              <span className="logo-bottom">CUP 2026</span>
-            </div>
+            <img src={logo} alt="StarCraft Cup" className="logo-img" />
           </Link>
 
           {/* Desktop Links */}
@@ -208,21 +205,12 @@ export default function Navbar() {
         .nav-logo {
           display: flex; align-items: center; gap: 12px; flex-shrink: 0;
         }
-        .logo-icon {
-          font-size: 1.8rem;
-          filter: drop-shadow(0 0 8px rgba(212,175,55,0.6));
+        .logo-img {
+          height: 52px; width: auto;
+          filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));
+          transition: height 300ms ease;
         }
-        .logo-text { display: flex; flex-direction: column; line-height: 1; }
-        .logo-top {
-          font-family: var(--font-heading);
-          font-size: 1rem; font-weight: 900;
-          letter-spacing: 3px; color: var(--gold);
-        }
-        .logo-bottom {
-          font-family: var(--font-secondary);
-          font-size: 0.65rem; font-weight: 700;
-          letter-spacing: 2px; color: rgba(255,255,255,0.7);
-        }
+        .navbar.scrolled .logo-img { height: 42px; }
         .nav-links {
           display: flex; list-style: none; gap: 4px; margin: 0 auto;
         }

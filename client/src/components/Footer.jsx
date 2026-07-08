@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import logo from '../assets/logo.png'
 
 export default function Footer() {
   return (
@@ -10,11 +11,7 @@ export default function Footer() {
             {/* Brand */}
             <div className="footer-brand">
               <div className="footer-logo">
-                <span style={{fontSize:'2.5rem'}}>⚽</span>
-                <div>
-                  <div style={{fontFamily:'var(--font-heading)',fontSize:'1.2rem',fontWeight:900,letterSpacing:'3px',color:'var(--gold)'}}>STARCRAFT</div>
-                  <div style={{fontFamily:'var(--font-secondary)',fontSize:'0.7rem',letterSpacing:'2px',color:'rgba(255,255,255,0.6)'}}>CUP 2027</div>
-                </div>
+                <img src={logo} alt="StarCraft Cup" style={{height:64,width:'auto'}} />
               </div>
               <p style={{marginTop:16,fontSize:'0.9rem',color:'rgba(255,255,255,0.6)',lineHeight:1.7}}>
                 The premier grassroots football tournament in Edo State, Nigeria. Building champions, creating legends.
