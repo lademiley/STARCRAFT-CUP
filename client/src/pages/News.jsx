@@ -81,8 +81,8 @@ export default function News() {
           {/* Featured Article */}
           {filtered.length > 0 && (
             <div className="card featured-article" onClick={()=>setSelected(filtered[0].id)} style={{marginBottom:32,cursor:'pointer'}}>
-              <div className="fa-img" style={{background:bgColors[0]}}>
-                <img src={cupImg} alt="StarCraft Cup trophy" style={{height:'80%',maxHeight:260,width:'auto',objectFit:'contain'}} />
+              <div className="fa-img" style={{background:'none',padding:0,overflow:'hidden'}}>
+                <img src="/news-featured.png" alt="StarCraft Cup 2026 Featured Story" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'left center',display:'block'}} />
                 <div className="fa-overlay">
                   <span className="badge badge-gold">{filtered[0].category}</span>
                   <div style={{marginTop:8,fontFamily:'var(--font-secondary)',fontSize:'0.8rem',color:'rgba(255,255,255,0.6)'}}>FEATURED STORY</div>
