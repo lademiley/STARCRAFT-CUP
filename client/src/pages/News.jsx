@@ -82,7 +82,7 @@ export default function News() {
           {filtered.length > 0 && (
             <div className="card featured-article" onClick={()=>setSelected(filtered[0].id)} style={{marginBottom:32,cursor:'pointer'}}>
               <div className="fa-img" style={{background:'linear-gradient(135deg, #4A090B 0%, #8B0E12 60%, #6B0A0E 100%)',padding:0,overflow:'hidden'}}>
-                <img src="/trophy.svg" alt="StarCraft Cup Trophy" style={{width:'60%',maxWidth:220,height:'auto',objectFit:'contain',display:'block',filter:'drop-shadow(0 8px 32px rgba(212,175,55,0.35))'}} />
+                <img src="/trophy-cup.png" alt="StarCraft Cup Trophy" style={{width:'75%',maxWidth:300,height:'auto',objectFit:'contain',display:'block',filter:'drop-shadow(0 8px 40px rgba(212,175,55,0.45))'}} />
                 <div className="fa-overlay">
                   <span className="badge badge-gold" style={{fontSize:'0.75rem',letterSpacing:'0.05em',fontWeight:700}}>{filtered[0].category}</span>
                   <div style={{marginTop:6,fontFamily:'var(--font-secondary)',fontSize:'0.75rem',fontWeight:700,letterSpacing:'0.12em',color:'rgba(255,255,255,0.75)',textTransform:'uppercase'}}>Featured Story</div>
@@ -125,7 +125,7 @@ export default function News() {
       </section>
 
       <style>{`
-        .featured-article { display: grid; grid-template-columns: 1.2fr 1fr; overflow: hidden; }
+        .featured-article { display: grid; grid-template-columns: 1.6fr 1fr; overflow: hidden; }
         .fa-img { display: flex; align-items: center; justify-content: center; position: relative; min-height: 300px; }
         .fa-overlay { position: absolute; bottom: 20px; left: 20px; }
         .fa-content { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
