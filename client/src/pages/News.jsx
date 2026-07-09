@@ -81,11 +81,11 @@ export default function News() {
           {/* Featured Article */}
           {filtered.length > 0 && (
             <div className="card featured-article" onClick={()=>setSelected(filtered[0].id)} style={{marginBottom:32,cursor:'pointer'}}>
-              <div className="fa-img" style={{background:'none',padding:0,overflow:'hidden'}}>
-                <img src="/news-featured.png" alt="StarCraft Cup 2026 Featured Story" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'left center',display:'block'}} />
+              <div className="fa-img" style={{background:'linear-gradient(135deg, #4A090B 0%, #8B0E12 60%, #6B0A0E 100%)',padding:0,overflow:'hidden'}}>
+                <img src="/trophy.svg" alt="StarCraft Cup Trophy" style={{width:'60%',maxWidth:220,height:'auto',objectFit:'contain',display:'block',filter:'drop-shadow(0 8px 32px rgba(212,175,55,0.35))'}} />
                 <div className="fa-overlay">
-                  <span className="badge badge-gold">{filtered[0].category}</span>
-                  <div style={{marginTop:8,fontFamily:'var(--font-secondary)',fontSize:'0.8rem',color:'rgba(255,255,255,0.6)'}}>FEATURED STORY</div>
+                  <span className="badge badge-gold" style={{fontSize:'0.75rem',letterSpacing:'0.05em',fontWeight:700}}>{filtered[0].category}</span>
+                  <div style={{marginTop:6,fontFamily:'var(--font-secondary)',fontSize:'0.75rem',fontWeight:700,letterSpacing:'0.12em',color:'rgba(255,255,255,0.75)',textTransform:'uppercase'}}>Featured Story</div>
                 </div>
               </div>
               <div className="fa-content">
