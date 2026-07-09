@@ -524,6 +524,287 @@ app.get('/api/users', requireAdmin, (req, res) => {
   res.json({ users: allUsers })
 })
 
+// ---------- LGA Chairman registration & dashboard ----------
+// Separate identity space from the `users` map (fan/individual/admin) and from
+// the older team-registration flow — chairmen authenticate with their own
+// session key so logging in as a chairman never collides with a fan/admin session.
+const chairmen = new Map() // email -> { id, name, lga, email, phone, passwordHash, photoUrl, createdAt }
+const chairmanUploadsDir = path.join(__dirname, 'uploads', 'chairmen')
+fs.mkdirSync(chairmanUploadsDir, { recursive: true })
+app.use('/uploads/chairmen', express.static(chairmanUploadsDir, {
+  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}))
+const chairmanPhotoUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024, files: 1 } })
+
+function safeChairman(c) {
+  const { passwordHash: _p, ...safe } = c
+  return safe
+}
+
+app.post('/api/chairman/register', (req, res) => {
+  const { name, lga, email, phone, password, confirmPassword } = req.body
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Full name is required' })
+  if (!EDO_LGAS.includes(lga)) return res.status(400).json({ error: 'A valid Local Government Area is required' })
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'A valid email address is required' })
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Phone number is required' })
+  if (!password || password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' })
+  if (password !== confirmPassword) return res.status(400).json({ error: 'Passwords do not match' })
+  if (chairmen.has(email)) return res.status(409).json({ error: 'A chairman account with this email already exists' })
+  // Each LGA has exactly one chairman account — otherwise the chairman dashboard's
+  // "players registered under my LGA" view would be shared/ambiguous across accounts.
+  if ([...chairmen.values()].some(c => c.lga === lga)) {
+    return res.status(409).json({ error: `${lga} already has a registered chairman account` })
+  }
+
+  const chairman = {
+    id: crypto.randomBytes(8).toString('hex'),
+    name: name.trim(),
+    lga,
+    email,
+    phone: phone.trim(),
+    photoUrl: '',
+    passwordHash: hashPassword(password),
+    createdAt: new Date().toISOString(),
+  }
+  chairmen.set(email, chairman)
+  req.session.chairmanEmail = email
+  console.log('[ChairmanReg]', { lga, email })
+  res.status(201).json({ success: true, chairman: safeChairman(chairman) })
+})
+
+app.post('/api/chairman/login', (req, res) => {
+  const { email, password } = req.body
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' })
+  const chairman = chairmen.get(email)
+  if (!chairman || chairman.passwordHash !== hashPassword(password)) {
+    return res.status(401).json({ error: 'Invalid email or password' })
+  }
+  req.session.chairmanEmail = email
+  res.json({ success: true, chairman: safeChairman(chairman) })
+})
+
+app.post('/api/chairman/logout', (req, res) => {
+  delete req.session.chairmanEmail
+  res.json({ success: true })
+})
+
+function requireChairman(req, res, next) {
+  if (!req.session.chairmanEmail || !chairmen.has(req.session.chairmanEmail)) {
+    return res.status(401).json({ error: 'Not authenticated' })
+  }
+  next()
+}
+
+app.get('/api/chairman/me', requireChairman, (req, res) => {
+  res.json({ chairman: safeChairman(chairmen.get(req.session.chairmanEmail)) })
+})
+
+app.patch('/api/chairman/profile', requireChairman, (req, res) => {
+  const chairman = chairmen.get(req.session.chairmanEmail)
+  const { name, phone } = req.body
+  if (name !== undefined) {
+    if (!name.trim()) return res.status(400).json({ error: 'Full name cannot be empty' })
+    chairman.name = name.trim()
+  }
+  if (phone !== undefined) chairman.phone = phone.trim()
+  chairmen.set(chairman.email, chairman)
+  res.json({ success: true, chairman: safeChairman(chairman) })
+})
+
+app.post('/api/chairman/photo', requireChairman, (req, res) => {
+  chairmanPhotoUpload.single('photo')(req, res, err => {
+    if (err) return res.status(400).json({ error: err.message })
+    if (!req.file) return res.status(400).json({ error: 'No photo uploaded' })
+    const ext = detectImageExt(req.file.buffer)
+    if (!ext) return res.status(400).json({ error: 'Only JPG, PNG, WEBP and GIF images are allowed' })
+    const chairman = chairmen.get(req.session.chairmanEmail)
+    const oldUrl = chairman.photoUrl
+    const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+    fs.writeFileSync(path.join(chairmanUploadsDir, filename), req.file.buffer)
+    chairman.photoUrl = `/uploads/chairmen/${filename}`
+    chairmen.set(chairman.email, chairman)
+    if (oldUrl) fs.unlink(path.join(chairmanUploadsDir, path.basename(oldUrl)), () => {})
+    res.json({ success: true, chairman: safeChairman(chairman) })
+  })
+})
+
+// Chairman: players registered under their LGA
+app.get('/api/chairman/players', requireChairman, (req, res) => {
+  const chairman = chairmen.get(req.session.chairmanEmail)
+  const lgaPlayers = [...players.values()]
+    .filter(p => p.lga === chairman.lga)
+    .map(safePlayer)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ players: lgaPlayers })
+})
+
+// Chairman: registration statistics for their LGA
+app.get('/api/chairman/stats', requireChairman, (req, res) => {
+  const chairman = chairmen.get(req.session.chairmanEmail)
+  const lgaPlayers = [...players.values()].filter(p => p.lga === chairman.lga)
+  res.json({
+    stats: {
+      totalPlayers: lgaPlayers.length,
+      pending: lgaPlayers.filter(p => p.status === 'pending').length,
+      approved: lgaPlayers.filter(p => p.status === 'approved').length,
+      rejected: lgaPlayers.filter(p => p.status === 'rejected').length,
+    }
+  })
+})
+
+// ---------- Individual player registration & dashboard ----------
+const players = new Map() // accountKey (id) -> { id, name, lga, dob, age, height, jerseySize, preferredFoot, phone, email, passwordHash, photoUrl, status, createdAt }
+// Players may log in with either their email or phone number, so both are
+// indexed to the same player id — a single Map keyed by only one field would
+// make the other field unusable for login and wouldn't enforce uniqueness on it.
+const playersByPhone = new Map() // phone -> player id
+const playersByEmail = new Map() // email -> player id
+const PREFERRED_FEET = ['Left', 'Right', 'Both']
+const playerProfileUploadsDir = path.join(__dirname, 'uploads', 'player-profiles')
+fs.mkdirSync(playerProfileUploadsDir, { recursive: true })
+app.use('/uploads/player-profiles', express.static(playerProfileUploadsDir, {
+  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}))
+const playerProfilePhotoUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024, files: 1 } })
+
+function calculateAge(dob) {
+  const birth = new Date(dob)
+  if (Number.isNaN(birth.getTime())) return null
+  const now = new Date()
+  let age = now.getFullYear() - birth.getFullYear()
+  const monthDiff = now.getMonth() - birth.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) age--
+  return age
+}
+
+function safePlayer(p) {
+  const { passwordHash: _p, ...safe } = p
+  return safe
+}
+
+app.post('/api/player/register', (req, res) => {
+  // Player-specific identity, used only by the individual player portal — a
+  // player account is distinct from a chairman account and from the fan/team
+  // accounts in `users`, even if the same email is reused across those spaces.
+  const { name, lga, dob, height, jerseySize, preferredFoot, phone, email, password, confirmPassword } = req.body
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Full name is required' })
+  if (!EDO_LGAS.includes(lga)) return res.status(400).json({ error: 'A valid Local Government Area is required' })
+  if (!dob) return res.status(400).json({ error: 'Date of birth is required' })
+  const age = calculateAge(dob)
+  if (age === null || age < 5 || age > 60) return res.status(400).json({ error: 'Please enter a valid date of birth' })
+  const heightNum = Number(height)
+  if (!Number.isFinite(heightNum) || heightNum < 100 || heightNum > 230) {
+    return res.status(400).json({ error: 'Height must be a number between 100 and 230 cm' })
+  }
+  if (!KIT_SIZES.includes(jerseySize)) return res.status(400).json({ error: 'A valid jersey size is required' })
+  if (!PREFERRED_FEET.includes(preferredFoot)) return res.status(400).json({ error: 'Preferred foot must be Left, Right or Both' })
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Phone number is required' })
+  if (!password || password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' })
+  if (password !== confirmPassword) return res.status(400).json({ error: 'Passwords do not match' })
+
+  const cleanPhone = phone.trim()
+  const cleanEmail = email ? email.trim() : ''
+  if (playersByPhone.has(cleanPhone)) return res.status(409).json({ error: 'A player account with this phone number already exists' })
+  if (cleanEmail && playersByEmail.has(cleanEmail)) return res.status(409).json({ error: 'A player account with this email already exists' })
+
+  const id = crypto.randomBytes(8).toString('hex')
+  const player = {
+    id,
+    name: name.trim(),
+    lga,
+    dob,
+    age,
+    height: heightNum,
+    jerseySize,
+    preferredFoot,
+    phone: cleanPhone,
+    email: cleanEmail,
+    photoUrl: '',
+    status: 'pending',
+    passwordHash: hashPassword(password),
+    createdAt: new Date().toISOString(),
+  }
+  players.set(id, player)
+  playersByPhone.set(cleanPhone, id)
+  if (cleanEmail) playersByEmail.set(cleanEmail, id)
+  req.session.playerId = id
+  console.log('[PlayerReg]', { lga, id, cleanPhone })
+  res.status(201).json({ success: true, player: safePlayer(player) })
+})
+
+app.post('/api/player/login', (req, res) => {
+  const { email, password } = req.body
+  if (!email || !password) return res.status(400).json({ error: 'Email/phone and password are required' })
+  const identifier = email.trim()
+  const id = playersByEmail.get(identifier) || playersByPhone.get(identifier)
+  const player = id ? players.get(id) : null
+  if (!player || player.passwordHash !== hashPassword(password)) {
+    return res.status(401).json({ error: 'Invalid email/phone or password' })
+  }
+  req.session.playerId = player.id
+  res.json({ success: true, player: safePlayer(player) })
+})
+
+app.post('/api/player/logout', (req, res) => {
+  delete req.session.playerId
+  res.json({ success: true })
+})
+
+function requirePlayer(req, res, next) {
+  if (!req.session.playerId || !players.has(req.session.playerId)) {
+    return res.status(401).json({ error: 'Not authenticated' })
+  }
+  next()
+}
+
+app.get('/api/player/me', requirePlayer, (req, res) => {
+  res.json({ player: safePlayer(players.get(req.session.playerId)) })
+})
+
+app.patch('/api/player/profile', requirePlayer, (req, res) => {
+  const player = players.get(req.session.playerId)
+  const { name, phone, height, jerseySize, preferredFoot } = req.body
+  if (name !== undefined) {
+    if (!name.trim()) return res.status(400).json({ error: 'Full name cannot be empty' })
+    player.name = name.trim()
+  }
+  if (phone !== undefined) player.phone = phone.trim()
+  if (height !== undefined) {
+    const heightNum = Number(height)
+    if (!Number.isFinite(heightNum) || heightNum < 100 || heightNum > 230) {
+      return res.status(400).json({ error: 'Height must be a number between 100 and 230 cm' })
+    }
+    player.height = heightNum
+  }
+  if (jerseySize !== undefined) {
+    if (!KIT_SIZES.includes(jerseySize)) return res.status(400).json({ error: 'A valid jersey size is required' })
+    player.jerseySize = jerseySize
+  }
+  if (preferredFoot !== undefined) {
+    if (!PREFERRED_FEET.includes(preferredFoot)) return res.status(400).json({ error: 'Preferred foot must be Left, Right or Both' })
+    player.preferredFoot = preferredFoot
+  }
+  players.set(player.id, player)
+  res.json({ success: true, player: safePlayer(player) })
+})
+
+app.post('/api/player/photo', requirePlayer, (req, res) => {
+  playerProfilePhotoUpload.single('photo')(req, res, err => {
+    if (err) return res.status(400).json({ error: err.message })
+    if (!req.file) return res.status(400).json({ error: 'No photo uploaded' })
+    const ext = detectImageExt(req.file.buffer)
+    if (!ext) return res.status(400).json({ error: 'Only JPG, PNG, WEBP and GIF images are allowed' })
+    const player = players.get(req.session.playerId)
+    const oldUrl = player.photoUrl
+    const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+    fs.writeFileSync(path.join(playerProfileUploadsDir, filename), req.file.buffer)
+    player.photoUrl = `/uploads/player-profiles/${filename}`
+    players.set(player.id, player)
+    if (oldUrl) fs.unlink(path.join(playerProfileUploadsDir, path.basename(oldUrl)), () => {})
+    res.json({ success: true, player: safePlayer(player) })
+  })
+})
+
 // ---------- Site Content (admin-editable page copy, starting with Home) ----------
 // Keyed by page slug so this can grow to about/tournament/etc. without changing shape.
 let siteContent = {

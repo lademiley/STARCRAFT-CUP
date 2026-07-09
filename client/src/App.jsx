@@ -28,6 +28,12 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import Tickets from './pages/Tickets'
 import Profile from './pages/Profile'
 import TeamDashboard from './pages/TeamDashboard'
+import ChairmanRegister from './pages/ChairmanRegister'
+import ChairmanLogin from './pages/ChairmanLogin'
+import ChairmanDashboard from './pages/ChairmanDashboard'
+import PlayerRegister from './pages/PlayerRegister'
+import PlayerLogin from './pages/PlayerLogin'
+import PlayerDashboard from './pages/PlayerDashboard'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -85,6 +91,14 @@ function App() {
           <Route path="/tickets" element={<PublicLayout><Tickets /></PublicLayout>} />
           <Route path="/profile" element={<PublicLayout><Profile /></PublicLayout>} />
           <Route path="/team-dashboard" element={<TeamDashboard />} />
+
+          {/* Chairman & Player portals — no Navbar/Footer, self-contained dashboards */}
+          <Route path="/register/chairman" element={<ChairmanRegister />} />
+          <Route path="/chairman/login" element={<ChairmanLogin />} />
+          <Route path="/chairman/dashboard" element={<ChairmanDashboard />} />
+          <Route path="/register/player" element={<PlayerRegister />} />
+          <Route path="/player/login" element={<PlayerLogin />} />
+          <Route path="/player/dashboard" element={<PlayerDashboard />} />
         </Routes>
       </Router>
       </ContentProvider>
