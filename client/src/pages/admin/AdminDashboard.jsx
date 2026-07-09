@@ -28,6 +28,7 @@ import WebsiteSettings from './modules/WebsiteSettings'
 import RolePermissions from './modules/RolePermissions'
 import TeamManagerDashboard from './modules/TeamManagerDashboard'
 import TeamRegistrations from './modules/TeamRegistrations'
+import FanApprovals from './modules/FanApprovals'
 
 // Page Editors
 import HomePageEditor from './modules/HomePageEditor'
@@ -99,6 +100,7 @@ const MENU = [
       { id: 'sponsors', label: 'Sponsorship Management', icon: '💼' },
       { id: 'finance', label: 'Financial Reports', icon: '💰' },
       { id: 'tickets', label: 'Ticket Sales', icon: '🎫' },
+      { id: 'fanApprovals', label: 'Fan/Ticket Approvals', icon: '🎟️' },
       { id: 'payments', label: 'Payment Orders', icon: '💳' },
       { id: 'paymentSettings', label: 'Payment Methods', icon: '🏦' },
       { id: 'merch', label: 'Merchandise', icon: '👕' },
@@ -134,6 +136,7 @@ const MODULE_MAP = {
   sponsors: SponsorshipManagement,
   finance: FinancialReports,
   tickets: TicketSales,
+  fanApprovals: FanApprovals,
   payments: PaymentOrders,
   paymentSettings: PaymentSettings,
   merch: Merchandise,

@@ -34,6 +34,10 @@ import ChairmanDashboard from './pages/ChairmanDashboard'
 import PlayerRegister from './pages/PlayerRegister'
 import PlayerLogin from './pages/PlayerLogin'
 import PlayerDashboard from './pages/PlayerDashboard'
+import FanRegister from './pages/FanRegister'
+import FanCheckout from './pages/FanCheckout'
+import FanLogin from './pages/FanLogin'
+import FanDashboard from './pages/FanDashboard'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -99,6 +103,10 @@ function App() {
           <Route path="/register/player" element={<PlayerRegister />} />
           <Route path="/player/login" element={<PlayerLogin />} />
           <Route path="/player/dashboard" element={<PlayerDashboard />} />
+          <Route path="/register/fan" element={<FanRegister />} />
+          <Route path="/fan/checkout" element={<FanCheckout />} />
+          <Route path="/fan/login" element={<FanLogin />} />
+          <Route path="/fan/dashboard" element={<FanDashboard />} />
         </Routes>
       </Router>
       </ContentProvider>

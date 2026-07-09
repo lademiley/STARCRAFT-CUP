@@ -805,6 +805,254 @@ app.post('/api/player/photo', requirePlayer, (req, res) => {
   })
 })
 
+// ---------- Fan / Ticket registration, checkout & dashboard ----------
+// Separate identity space from the `users` map (legacy individual/fan mode,
+// left untouched for backward compatibility) — fans authenticate with their
+// own session key, matching the chairman/player pattern above.
+const FAN_TEAMS = [
+  'Akoko-Edo Panthers', 'Egor United', 'Esan Central FC', 'Esan North Stars', 'Esan South FC',
+  'Esan West Rangers', 'Etsako Central FC', 'Etsako East United', 'Etsako West FC', 'Igueben FC',
+  'Ikpoba-Okha FC', 'Oredo City FC', 'Orhionmwon FC', 'Ovia North Rangers', 'Ovia South United',
+  'Owan East FC', 'Owan West United', 'Uhunmwonde FC', 'Egor Host XI', 'Oredo Youth',
+]
+// Fan-favourite / high-demand teams command a premium on VIP & VVIP tiers.
+const FAN_PREMIUM_TEAMS = new Set(['Oredo City FC', 'Oredo Youth', 'Egor Host XI'])
+const FAN_BASE_PRICES = { Regular: 2000, VIP: 5000, VVIP: 10000 }
+const FAN_PREMIUM_PRICES = { Regular: 2500, VIP: 7500, VVIP: 15000 }
+const FAN_TICKET_CATEGORIES = Object.keys(FAN_BASE_PRICES)
+
+function getTicketPrice(team, category) {
+  const table = FAN_PREMIUM_TEAMS.has(team) ? FAN_PREMIUM_PRICES : FAN_BASE_PRICES
+  return table[category]
+}
+
+const fans = new Map() // email -> { id, name, lga, email, phone, preferredTeam, ticketCategory, ticketPrice, passwordHash, photoUrl, status, payment, ticket, notifications, createdAt }
+const fanUploadsDir = path.join(__dirname, 'uploads', 'fans')
+fs.mkdirSync(fanUploadsDir, { recursive: true })
+app.use('/uploads/fans', express.static(fanUploadsDir, {
+  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}))
+const fanPhotoUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024, files: 1 } })
+
+function safeFan(f) {
+  const { passwordHash: _p, ...safe } = f
+  return safe
+}
+
+function addFanNotification(fan, title, message) {
+  fan.notifications.unshift({
+    id: crypto.randomBytes(6).toString('hex'),
+    title,
+    message,
+    createdAt: new Date().toISOString(),
+    read: false,
+  })
+  fan.notifications = fan.notifications.slice(0, 30)
+}
+
+app.get('/api/fan/teams', (req, res) => {
+  res.json({
+    teams: FAN_TEAMS,
+    categories: FAN_TICKET_CATEGORIES,
+    prices: Object.fromEntries(FAN_TEAMS.map(t => [t, Object.fromEntries(FAN_TICKET_CATEGORIES.map(c => [c, getTicketPrice(t, c)]))])),
+  })
+})
+
+app.post('/api/fan/register', (req, res) => {
+  const { name, lga, email, phone, preferredTeam, ticketCategory, password, confirmPassword } = req.body
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Full name is required' })
+  if (!EDO_LGAS.includes(lga)) return res.status(400).json({ error: 'A valid Local Government Area is required' })
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'A valid email address is required' })
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Phone number is required' })
+  if (!FAN_TEAMS.includes(preferredTeam)) return res.status(400).json({ error: 'Please select a valid preferred team' })
+  if (!FAN_TICKET_CATEGORIES.includes(ticketCategory)) return res.status(400).json({ error: 'Please select a valid ticket category' })
+  if (!password || password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' })
+  if (password !== confirmPassword) return res.status(400).json({ error: 'Passwords do not match' })
+  const canonicalEmail = email.trim().toLowerCase()
+  if (fans.has(canonicalEmail)) return res.status(409).json({ error: 'A fan account with this email already exists' })
+
+  const fan = {
+    id: crypto.randomBytes(8).toString('hex'),
+    name: name.trim(),
+    lga,
+    email: canonicalEmail,
+    phone: phone.trim(),
+    preferredTeam,
+    ticketCategory,
+    ticketPrice: getTicketPrice(preferredTeam, ticketCategory),
+    photoUrl: '',
+    status: 'pending_payment', // pending_payment -> pending_approval -> approved / rejected
+    payment: null,
+    ticket: null,
+    notifications: [],
+    passwordHash: hashPassword(password),
+    createdAt: new Date().toISOString(),
+  }
+  addFanNotification(fan, 'Account created', 'Complete secure checkout to submit your ticket for approval.')
+  fans.set(fan.email, fan)
+  req.session.fanEmail = fan.email
+  console.log('[FanReg]', { lga, email: fan.email, preferredTeam, ticketCategory })
+  res.status(201).json({ success: true, fan: safeFan(fan) })
+})
+
+app.post('/api/fan/login', (req, res) => {
+  const { email, password } = req.body
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' })
+  const fan = fans.get(email.trim().toLowerCase())
+  if (!fan || fan.passwordHash !== hashPassword(password)) {
+    return res.status(401).json({ error: 'Invalid email or password' })
+  }
+  req.session.fanEmail = fan.email
+  res.json({ success: true, fan: safeFan(fan) })
+})
+
+app.post('/api/fan/logout', (req, res) => {
+  delete req.session.fanEmail
+  res.json({ success: true })
+})
+
+function requireFan(req, res, next) {
+  if (!req.session.fanEmail || !fans.has(req.session.fanEmail)) {
+    return res.status(401).json({ error: 'Not authenticated' })
+  }
+  next()
+}
+
+app.get('/api/fan/me', requireFan, (req, res) => {
+  res.json({ fan: safeFan(fans.get(req.session.fanEmail)) })
+})
+
+// Secure checkout — validates and masks card details (only last 4 digits are
+// ever persisted); no raw PAN/CVV is stored, matching PCI-conscious handling
+// even though this in-memory demo does not call out to a real card network.
+function luhnValid(num) {
+  let sum = 0, alt = false
+  for (let i = num.length - 1; i >= 0; i--) {
+    let n = parseInt(num[i], 10)
+    if (alt) { n *= 2; if (n > 9) n -= 9 }
+    sum += n
+    alt = !alt
+  }
+  return sum % 10 === 0
+}
+
+app.post('/api/fan/pay', requireFan, (req, res) => {
+  const fan = fans.get(req.session.fanEmail)
+  if (fan.status !== 'pending_payment') {
+    return res.status(400).json({ error: 'This account has already completed checkout' })
+  }
+  const { cardName, cardNumber, expiry, cvv } = req.body
+  const digits = (cardNumber || '').replace(/\s+/g, '')
+  if (!cardName || !cardName.trim()) return res.status(400).json({ error: 'Cardholder name is required' })
+  if (!/^\d{13,19}$/.test(digits) || !luhnValid(digits)) return res.status(400).json({ error: 'Invalid card number' })
+  if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry || '')) return res.status(400).json({ error: 'Expiry must be in MM/YY format' })
+  const [mm, yy] = expiry.split('/').map(Number)
+  const expDate = new Date(2000 + yy, mm, 0, 23, 59, 59)
+  if (expDate < new Date()) return res.status(400).json({ error: 'Card has expired' })
+  if (!/^\d{3,4}$/.test(cvv || '')) return res.status(400).json({ error: 'Invalid CVV' })
+
+  fan.payment = {
+    status: 'paid',
+    method: 'card',
+    last4: digits.slice(-4),
+    amount: fan.ticketPrice,
+    reference: `PAY-${crypto.randomBytes(6).toString('hex').toUpperCase()}`,
+    paidAt: new Date().toISOString(),
+  }
+  fan.status = 'pending_approval'
+  addFanNotification(fan, 'Payment received', `Your payment of ₦${fan.ticketPrice.toLocaleString()} was received. Awaiting admin approval.`)
+  fans.set(fan.email, fan)
+  res.json({ success: true, fan: safeFan(fan) })
+})
+
+app.patch('/api/fan/profile', requireFan, (req, res) => {
+  const fan = fans.get(req.session.fanEmail)
+  const { name, phone } = req.body
+  // Email, LGA, preferred team and ticket category are locked once submitted —
+  // they determine the ticket price/category already paid for, so only an
+  // admin can change them (via a full refund/reissue, not implemented here).
+  if (name !== undefined) {
+    if (!name.trim()) return res.status(400).json({ error: 'Full name cannot be empty' })
+    fan.name = name.trim()
+  }
+  if (phone !== undefined) {
+    if (!phone.trim()) return res.status(400).json({ error: 'Phone number cannot be empty' })
+    fan.phone = phone.trim()
+  }
+  fans.set(fan.email, fan)
+  res.json({ success: true, fan: safeFan(fan) })
+})
+
+app.post('/api/fan/photo', requireFan, (req, res) => {
+  fanPhotoUpload.single('photo')(req, res, err => {
+    if (err) return res.status(400).json({ error: err.message })
+    if (!req.file) return res.status(400).json({ error: 'No photo uploaded' })
+    const ext = detectImageExt(req.file.buffer)
+    if (!ext) return res.status(400).json({ error: 'Only JPG, PNG, WEBP and GIF images are allowed' })
+    const fan = fans.get(req.session.fanEmail)
+    const oldUrl = fan.photoUrl
+    const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+    fs.writeFileSync(path.join(fanUploadsDir, filename), req.file.buffer)
+    fan.photoUrl = `/uploads/fans/${filename}`
+    fans.set(fan.email, fan)
+    if (oldUrl) fs.unlink(path.join(fanUploadsDir, path.basename(oldUrl)), () => {})
+    res.json({ success: true, fan: safeFan(fan) })
+  })
+})
+
+app.patch('/api/fan/notifications/:id/read', requireFan, (req, res) => {
+  const fan = fans.get(req.session.fanEmail)
+  const n = fan.notifications.find(n => n.id === req.params.id)
+  if (!n) return res.status(404).json({ error: 'Notification not found' })
+  n.read = true
+  fans.set(fan.email, fan)
+  res.json({ success: true })
+})
+
+// ---------- Admin: fan/ticket approval workflow ----------
+app.get('/api/admin/fans', requireAdmin, (req, res) => {
+  res.json({ fans: [...fans.values()].map(safeFan).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) })
+})
+
+app.patch('/api/admin/fans/:id/approve', requireAdmin, (req, res) => {
+  const fan = [...fans.values()].find(f => f.id === req.params.id)
+  if (!fan) return res.status(404).json({ error: 'Fan account not found' })
+  if (fan.status !== 'pending_approval') return res.status(400).json({ error: 'Only fans awaiting approval can be approved' })
+
+  const needsSeat = fan.ticketCategory !== 'Regular'
+  const seatNumber = needsSeat
+    ? `${String.fromCharCode(65 + Math.floor(Math.random() * 8))}${1 + Math.floor(Math.random() * 30)}`
+    : null
+  const ticketId = `SCC26-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
+  const qrData = [
+    'STARCRAFT CUP 2026', ticketId, fan.ticketCategory, fan.preferredTeam,
+    'Ugbowo Campus Main Bowl — Group Stage · 1 Dec 2026, 4:00 PM',
+    fan.name, fan.email,
+  ].join('|')
+
+  fan.status = 'approved'
+  fan.ticket = {
+    id: ticketId,
+    qrData,
+    matchDetails: 'Ugbowo Campus Main Bowl — Group Stage · 1 Dec 2026, 4:00 PM',
+    seatNumber,
+    generatedAt: new Date().toISOString(),
+  }
+  addFanNotification(fan, 'Ticket approved 🎉', `Your ${fan.ticketCategory} ticket for ${fan.preferredTeam} has been approved. Ticket ID: ${ticketId}.`)
+  fans.set(fan.email, fan)
+  res.json({ success: true, fan: safeFan(fan) })
+})
+
+app.patch('/api/admin/fans/:id/reject', requireAdmin, (req, res) => {
+  const fan = [...fans.values()].find(f => f.id === req.params.id)
+  if (!fan) return res.status(404).json({ error: 'Fan account not found' })
+  if (fan.status !== 'pending_approval') return res.status(400).json({ error: 'Only fans awaiting approval can be rejected' })
+  fan.status = 'rejected'
+  addFanNotification(fan, 'Payment not approved', req.body?.note || 'Your payment could not be verified. Please contact support.')
+  fans.set(fan.email, fan)
+  res.json({ success: true, fan: safeFan(fan) })
+})
+
 // ---------- Site Content (admin-editable page copy, starting with Home) ----------
 // Keyed by page slug so this can grow to about/tournament/etc. without changing shape.
 let siteContent = {
