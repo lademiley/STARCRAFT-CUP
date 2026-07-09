@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { c, StatCard, SectionCard, Badge, Table, ModuleHeader, SearchBar, ActionRow } from './shared'
 
-const roleColor = { fan: '#3B82F6', admin: '#EF4444' }
+const roleColor = { individual: '#3B82F6', admin: '#EF4444' }
 
 export default function UserManagement() {
   const [users, setUsers]         = useState([])
@@ -30,7 +30,7 @@ export default function UserManagement() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 24 }}>
         <StatCard label="Total Accounts" value={users.length}                            icon="👥" color="#D4AF37" />
-        <StatCard label="Fan Accounts"   value={users.filter(u => u.mode === 'fan').length} icon="🎫" color="#3B82F6" />
+        <StatCard label="Individual Registrations" value={users.filter(u => u.mode === 'individual').length} icon="🎫" color="#3B82F6" />
         <StatCard label="Admin Accounts" value={users.filter(u => u.mode === 'admin').length} icon="🔐" color="#EF4444" />
       </div>
 

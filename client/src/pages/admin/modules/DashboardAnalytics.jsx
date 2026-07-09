@@ -27,7 +27,7 @@ export default function DashboardAnalytics() {
     { label: 'Registered Players', value: '0',  icon: '👤', change: '—', color: '#3B82F6' },
     { label: 'Matches Played',     value: '0',  icon: '⚽', change: '—', color: '#22C55E' },
     { label: 'Ticket Revenue',     value: confirmedRevenue > 0 ? `₦${(confirmedRevenue/1000).toFixed(0)}K` : '₦0', icon: '🎫', change: pendingOrders > 0 ? `${pendingOrders} pending` : '—', color: '#F59E0B' },
-    { label: 'Fan Accounts',       value: '0',  icon: '👥', change: '—', color: '#EC4899' },
+    { label: 'Individual Registrations', value: '0',  icon: '👥', change: '—', color: '#EC4899' },
     { label: 'Active Sponsors',    value: '0',  icon: '💼', change: '—', color: '#8B5CF6' },
     { label: 'Volunteers',         value: '0',  icon: '🤝', change: '—', color: '#14B8A6' },
     { label: 'News Articles',      value: '0',  icon: '📰', change: '—', color: '#F97316' },

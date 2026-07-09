@@ -78,8 +78,12 @@ function hashPassword(password) {
 }
 
 // ---------- Auth routes ----------
+const EDO_LGAS = ['Akoko-Edo','Egor','Esan Central','Esan North-East','Esan South-East','Esan West','Etsako Central','Etsako East','Etsako West','Igueben','Ikpoba-Okha','Orhionmwon','Oredo','Ovia North-East','Ovia South-West','Owan East','Owan West','Uhunmwonde']
+const KIT_SIZES = ['XS','S','M','L','XL','XXL']
+const VALID_MODES = ['individual', 'fan', 'admin']
+
 app.post('/api/auth/register', (req, res) => {
-  const { email, password, name, mode } = req.body
+  const { email, password, name, mode, phone, lga, age, kitSize, height, footSize } = req.body
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' })
   }
@@ -89,12 +93,44 @@ app.post('/api/auth/register', (req, res) => {
   if (users.has(email)) {
     return res.status(409).json({ error: 'An account with this email already exists' })
   }
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Full name is required' })
+  }
+  const resolvedMode = mode || 'individual'
+  if (!VALID_MODES.includes(resolvedMode)) {
+    return res.status(400).json({ error: 'Invalid registration mode' })
+  }
+
+  let playerFields = {}
+  if (resolvedMode === 'individual') {
+    if (!EDO_LGAS.includes(lga)) {
+      return res.status(400).json({ error: 'A valid LGA is required' })
+    }
+    if (!KIT_SIZES.includes(kitSize)) {
+      return res.status(400).json({ error: 'A valid kit size is required' })
+    }
+    const ageNum    = Number(age)
+    const heightNum = Number(height)
+    const footNum   = Number(footSize)
+    if (!Number.isFinite(ageNum) || ageNum < 5 || ageNum > 60) {
+      return res.status(400).json({ error: 'Age must be a number between 5 and 60' })
+    }
+    if (!Number.isFinite(heightNum) || heightNum < 100 || heightNum > 230) {
+      return res.status(400).json({ error: 'Height must be a number between 100 and 230 cm' })
+    }
+    if (!Number.isFinite(footNum) || footNum < 20 || footNum > 55) {
+      return res.status(400).json({ error: 'Foot size must be a number between 20 and 55' })
+    }
+    playerFields = { lga, age: ageNum, kitSize, height: heightNum, footSize: footNum }
+  }
 
   const user = {
     id: Date.now(),
     email,
-    name: name || email.split('@')[0],
-    mode: mode || 'fan',
+    name: name.trim(),
+    mode: resolvedMode,
+    phone: phone || '',
+    ...playerFields,
     passwordHash: hashPassword(password),
     createdAt: new Date().toISOString()
   }

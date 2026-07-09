@@ -10,8 +10,9 @@ export default function Register() {
   const [step, setStep]   = useState(0)
   const [mode, setMode]   = useState('team')
   const [form, setForm]   = useState({
-    // fan
+    // individual
     email: '', password: '', confirmPassword: '', name: '', phone: '', favouriteTeam: '',
+    lga: '', age: '', kitSize: '', height: '', footSize: '',
     // team rep
     repName: '', repEmail: '', repPassword: '', repConfirmPassword: '', repPhone: '',
     // team info
@@ -119,13 +120,23 @@ export default function Register() {
     setError('')
     if (form.password !== form.confirmPassword) { setError('Passwords do not match.'); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters.'); return }
+    if (!form.name.trim() || !form.email.trim()) { setError('Full name and email are required.'); return }
+    if (!form.lga.trim() || !form.kitSize.trim()) { setError('Please select your LGA and kit size.'); return }
+    const ageNum = Number(form.age), heightNum = Number(form.height), footNum = Number(form.footSize)
+    if (!Number.isFinite(ageNum) || ageNum < 5 || ageNum > 60) { setError('Age must be between 5 and 60.'); return }
+    if (!Number.isFinite(heightNum) || heightNum < 100 || heightNum > 230) { setError('Height must be between 100 and 230 cm.'); return }
+    if (!Number.isFinite(footNum) || footNum < 20 || footNum > 55) { setError('Foot size must be between 20 and 55.'); return }
     setLoading(true)
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email: form.email, password: form.password, name: form.name, mode: 'fan' }),
+        body: JSON.stringify({
+          email: form.email, password: form.password, name: form.name, phone: form.phone,
+          mode: 'individual', lga: form.lga, age: form.age, kitSize: form.kitSize,
+          height: form.height, footSize: form.footSize,
+        }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Registration failed.'); setLoading(false); return }
@@ -156,7 +167,7 @@ export default function Register() {
 
           {/* Mode toggle */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 28, background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 4 }}>
-            {[['team', '🏟️ Register Team'], ['fan', '👤 Fan Account']].map(([m, l]) => (
+            {[['team', '🏛️ LGA Chairman'], ['fan', '👤 Individual Registration']].map(([m, l]) => (
               <button
                 key={m}
                 type="button"
@@ -192,9 +203,12 @@ export default function Register() {
               {/* ── Step 0 — Account ── */}
               {step === 0 && (
                 <div>
-                  <h4 style={{ color: 'var(--gold)', marginBottom: 16 }}>Team Representative Account</h4>
+                  <h4 style={{ color: 'var(--gold)', marginBottom: 6 }}>LGA Chairman Account</h4>
+                  <p style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.5)', marginBottom: 16 }}>
+                    Only the Local Government Chairman (or an authorised representative) may register their LGA as a team.
+                  </p>
                   <div className="form-group">
-                    <label>Full Name (Representative) *</label>
+                    <label>Full Name (Chairman / Representative) *</label>
                     <input type="text" className="form-control" placeholder="Your full name" value={form.repName} onChange={set('repName')} autoComplete="name" />
                   </div>
                   <div className="form-group">
@@ -221,10 +235,10 @@ export default function Register() {
               {/* ── Step 1 — Team Info ── */}
               {step === 1 && (
                 <div>
-                  <h4 style={{ color: 'var(--gold)', marginBottom: 16 }}>Team Information</h4>
+                  <h4 style={{ color: 'var(--gold)', marginBottom: 16 }}>LGA / Team Information</h4>
                   <div className="form-group">
-                    <label>Team Name *</label>
-                    <input type="text" className="form-control" placeholder="Official club name" value={form.teamName} onChange={set('teamName')} />
+                    <label>LGA / Team Name *</label>
+                    <input type="text" className="form-control" placeholder="Name of the Local Government Area team" value={form.teamName} onChange={set('teamName')} />
                   </div>
                   <div className="grid-2" style={{ gap: 16 }}>
                     <div className="form-group">
@@ -431,15 +445,48 @@ export default function Register() {
             </div>
           )}
 
-          {/* ══════════════ FAN REGISTRATION ══════════════ */}
+          {/* ══════════════ INDIVIDUAL / PLAYER REGISTRATION ══════════════ */}
           {mode === 'fan' && (
             <form onSubmit={handleFanSubmit} noValidate>
+              <p style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.5)', marginBottom: 16, marginTop: -8 }}>
+                Register as an individual player — provide your details below.
+              </p>
               <div className="form-group">
-                <label>Full Name</label>
+                <label>Full Name *</label>
                 <input type="text" className="form-control" placeholder="Your name" required value={form.name} onChange={set('name')} autoComplete="name" />
               </div>
+              <div className="grid-2" style={{ gap: 16 }}>
+                <div className="form-group">
+                  <label>LGA *</label>
+                  <select className="form-control" required value={form.lga} onChange={set('lga')}>
+                    <option value="">Select your LGA</option>
+                    {['Akoko-Edo','Egor','Esan Central','Esan North-East','Esan South-East','Esan West','Etsako Central','Etsako East','Etsako West','Igueben','Ikpoba-Okha','Orhionmwon','Oredo','Ovia North-East','Ovia South-West','Owan East','Owan West','Uhunmwonde'].map(t => <option key={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Age *</label>
+                  <input type="number" className="form-control" placeholder="e.g. 22" required value={form.age} onChange={set('age')} />
+                </div>
+              </div>
+              <div className="grid-2" style={{ gap: 16 }}>
+                <div className="form-group">
+                  <label>Jersey / Kit Size *</label>
+                  <select className="form-control" required value={form.kitSize} onChange={set('kitSize')}>
+                    <option value="">Select size</option>
+                    {['XS','S','M','L','XL','XXL'].map(s => <option key={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Height (cm) *</label>
+                  <input type="number" className="form-control" placeholder="e.g. 175" required value={form.height} onChange={set('height')} />
+                </div>
+              </div>
               <div className="form-group">
-                <label>Email Address</label>
+                <label>Foot Size *</label>
+                <input type="number" className="form-control" placeholder="e.g. 42" required value={form.footSize} onChange={set('footSize')} />
+              </div>
+              <div className="form-group">
+                <label>Email Address *</label>
                 <input type="email" className="form-control" placeholder="your@email.com" required value={form.email} onChange={set('email')} autoComplete="email" />
               </div>
               <div className="form-group">
@@ -447,22 +494,15 @@ export default function Register() {
                 <input type="tel" className="form-control" placeholder="+234..." value={form.phone} onChange={set('phone')} autoComplete="tel" />
               </div>
               <div className="form-group">
-                <label>Favourite Team</label>
-                <select className="form-control" value={form.favouriteTeam} onChange={set('favouriteTeam')}>
-                  <option value="">Select a team</option>
-                  {['Akoko-Edo Panthers','Egor United','Esan Central FC','Esan West Rangers','Etsako Central FC','Ikpoba-Okha FC','Oredo City FC','Owan East FC','Owan West United','Bendel Insurance Youth'].map(t => <option key={t}>{t}</option>)}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Password</label>
+                <label>Password *</label>
                 <input type="password" className="form-control" placeholder="Min 8 characters" required value={form.password} onChange={set('password')} autoComplete="new-password" />
               </div>
               <div className="form-group">
-                <label>Confirm Password</label>
+                <label>Confirm Password *</label>
                 <input type="password" className="form-control" placeholder="Confirm password" required value={form.confirmPassword} onChange={set('confirmPassword')} autoComplete="new-password" />
               </div>
               <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 16 }} disabled={loading}>
-                {loading ? 'Creating account…' : 'Create Fan Account 🎉'}
+                {loading ? 'Submitting…' : 'Register as Player 🎉'}
               </button>
             </form>
           )}
