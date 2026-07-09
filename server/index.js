@@ -39,6 +39,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 if (!process.env.SESSION_SECRET) {
+  if (isProd) {
+    console.error('[ERROR] SESSION_SECRET is required in production. Set it via Replit Secrets and restart.')
+    process.exit(1)
+  }
   console.warn('[WARN] SESSION_SECRET is not set — using insecure fallback. Set it via environment secrets.')
 }
 
@@ -124,10 +128,14 @@ app.post('/api/auth/login', (req, res) => {
 // ---------- Admin auth ----------
 // Admin credentials loaded from environment variables. Set ADMIN_EMAIL and
 // ADMIN_PASSWORD in your environment secrets before deploying to production.
+if (isProd && (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD)) {
+  console.error('[ERROR] ADMIN_EMAIL and ADMIN_PASSWORD are required in production. Set them via Replit Secrets and restart.')
+  process.exit(1)
+}
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@starcraft2026.com'
 const ADMIN_PASSWORD_HASH = hashPassword(process.env.ADMIN_PASSWORD || 'SC2026@Admin')
 if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
-  console.warn('[WARN] ADMIN_EMAIL / ADMIN_PASSWORD are not set — using insecure defaults. Set them via environment secrets.')
+  console.warn('[WARN] ADMIN_EMAIL / ADMIN_PASSWORD are not set — using insecure defaults. Set them via Replit Secrets before deploying.')
 }
 
 app.post('/api/auth/admin-login', (req, res) => {
