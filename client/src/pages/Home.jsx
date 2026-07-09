@@ -339,7 +339,10 @@ export default function Home() {
             {news.slice(0,3).map(n => (
               <div key={n.id} className="card news-card">
                 <div className="news-img">
-                  <div className="news-img-placeholder">⚽</div>
+                  {n.image
+                    ? <img src={n.image} alt={n.title} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
+                    : <div className="news-img-placeholder">⚽</div>
+                  }
                   <span className="badge badge-gold news-cat">{n.category}</span>
                 </div>
                 <div className="news-body">
