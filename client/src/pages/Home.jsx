@@ -159,7 +159,8 @@ export default function Home() {
       {/* TOURNAMENT OVERVIEW */}
       <section className="section">
         <div className="container">
-          <div className="overview-grid">
+          <div className="overview-grid-3col">
+            {/* Left — text */}
             <div className="overview-text">
               <span className="eyebrow">{overview.eyebrow}</span>
               <h2>{overview.heading}</h2>
@@ -172,6 +173,22 @@ export default function Home() {
               </div>
               <Link to="/about" className="btn btn-primary" style={{marginTop:28}}>Learn More →</Link>
             </div>
+
+            {/* Centre — trophy */}
+            <div className="overview-trophy-col">
+              <div className="overview-trophy-glow" />
+              <img
+                src="/trophy-home.png"
+                alt="StarCraft Cup Trophy"
+                className="overview-trophy-img"
+              />
+              <div className="overview-trophy-label">
+                <span style={{fontFamily:'var(--font-heading)',fontSize:'1rem',letterSpacing:'3px',color:'var(--gold)'}}>THE PRIZE</span>
+                <span style={{fontFamily:'var(--font-secondary)',fontSize:'0.68rem',letterSpacing:'2px',color:'rgba(255,255,255,0.45)',marginTop:4}}>STARCRAFT CUP 2026</span>
+              </div>
+            </div>
+
+            {/* Right — info card */}
             <div className="overview-card-wrap">
               <div className="card glass-panel" style={{padding:0,overflow:'visible'}}>
                 <div style={{padding:'28px 28px 0',borderBottom:'1px solid rgba(212,175,55,0.15)',paddingBottom:20}}>
@@ -504,6 +521,28 @@ export default function Home() {
         .stat-icon { font-size: 1.6rem; }
         .stat-label { font-family: var(--font-secondary); font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.5); }
         .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .overview-grid-3col { display: grid; grid-template-columns: 1fr 280px 1fr; gap: 48px; align-items: center; }
+        .overview-trophy-col { display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; }
+        .overview-trophy-glow {
+          position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+          width: 260px; height: 260px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(212,175,55,0.22) 0%, transparent 70%);
+          pointer-events: none; filter: blur(24px);
+        }
+        .overview-trophy-img {
+          width: 100%; max-width: 260px; height: auto;
+          position: relative; z-index: 1;
+          filter: drop-shadow(0 12px 48px rgba(212,175,55,0.4));
+          animation: trophyFloat 4s ease-in-out infinite;
+        }
+        @keyframes trophyFloat {
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(-12px); }
+        }
+        .overview-trophy-label {
+          display: flex; flex-direction: column; align-items: center;
+          margin-top: 16px; gap: 2px; z-index: 1;
+        }
         .eyebrow { font-family: var(--font-secondary); font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 12px; }
         .overview-text h2 { margin-bottom: 16px; }
         .overview-features { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
@@ -543,6 +582,8 @@ export default function Home() {
         @media (max-width: 768px) {
           .stats-bar-grid { grid-template-columns: repeat(2, 1fr); }
           .overview-grid { grid-template-columns: 1fr; }
+          .overview-grid-3col { grid-template-columns: 1fr; }
+          .overview-trophy-img { max-width: 200px; }
           .countdown { gap: 10px; }
           .countdown-unit { min-width: 65px; padding: 12px 14px; }
           .countdown-num { font-size: 1.8rem; }
