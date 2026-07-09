@@ -35,8 +35,8 @@ export const teams = [
   { id: 16, name: 'Owan East FC',          shortName: 'OWE', logo: '🦊', lga: 'Owan East',      coach: 'Richard Ebore',     group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#22D3EE' },
   { id: 17, name: 'Owan West United',      shortName: 'OWW', logo: '🌙', lga: 'Owan West',      coach: 'Samuel Oriaifo',    group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#F9A8D4' },
   { id: 18, name: 'Uhunmwonde FC',         shortName: 'UHU', logo: '🏔️', lga: 'Uhunmwonde',     coach: 'Kingsley Egbase',   group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#4ADE80' },
-  { id: 19, name: 'Oredo Host XI',         shortName: 'HXI', logo: '🏠', lga: 'Host (Oredo)',   coach: 'Chief Osagie-Eweka', group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#FB923C' },
-  { id: 20, name: 'Bendel Insurance Youth',shortName: 'BIY', logo: '🦁', lga: 'Defending 🏆',   coach: 'Godwin Enakhena',   group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#6B7280' },
+  { id: 19, name: 'Egor Host XI',           shortName: 'EHX', logo: '🎓', lga: 'Host (UNIBEN YOUTH)', coach: 'Chief Osagie-Eweka', group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#FB923C' },
+  { id: 20, name: 'Oredo Youth',            shortName: 'ORY', logo: '🏆', lga: 'Defending 🏆 (DEFENDING CHAMP)', coach: 'Godwin Enakhena', group: 'D', played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: [], color: '#6B7280' },
 ]
 
 // ── Players ─────────────────────────────────
@@ -70,8 +70,8 @@ export const fixtures = [
   // Dec 3 — Group Stage MD1 cont. (4 matches)
   { id: 6,  homeTeam: 'Ikpoba-Okha FC',        awayTeam: 'Ovia South United',       homeScore: null, awayScore: null, date: '2026-12-03', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'John Onyeka',   round: 'Group Stage' },
   { id: 7,  homeTeam: 'Oredo City FC',         awayTeam: 'Ovia North Rangers',      homeScore: null, awayScore: null, date: '2026-12-03', time: '11:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Chris Agoro',   round: 'Group Stage' },
-  { id: 8,  homeTeam: 'Owan East FC',          awayTeam: 'Bendel Insurance Youth',  homeScore: null, awayScore: null, date: '2026-12-03', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'James Okafor',   round: 'Group Stage' },
-  { id: 9,  homeTeam: 'Owan West United',      awayTeam: 'Oredo Host XI',           homeScore: null, awayScore: null, date: '2026-12-03', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Paul Agbakoba', round: 'Group Stage' },
+  { id: 8,  homeTeam: 'Owan East FC',          awayTeam: 'Oredo Youth',             homeScore: null, awayScore: null, date: '2026-12-03', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'James Okafor',   round: 'Group Stage' },
+  { id: 9,  homeTeam: 'Owan West United',      awayTeam: 'Egor Host XI',            homeScore: null, awayScore: null, date: '2026-12-03', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Paul Agbakoba', round: 'Group Stage' },
 
   // Dec 4–11 — Remaining Group Stage Matchdays (representative)
   { id: 10, homeTeam: 'Esan Central FC',       awayTeam: 'Akoko-Edo Panthers',     homeScore: null, awayScore: null, date: '2026-12-04', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Ehis Omoregie', round: 'Group Stage' },
@@ -81,7 +81,7 @@ export const fixtures = [
   { id: 14, homeTeam: 'Orhionmwon FC',         awayTeam: 'Ikpoba-Okha FC',          homeScore: null, awayScore: null, date: '2026-12-05', time: '09:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'James Okafor',  round: 'Group Stage' },
   { id: 15, homeTeam: 'Ovia North Rangers',    awayTeam: 'Orhionmwon FC',           homeScore: null, awayScore: null, date: '2026-12-05', time: '11:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Paul Agbakoba', round: 'Group Stage' },
   { id: 16, homeTeam: 'Uhunmwonde FC',         awayTeam: 'Owan East FC',            homeScore: null, awayScore: null, date: '2026-12-05', time: '14:00', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Ehis Omoregie', round: 'Group Stage' },
-  { id: 17, homeTeam: 'Oredo Host XI',         awayTeam: 'Uhunmwonde FC',           homeScore: null, awayScore: null, date: '2026-12-05', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Tom Adaeze',    round: 'Group Stage' },
+  { id: 17, homeTeam: 'Egor Host XI',           awayTeam: 'Uhunmwonde FC',           homeScore: null, awayScore: null, date: '2026-12-05', time: '16:30', venue: 'Ugbowo Campus Main Bowl', status: 'upcoming', referee: 'Tom Adaeze',    round: 'Group Stage' },
 
   // Dec 13 — Rest day (no fixtures)
 
@@ -104,7 +104,7 @@ export const fixtures = [
   { id: 25, homeTeam: 'TBD',                   awayTeam: 'TBD', homeScore: null, awayScore: null, date: '2026-12-18', time: '17:00', venue: 'Ogbemudia Main Bowl',      status: 'upcoming', referee: 'TBD', round: 'Grand Final' },
 
   // Dec 20 — Closing Ceremony + Exhibition
-  { id: 26, homeTeam: 'Bendel Insurance',      awayTeam: 'StarCraft Elite XI',      homeScore: null, awayScore: null, date: '2026-12-20', time: '16:00', venue: 'Ogbemudia Main Bowl',      status: 'upcoming', referee: 'TBD', round: 'Closing Exhibition', note: 'Closing Ceremony' },
+  { id: 26, homeTeam: 'Oredo Youth',           awayTeam: 'StarCraft Elite XI',      homeScore: null, awayScore: null, date: '2026-12-20', time: '16:00', venue: 'Ogbemudia Main Bowl',      status: 'upcoming', referee: 'TBD', round: 'Closing Exhibition', note: 'Closing Ceremony' },
 ]
 
 // ── Live Matches ──────────────────────────────
