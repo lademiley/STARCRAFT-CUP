@@ -29,6 +29,16 @@ import RolePermissions from './modules/RolePermissions'
 import TeamManagerDashboard from './modules/TeamManagerDashboard'
 import TeamRegistrations from './modules/TeamRegistrations'
 
+// Page Editors
+import HomePageEditor from './modules/HomePageEditor'
+import TournamentPageEditor from './modules/TournamentPageEditor'
+import AboutPageEditor from './modules/AboutPageEditor'
+import ContactPageEditor from './modules/ContactPageEditor'
+import MediaCenterEditor from './modules/MediaCenterEditor'
+import NewsPageEditor from './modules/NewsPageEditor'
+import SponsorsPageEditor from './modules/SponsorsPageEditor'
+import VolunteersPageEditor from './modules/VolunteersPageEditor'
+
 const MENU = [
   {
     category: 'Overview',
@@ -66,9 +76,21 @@ const MENU = [
   {
     category: 'Content',
     items: [
-
       { id: 'news', label: 'News & Blog CMS', icon: '📝' },
       { id: 'gallery', label: 'Gallery Management', icon: '🖼️' },
+    ]
+  },
+  {
+    category: 'Page Editors',
+    items: [
+      { id: 'page-home',        label: 'Home Page',       icon: '🏠' },
+      { id: 'page-tournament',  label: 'Tournament',      icon: '🏆' },
+      { id: 'page-about',       label: 'About',           icon: 'ℹ️' },
+      { id: 'page-contact',     label: 'Contact',         icon: '📞' },
+      { id: 'page-media',       label: 'Media Center',    icon: '📺' },
+      { id: 'page-news',        label: 'News Page',       icon: '📰' },
+      { id: 'page-sponsors',    label: 'Sponsors',        icon: '🤝' },
+      { id: 'page-volunteers',  label: 'Volunteers',      icon: '🙋' },
     ]
   },
   {
@@ -119,6 +141,14 @@ const MODULE_MAP = {
   audit: AuditLogs,
   settings: WebsiteSettings,
   roles: RolePermissions,
+  'page-home':       HomePageEditor,
+  'page-tournament': TournamentPageEditor,
+  'page-about':      AboutPageEditor,
+  'page-contact':    ContactPageEditor,
+  'page-media':      MediaCenterEditor,
+  'page-news':       NewsPageEditor,
+  'page-sponsors':   SponsorsPageEditor,
+  'page-volunteers': VolunteersPageEditor,
 }
 
 export default function AdminDashboard() {
