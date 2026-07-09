@@ -101,9 +101,12 @@ export default function News() {
           <div className="grid-3">
             {filtered.slice(1).map((n,i) => (
               <div key={n.id} className="card news-card-2" onClick={()=>setSelected(n.id)}>
-                <div style={{height:160,background:bgColors[(i+1)%bgColors.length],display:'flex',alignItems:'center',justifyContent:'center',position:'relative',borderRadius:'20px 20px 0 0'}}>
-                  <span style={{fontSize:'3rem',opacity:0.3}}>⚽</span>
-                  <span className="badge badge-gold" style={{position:'absolute',bottom:12,left:12,fontSize:'0.65rem'}}>{n.category}</span>
+                <div style={{height:180,background:bgColors[(i+1)%bgColors.length],display:'flex',alignItems:'center',justifyContent:'center',position:'relative',borderRadius:'20px 20px 0 0',overflow:'hidden'}}>
+                  {n.image
+                    ? <img src={n.image} alt={n.title} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
+                    : <span style={{fontSize:'3rem',opacity:0.3}}>⚽</span>
+                  }
+                  <span className="badge badge-gold" style={{position:'absolute',bottom:12,left:12,fontSize:'0.65rem',backdropFilter:'blur(4px)'}}>{n.category}</span>
                 </div>
                 <div style={{padding:20}}>
                   <span style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.4)'}}>📅 {n.date} • ✍️ {n.author}</span>
