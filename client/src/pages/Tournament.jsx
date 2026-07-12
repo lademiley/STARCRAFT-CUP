@@ -48,7 +48,7 @@ const venues = [
     facilities: 'Changing rooms, Medical bay, VIP lounge, Floodlights',
     role: 'Group Stage, Quarter-Finals & Semi-Finals',
     matches: 'Dec 2–12 (Group Stage) • Dec 14 (QF) • Dec 16 (SF)',
-    icon: '🏟️'
+    image: '/venue-ugbowo.jpg'
   },
   {
     name: 'Ogbemudia Main Bowl',
@@ -57,7 +57,7 @@ const venues = [
     facilities: 'Full broadcast suite, Press box, VIP suites, LED screens',
     role: 'Grand Final & Closing Ceremony',
     matches: 'Dec 18 (Final + 3rd Place) • Dec 20 (Closing)',
-    icon: '🏆'
+    image: '/venue-ogbemudia.jpg'
   },
 ]
 
@@ -334,7 +334,10 @@ export default function Tournament() {
             <div className="grid-2">
               {venues.map(v => (
                 <div key={v.name} className="card" style={{padding:0,overflow:'hidden'}}>
-                  <div style={{height:160,background:'linear-gradient(135deg,var(--burgundy),var(--red-primary))',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'5rem'}}>{v.icon}</div>
+                  <div style={{height:200,overflow:'hidden',position:'relative'}}>
+                    <img src={v.image} alt={v.name} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',display:'block'}} />
+                    <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom, transparent 40%, rgba(10,2,2,0.75) 100%)'}} />
+                  </div>
                   <div style={{padding:28}}>
                     <span className="badge badge-gold" style={{marginBottom:12,display:'inline-block'}}>{v.role}</span>
                     <h3 style={{color:'var(--white)',marginBottom:8}}>{v.name}</h3>
