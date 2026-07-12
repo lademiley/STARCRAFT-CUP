@@ -147,6 +147,67 @@ export default function About() {
         </div>
       </section>
 
+      {/* Messages of Support */}
+      <section className="section section-dark">
+        <div className="container">
+          <div className="section-header">
+            <span className="eyebrow">Endorsements</span>
+            <h2>Messages of Support</h2>
+            <p>Distinguished voices backing the StarCraft Cup vision</p>
+            <div className="divider" />
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:32}}>
+
+            {/* Governor */}
+            <div className="card" style={{padding:0,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+              <div style={{background:'linear-gradient(135deg,rgba(139,0,0,0.6),rgba(212,175,55,0.15))',padding:'32px 32px 24px',display:'flex',alignItems:'center',gap:20,borderBottom:'1px solid rgba(212,175,55,0.2)'}}>
+                <img src="/governor-okpebholo.jpeg" alt="Gov. Monday Okpebholo" style={{width:80,height:80,borderRadius:'50%',objectFit:'cover',objectPosition:'top',border:'2px solid var(--gold)',flexShrink:0}} />
+                <div>
+                  <h4 style={{color:'var(--white)',marginBottom:4,fontSize:'1rem'}}>Senator Monday Okpebholo</h4>
+                  <span className="badge badge-gold" style={{fontSize:'0.6rem'}}>Executive Governor, Edo State</span>
+                </div>
+              </div>
+              <div style={{padding:'24px 32px 32px',flex:1}}>
+                <div style={{fontSize:'2.5rem',color:'var(--gold)',lineHeight:1,marginBottom:12,opacity:0.5}}>"</div>
+                <p style={{fontSize:'0.88rem',lineHeight:1.8,color:'rgba(255,255,255,0.75)',fontStyle:'italic',marginBottom:16}}>
+                  The StarCraft Cup represents a valuable platform for youth development, talent discovery, and community engagement — all of which align with the state's commitment to empowering young people through sports. Edo State has always invested in sports development, infrastructure, and youth programs, recognizing the role of sports in promoting discipline, unity, and economic growth.
+                </p>
+                <p style={{fontSize:'0.88rem',lineHeight:1.8,color:'rgba(255,255,255,0.75)',fontStyle:'italic',marginBottom:16}}>
+                  The government encourages participating teams, coaches, officials, and supporters to embrace the values of fair play, excellence, and sportsmanship throughout the competition.
+                </p>
+                <p style={{fontSize:'0.88rem',lineHeight:1.8,color:'rgba(255,255,255,0.6)'}}>
+                  The Government of Edo State wishes the organizers every success and looks forward to the lasting impact the StarCraft Cup will have on our communities and our youth.
+                </p>
+              </div>
+            </div>
+
+            {/* Oba of Benin */}
+            <div className="card" style={{padding:0,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+              <div style={{background:'linear-gradient(135deg,rgba(139,0,0,0.6),rgba(212,175,55,0.15))',padding:'32px 32px 24px',display:'flex',alignItems:'center',gap:20,borderBottom:'1px solid rgba(212,175,55,0.2)'}}>
+                <img src="/oba-of-benin.png" alt="Oba of Benin" style={{width:80,height:80,borderRadius:'50%',objectFit:'cover',objectPosition:'top',border:'2px solid var(--gold)',flexShrink:0}} />
+                <div>
+                  <h4 style={{color:'var(--white)',marginBottom:4,fontSize:'1rem'}}>Omo N'Oba N'Edo Uku Akpolokpolo</h4>
+                  <span className="badge badge-gold" style={{fontSize:'0.6rem'}}>His Royal Majesty, the Oba of Benin</span>
+                </div>
+              </div>
+              <div style={{padding:'24px 32px 32px',flex:1}}>
+                <div style={{fontSize:'2.5rem',color:'var(--gold)',lineHeight:1,marginBottom:12,opacity:0.5}}>"</div>
+                <p style={{fontSize:'0.88rem',lineHeight:1.8,color:'rgba(255,255,255,0.75)',fontStyle:'italic',marginBottom:16}}>
+                  Sports, particularly football, have long served as a unifying force that brings together people from different communities and backgrounds. The promotion of youth development through organized sporting activities reflects values that are deeply respected within the Benin Kingdom — including discipline, hard work, respect, and excellence.
+                </p>
+                <p style={{fontSize:'0.88rem',lineHeight:1.8,color:'rgba(255,255,255,0.75)',fontStyle:'italic',marginBottom:16}}>
+                  His Royal Majesty encourages all participants to compete honorably, respect one another, and serve as worthy ambassadors of their communities. The StarCraft Cup is not only a football competition but also a celebration of youth, culture, and the enduring spirit of the people.
+                </p>
+                <p style={{fontSize:'0.88rem',lineHeight:1.8,color:'rgba(255,255,255,0.6)'}}>
+                  The Palace of the Oba of Benin offers its support and best wishes for a successful tournament and prays for peace, safety, and excellence throughout the competition.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* 2026–2030 Roadmap */}
       <section className="section section-dark">
         <div className="container">
