@@ -1,28 +1,7 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [showPass, setShowPass] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
-  const navigate = useNavigate()
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    const result = await login(form.email, form.password)
-    setLoading(false)
-    if (result.success) {
-      navigate('/')
-    } else {
-      setError(result.error || 'Invalid email or password')
-    }
-  }
-
   return (
     <div className="auth-page">
       <div className="auth-bg" />
@@ -30,103 +9,47 @@ export default function Login() {
         <div className="auth-card card">
           {/* Logo */}
           <div className="auth-logo" style={{justifyContent:'center'}}>
-            <img src="/logo.png" alt="StarCraft Cup" style={{width:100,height:100,objectFit:'contain'}} />
+            <img src="/logo.png" alt="StarCraft Cup" style={{width:110,height:110,objectFit:'contain'}} />
           </div>
 
           <h2 style={{textAlign:'center',marginBottom:6,color:'var(--white)'}}>Welcome Back</h2>
-          <p style={{textAlign:'center',color:'rgba(255,255,255,0.5)',marginBottom:32}}>Sign in to your StarCraft Cup account</p>
+          <p style={{textAlign:'center',color:'rgba(255,255,255,0.5)',marginBottom:36}}>Choose your portal to sign in</p>
 
-          {error && (
-            <div style={{background:'rgba(139,14,18,0.4)',border:'1px solid rgba(212,175,55,0.3)',borderRadius:8,padding:'12px 16px',marginBottom:20,color:'#ff6b6b',fontSize:'0.9rem',textAlign:'center'}}>
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:4}}>
-            <div className="form-group">
-              <label>Email Address</label>
-              <input
-                type="email"
-                className="form-control"
-                placeholder="your@email.com"
-                value={form.email}
-                onChange={e=>setForm({...form,email:e.target.value})}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Password</label>
-              <div style={{position:'relative'}}>
-                <input
-                  type={showPass?'text':'password'}
-                  className="form-control"
-                  placeholder="Enter your password"
-                  value={form.password}
-                  onChange={e=>setForm({...form,password:e.target.value})}
-                  required
-                  style={{paddingRight:48}}
-                />
-                <button
-                  type="button"
-                  onClick={()=>setShowPass(!showPass)}
-                  style={{position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',color:'rgba(255,255,255,0.5)',cursor:'pointer',fontSize:'0.85rem'}}
-                >
-                  {showPass?'🙈':'👁'}
-                </button>
+          <div style={{display:'flex',flexDirection:'column',gap:14}}>
+            <Link to="/chairman/login" style={{display:'flex',alignItems:'center',gap:16,textDecoration:'none',padding:'20px 24px',borderRadius:12,background:'rgba(212,175,55,0.08)',border:'1px solid rgba(212,175,55,0.3)',transition:'all 0.2s'}}>
+              <span style={{fontSize:'2rem',flexShrink:0}}>🏛️</span>
+              <div style={{flex:1}}>
+                <div style={{fontFamily:'var(--font-heading)',fontSize:'0.95rem',fontWeight:900,letterSpacing:'2px',color:'var(--gold)',marginBottom:2}}>LGA CHAIRMAN LOGIN</div>
+                <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.45)'}}>Register & manage your LGA team</div>
               </div>
-            </div>
-            <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
-              <Link to="#" style={{fontSize:'0.85rem',color:'var(--gold)'}}>Forgot Password?</Link>
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{width:'100%',justifyContent:'center',marginBottom:16}}
-              disabled={loading}
-            >
-              {loading ? 'Signing in…' : 'Sign In →'}
-            </button>
+              <span style={{color:'var(--gold)',fontSize:'1.2rem',flexShrink:0}}>→</span>
+            </Link>
 
-            <div className="divider-text"><span>or sign in with</span></div>
-
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:16}}>
-              <button type="button" className="btn btn-secondary" style={{justifyContent:'center',gap:8}}>
-                <span>G</span> Google
-              </button>
-              <button type="button" className="btn btn-secondary" style={{justifyContent:'center',gap:8}}>
-                <span>f</span> Facebook
-              </button>
-            </div>
-
-            <p style={{textAlign:'center',marginTop:24,fontSize:'0.9rem',color:'rgba(255,255,255,0.5)'}}>
-              Don't have an account?{' '}
-              <Link to="/register" style={{color:'var(--gold)',fontWeight:700}}>Register →</Link>
-            </p>
-
-            <div style={{marginTop:24,padding:'16px',background:'rgba(212,175,55,0.06)',border:'1px solid rgba(212,175,55,0.15)',borderRadius:10}}>
-              <div style={{fontSize:'0.72rem',fontWeight:700,letterSpacing:1,color:'rgba(255,255,255,0.35)',textTransform:'uppercase',marginBottom:10}}>Other Portals</div>
-              <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                <Link to="/chairman/login" style={{display:'flex',alignItems:'center',gap:8,fontSize:'0.82rem',color:'rgba(255,255,255,0.7)',textDecoration:'none',padding:'8px 12px',borderRadius:8,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)'}}>
-                  🏛️ <span>LGA Chairman Login</span> <span style={{marginLeft:'auto',color:'var(--gold)'}}>→</span>
-                </Link>
-                <Link to="/player/login" style={{display:'flex',alignItems:'center',gap:8,fontSize:'0.82rem',color:'rgba(255,255,255,0.7)',textDecoration:'none',padding:'8px 12px',borderRadius:8,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)'}}>
-                  ⚽ <span>Player Login</span> <span style={{marginLeft:'auto',color:'var(--gold)'}}>→</span>
-                </Link>
+            <Link to="/player/login" style={{display:'flex',alignItems:'center',gap:16,textDecoration:'none',padding:'20px 24px',borderRadius:12,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.12)',transition:'all 0.2s'}}>
+              <span style={{fontSize:'2rem',flexShrink:0}}>⚽</span>
+              <div style={{flex:1}}>
+                <div style={{fontFamily:'var(--font-heading)',fontSize:'0.95rem',fontWeight:900,letterSpacing:'2px',color:'var(--white)',marginBottom:2}}>PLAYER LOGIN</div>
+                <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.45)'}}>Access your player dashboard</div>
               </div>
-            </div>
-          </form>
+              <span style={{color:'rgba(255,255,255,0.4)',fontSize:'1.2rem',flexShrink:0}}>→</span>
+            </Link>
+          </div>
+
+          <div style={{marginTop:32,paddingTop:24,borderTop:'1px solid rgba(255,255,255,0.08)',textAlign:'center'}}>
+            <p style={{fontSize:'0.85rem',color:'rgba(255,255,255,0.4)',marginBottom:12}}>New to StarCraft Cup?</p>
+            <Link to="/register" className="btn btn-secondary" style={{width:'100%',justifyContent:'center'}}>
+              Register Your Team →
+            </Link>
+          </div>
         </div>
       </div>
 
       <style>{`
         .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 100px 24px 40px; background: linear-gradient(160deg, #0d0102 0%, #3a0608 50%, #0d0102 100%); }
         .auth-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.06) 0%, transparent 70%); pointer-events: none; }
-        .auth-container { width: 100%; max-width: 480px; position: relative; z-index: 1; }
+        .auth-container { width: 100%; max-width: 440px; position: relative; z-index: 1; }
         .auth-card { padding: 48px 40px; }
         .auth-logo { display: flex; align-items: center; gap: 14px; justify-content: center; margin-bottom: 28px; }
-        .divider-text { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
-        .divider-text::before, .divider-text::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
-        .divider-text span { font-family: var(--font-secondary); font-size: 0.75rem; color: rgba(255,255,255,0.4); white-space: nowrap; }
         @media (max-width: 480px) { .auth-card { padding: 32px 24px; } }
       `}</style>
     </div>
