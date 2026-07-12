@@ -175,7 +175,7 @@ export default function AdminDashboard() {
       <aside style={{ ...s.sidebar, width: sidebarOpen ? 260 : 64 }}>
         {/* Logo */}
         <div style={s.sidebarLogo}>
-          <span style={s.logoIcon}>⚽</span>
+          <img src="/logo.png" alt="StarCraft Cup" style={{width:36,height:36,objectFit:'contain',flexShrink:0}} />
           {sidebarOpen && (
             <div style={s.logoText}>
               <span style={s.logoTop}>STARCRAFT</span>

@@ -35,7 +35,7 @@ export default function AdminLogin() {
       <div style={styles.card}>
         {/* Header */}
         <div style={styles.header}>
-          <div style={styles.shield}>🛡️</div>
+          <img src="/logo.png" alt="StarCraft Cup" style={{width:90,height:90,objectFit:'contain',marginBottom:4}} />
           <h1 style={styles.title}>Admin Portal</h1>
           <p style={styles.subtitle}>StarCraft Cup 2026 — Restricted Access</p>
         </div>

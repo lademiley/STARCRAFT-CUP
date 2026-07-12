@@ -32,8 +32,8 @@ export default function ChairmanLogin() {
       <div className="auth-bg" />
       <div className="auth-container" style={{ maxWidth: 420 }}>
         <div className="auth-card card">
-          <div className="auth-logo">
-            <span style={{ fontSize: '2rem' }}>🏛️</span>
+          <div className="auth-logo" style={{flexDirection:'column',gap:8}}>
+            <img src="/logo.png" alt="StarCraft Cup" style={{width:80,height:80,objectFit:'contain'}} />
             <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.9rem', fontWeight: 900, letterSpacing: '3px', color: 'var(--gold)' }}>CHAIRMAN LOGIN</div>
           </div>
           <h2 style={{ textAlign: 'center', marginBottom: 6 }}>Welcome Back, Chairman</h2>

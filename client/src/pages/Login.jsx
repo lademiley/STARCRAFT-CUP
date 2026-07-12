@@ -29,12 +29,8 @@ export default function Login() {
       <div className="auth-container">
         <div className="auth-card card">
           {/* Logo */}
-          <div className="auth-logo">
-            <span style={{fontSize:'2.5rem'}}>⚽</span>
-            <div>
-              <div style={{fontFamily:'var(--font-heading)',fontSize:'1rem',fontWeight:900,letterSpacing:'3px',color:'var(--gold)'}}>STARCRAFT</div>
-              <div style={{fontFamily:'var(--font-secondary)',fontSize:'0.65rem',letterSpacing:'2px',color:'rgba(255,255,255,0.6)'}}>CUP 2027</div>
-            </div>
+          <div className="auth-logo" style={{justifyContent:'center'}}>
+            <img src="/logo.png" alt="StarCraft Cup" style={{width:100,height:100,objectFit:'contain'}} />
           </div>
 
           <h2 style={{textAlign:'center',marginBottom:6,color:'var(--white)'}}>Welcome Back</h2>
