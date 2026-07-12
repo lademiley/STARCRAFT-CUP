@@ -457,6 +457,64 @@ function requireAdmin(req, res, next) {
   next()
 }
 
+// ---------- Admin: Chairman registration approvals ----------
+app.get('/api/admin/chairmen', requireAdmin, (req, res) => {
+  const all = [...chairmen.values()]
+    .map(safeChairman)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ chairmen: all })
+})
+
+app.patch('/api/admin/chairmen/:id/approve', requireAdmin, (req, res) => {
+  const chairman = [...chairmen.values()].find(c => c.id === req.params.id)
+  if (!chairman) return res.status(404).json({ error: 'Chairman not found' })
+  chairman.status = 'approved'
+  chairman.reviewNote = (req.body.note || '').trim()
+  chairman.reviewedAt = new Date().toISOString()
+  chairmen.set(chairman.email, chairman)
+  res.json({ success: true, chairman: safeChairman(chairman) })
+})
+
+app.patch('/api/admin/chairmen/:id/reject', requireAdmin, (req, res) => {
+  const chairman = [...chairmen.values()].find(c => c.id === req.params.id)
+  if (!chairman) return res.status(404).json({ error: 'Chairman not found' })
+  if (!req.body.note || !req.body.note.trim()) return res.status(400).json({ error: 'Rejection reason is required' })
+  chairman.status = 'rejected'
+  chairman.reviewNote = req.body.note.trim()
+  chairman.reviewedAt = new Date().toISOString()
+  chairmen.set(chairman.email, chairman)
+  res.json({ success: true, chairman: safeChairman(chairman) })
+})
+
+// ---------- Admin: Player registration approvals ----------
+app.get('/api/admin/players', requireAdmin, (req, res) => {
+  const all = [...players.values()]
+    .map(safePlayer)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ players: all })
+})
+
+app.patch('/api/admin/players/:id/approve', requireAdmin, (req, res) => {
+  const player = players.get(req.params.id)
+  if (!player) return res.status(404).json({ error: 'Player not found' })
+  player.status = 'approved'
+  player.reviewNote = (req.body.note || '').trim()
+  player.reviewedAt = new Date().toISOString()
+  players.set(player.id, player)
+  res.json({ success: true, player: safePlayer(player) })
+})
+
+app.patch('/api/admin/players/:id/reject', requireAdmin, (req, res) => {
+  const player = players.get(req.params.id)
+  if (!player) return res.status(404).json({ error: 'Player not found' })
+  if (!req.body.note || !req.body.note.trim()) return res.status(400).json({ error: 'Rejection reason is required' })
+  player.status = 'rejected'
+  player.reviewNote = req.body.note.trim()
+  player.reviewedAt = new Date().toISOString()
+  players.set(player.id, player)
+  res.json({ success: true, player: safePlayer(player) })
+})
+
 // ---------- In-memory orders store ----------
 const orders = new Map() // orderId -> { id, userId, userEmail, userName, items, total, ref, status, createdAt, confirmedAt }
 
@@ -563,6 +621,9 @@ app.post('/api/chairman/register', (req, res) => {
     email,
     phone: phone.trim(),
     photoUrl: '',
+    status: 'pending',
+    reviewNote: '',
+    reviewedAt: null,
     passwordHash: hashPassword(password),
     createdAt: new Date().toISOString(),
   }
