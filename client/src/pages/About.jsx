@@ -84,15 +84,17 @@ export default function About() {
           </div>
           <div className="grid-2">
             {[
-              { icon:'🌍', title:'Talent Discovery',           desc:'Identify and develop the next generation of Nigerian football stars from all 18 LGAs in Edo State, providing a structured U17–U20 competitive platform.' },
-              { icon:'💰', title:'Economic Impact',            desc:'Generate significant economic activity in Edo State through tourism, local business patronage, and job creation across all 20 match days.' },
-              { icon:'🤝', title:'LGA Unity',                  desc:'Bring all 18 Local Government Areas together under one flag — representing every Edo community through the universal language of football.' },
-              { icon:'🏟️', title:'Infrastructure Development', desc:'Maximize and sustain both the Ugbowo Campus Main Bowl and Ogbemudia Main Bowl for long-term community benefit and future editions.' },
-              { icon:'📺', title:'Media Visibility',           desc:'Showcase Edo State youth talent to national and international audiences through broadcast, social media coverage, and the Dec 19 media tour.' },
-              { icon:'🌱', title:'Youth Development',          desc:'Provide structured pathways for U17–U20 players to grow, compete, and progress — with scouting opportunities and the StarCraft Elite XI training program.' },
+              { img:'/obj-talent.jpg',  title:'Talent Discovery',           desc:'Identify and develop the next generation of Nigerian football stars from all 18 LGAs in Edo State, providing a structured U17–U20 competitive platform.' },
+              { img:'/obj-economy.jpg', title:'Economic Impact',            desc:'Generate significant economic activity in Edo State through tourism, local business patronage, and job creation across all 20 match days.' },
+              { img:'/obj-unity.jpg',   title:'LGA Unity',                  desc:'Bring all 18 Local Government Areas together under one flag — representing every Edo community through the universal language of football.' },
+              { img:'/obj-infra.jpg',   title:'Infrastructure Development', desc:'Maximize and sustain both the Ugbowo Campus Main Bowl and Ogbemudia Main Bowl for long-term community benefit and future editions.' },
+              { img:'/obj-media.jpg',   title:'Media Visibility',           desc:'Showcase Edo State youth talent to national and international audiences through broadcast, social media coverage, and the Dec 19 media tour.' },
+              { img:'/obj-youth.jpg',   title:'Youth Development',          desc:'Provide structured pathways for U17–U20 players to grow, compete, and progress — with scouting opportunities and the StarCraft Elite XI training program.' },
             ].map(o => (
               <div key={o.title} className="card" style={{padding:28,display:'flex',gap:20,alignItems:'flex-start'}}>
-                <div style={{fontSize:'2.5rem',flexShrink:0}}>{o.icon}</div>
+                <div style={{flexShrink:0,width:64,height:64,borderRadius:10,overflow:'hidden',border:'1px solid rgba(212,175,55,0.25)'}}>
+                  <img src={o.img} alt={o.title} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
+                </div>
                 <div>
                   <h4 style={{color:'var(--gold)',marginBottom:8}}>{o.title}</h4>
                   <p style={{fontSize:'0.9rem',color:'rgba(255,255,255,0.7)'}}>{o.desc}</p>
