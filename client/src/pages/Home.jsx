@@ -121,6 +121,11 @@ export default function Home() {
         const doubled = [...items, ...items]
         return (
           <div className="sponsor-ticker">
+            <div className="sponsor-ticker-arrow">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7h10M8 3l4 4-4 4" stroke="#D4AF37" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <div className="sponsor-ticker-track">
               {doubled.map(({ tier, name }, i) => (
                 <span key={i} className="sponsor-ticker-item">
