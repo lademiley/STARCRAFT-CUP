@@ -106,6 +106,18 @@ export default function Login() {
               Don't have an account?{' '}
               <Link to="/register" style={{color:'var(--gold)',fontWeight:700}}>Register →</Link>
             </p>
+
+            <div style={{marginTop:24,padding:'16px',background:'rgba(212,175,55,0.06)',border:'1px solid rgba(212,175,55,0.15)',borderRadius:10}}>
+              <div style={{fontSize:'0.72rem',fontWeight:700,letterSpacing:1,color:'rgba(255,255,255,0.35)',textTransform:'uppercase',marginBottom:10}}>Other Portals</div>
+              <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                <Link to="/chairman/login" style={{display:'flex',alignItems:'center',gap:8,fontSize:'0.82rem',color:'rgba(255,255,255,0.7)',textDecoration:'none',padding:'8px 12px',borderRadius:8,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)'}}>
+                  🏛️ <span>LGA Chairman Login</span> <span style={{marginLeft:'auto',color:'var(--gold)'}}>→</span>
+                </Link>
+                <Link to="/player/login" style={{display:'flex',alignItems:'center',gap:8,fontSize:'0.82rem',color:'rgba(255,255,255,0.7)',textDecoration:'none',padding:'8px 12px',borderRadius:8,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)'}}>
+                  ⚽ <span>Player Login</span> <span style={{marginLeft:'auto',color:'var(--gold)'}}>→</span>
+                </Link>
+              </div>
+            </div>
           </form>
         </div>
       </div>

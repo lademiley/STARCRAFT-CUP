@@ -106,11 +106,16 @@ export default function ChairmanDashboard() {
   if (error || !chairman) {
     return (
       <div style={s.page}>
-        <div style={s.card}>
-          <div style={{ textAlign: 'center', padding: 24 }}>
-            <div style={{ fontSize: '3rem', marginBottom: 12 }}>⚠️</div>
-            <p style={{ color: 'rgba(255,255,255,0.55)', marginBottom: 24 }}>{error || 'Could not load chairman account.'}</p>
-            <Link to="/chairman/login" style={s.btnPrimary}>Sign In</Link>
+        <div style={{ maxWidth: 480, margin: '80px auto', padding: '0 24px' }}>
+          <div style={s.card}>
+            <div style={{ textAlign: 'center', padding: 24 }}>
+              <div style={{ fontSize: '3rem', marginBottom: 12 }}>⚠️</div>
+              <p style={{ color: 'rgba(255,255,255,0.55)', marginBottom: 8 }}>{error || 'Could not load chairman account.'}</p>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.82rem', marginBottom: 24 }}>
+                Make sure you are logging in at <strong style={{ color: '#D4AF37' }}>/chairman/login</strong> — not the public login page.
+              </p>
+              <Link to="/chairman/login" style={s.btnPrimary}>Go to Chairman Login</Link>
+            </div>
           </div>
         </div>
       </div>
@@ -156,17 +161,24 @@ export default function ChairmanDashboard() {
           ))}
         </div>
 
-        {tab === 'overview' && stats && (
+        {tab === 'overview' && (
           <div>
             <div style={s.statsGrid}>
-              <div style={s.statCard}><div style={s.statValue}>{stats.totalPlayers}</div><div style={s.statLabel}>Total Players</div></div>
-              <div style={{ ...s.statCard, color: '#F59E0B' }}><div style={{ ...s.statValue, color: '#F59E0B' }}>{stats.pending}</div><div style={s.statLabel}>Pending</div></div>
-              <div style={{ ...s.statCard, color: '#22C55E' }}><div style={{ ...s.statValue, color: '#22C55E' }}>{stats.approved}</div><div style={s.statLabel}>Approved</div></div>
-              <div style={{ ...s.statCard, color: '#EF4444' }}><div style={{ ...s.statValue, color: '#EF4444' }}>{stats.rejected}</div><div style={s.statLabel}>Rejected</div></div>
+              <div style={s.statCard}><div style={s.statValue}>{stats?.totalPlayers ?? 0}</div><div style={s.statLabel}>Total Players</div></div>
+              <div style={{ ...s.statCard }}><div style={{ ...s.statValue, color: '#F59E0B' }}>{stats?.pending ?? 0}</div><div style={s.statLabel}>Pending</div></div>
+              <div style={{ ...s.statCard }}><div style={{ ...s.statValue, color: '#22C55E' }}>{stats?.approved ?? 0}</div><div style={s.statLabel}>Approved</div></div>
+              <div style={{ ...s.statCard }}><div style={{ ...s.statValue, color: '#EF4444' }}>{stats?.rejected ?? 0}</div><div style={s.statLabel}>Rejected</div></div>
             </div>
-            <div style={s.card}>
+            <div style={{ ...s.card, maxWidth: '100%' }}>
               <div style={s.cardTitle}>LGA Information</div>
-              {[['Local Government Area', chairman.lga], ['Chairman', chairman.name], ['Email', chairman.email], ['Phone', chairman.phone || '—']].map(([k, v]) => (
+              {[
+                ['Local Government Area', chairman.lga],
+                ['Chairman', chairman.name],
+                ['Email', chairman.email],
+                ['Phone', chairman.phone || '—'],
+                ['Account Status', <span style={{ textTransform: 'capitalize', fontWeight: 700, color: chairman.status === 'approved' ? '#4ade80' : chairman.status === 'rejected' ? '#f87171' : '#F59E0B' }}>{chairman.status || 'pending'}</span>],
+                ['Registered', fmt(chairman.createdAt)],
+              ].map(([k, v]) => (
                 <div key={k} style={s.infoRow}><span style={s.infoKey}>{k}</span><span style={s.infoVal}>{v}</span></div>
               ))}
             </div>
@@ -174,7 +186,7 @@ export default function ChairmanDashboard() {
         )}
 
         {tab === 'players' && (
-          <div style={s.card}>
+          <div style={{ ...s.card, maxWidth: '100%' }}>
             <div style={s.cardTitle}>Players Registered Under {chairman.lga}</div>
             {photoError && <div style={s.errorBanner}>{photoError}</div>}
             {players.length === 0 ? (

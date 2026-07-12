@@ -31,7 +31,8 @@ export default function ChairmanRegister() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Registration failed.'); setLoading(false); return }
-      navigate('/chairman/dashboard')
+      // Small delay so the session cookie is set before navigating
+      setTimeout(() => navigate('/chairman/dashboard'), 100)
     } catch {
       setError('Network error — please try again.')
       setLoading(false)
