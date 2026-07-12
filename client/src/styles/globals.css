@@ -433,8 +433,8 @@ select.form-control option { background: var(--burgundy); color: var(--white); }
   will-change: transform;
 }
 @keyframes ticker-scroll {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 /* Direction arrow anchored at left edge */
 .sponsor-ticker-arrow {

@@ -100,9 +100,6 @@ export default function Home() {
           <Countdown />
           <div className="hero-ctas">
             <Link to="/register" className="btn btn-primary btn-lg">Register Team 🚀</Link>
-            <Link to="/live-scores" className="btn btn-secondary btn-lg">
-              <span className="live-dot"></span> Watch Live
-            </Link>
             <Link to="/fixtures" className="btn btn-red btn-lg">View Fixtures</Link>
           </div>
         </div>
@@ -123,7 +120,7 @@ export default function Home() {
           <div className="sponsor-ticker">
             <div className="sponsor-ticker-arrow">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 7h10M8 3l4 4-4 4" stroke="#D4AF37" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 7H2M6 3L2 7l4 4" stroke="#D4AF37" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div className="sponsor-ticker-track">
