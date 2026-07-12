@@ -393,7 +393,9 @@ export default function Home() {
           <div style={{display:'flex',justifyContent:'center',gap:32,flexWrap:'wrap',marginBottom:40}}>
             {sponsors.platinum.map(s => (
               <div key={s.name} className="sponsor-logo-card card">
-                <span style={{fontSize:'2.5rem'}}>{s.logo}</span>
+                {s.image
+                  ? <img src={s.image} alt={s.name} style={{width:72,height:72,objectFit:'contain',borderRadius:8,background:'rgba(255,255,255,0.06)',padding:6}} />
+                  : <span style={{fontSize:'2.5rem'}}>{s.logo}</span>}
                 <span style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.9rem',color:'var(--gold)'}}>{s.name}</span>
                 <span style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.5)'}}>{s.description}</span>
               </div>
@@ -402,7 +404,9 @@ export default function Home() {
           <div style={{display:'flex',justifyContent:'center',gap:20,flexWrap:'wrap'}}>
             {[...sponsors.gold,...sponsors.silver].map(s => (
               <div key={s.name} className="sponsor-logo-sm">
-                <span style={{fontSize:'1.5rem'}}>{s.logo}</span>
+                {s.image
+                  ? <img src={s.image} alt={s.name} style={{width:48,height:48,objectFit:'contain',borderRadius:6,background:'rgba(255,255,255,0.06)',padding:4}} />
+                  : <span style={{fontSize:'1.5rem'}}>{s.logo}</span>}
                 <span style={{fontSize:'0.8rem',fontWeight:600}}>{s.name}</span>
               </div>
             ))}
