@@ -127,8 +127,6 @@ export default function Navbar() {
               </>
             ) : user ? (
               <>
-                <Link to="/tickets" className="btn btn-primary btn-sm">🎫 Buy Tickets</Link>
-                <Link to="/profile" className="btn btn-secondary btn-sm" title={user.name}>👤 My Tickets</Link>
                 <button onClick={logout} className="btn btn-secondary btn-sm">Logout</button>
               </>
             ) : (
@@ -171,7 +169,6 @@ export default function Navbar() {
                 <div style={{fontFamily:'var(--font-secondary)',fontSize:'0.85rem',color:'rgba(255,255,255,0.6)',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.08)',marginBottom:12}}>
                   Signed in as <strong style={{color:'var(--gold)'}}>{user.name}</strong>
                 </div>
-                <Link to="/tickets" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginBottom:12}}>🎫 Buy Tickets</Link>
                 <button onClick={logout} className="btn btn-secondary" style={{width:'100%',justifyContent:'center'}}>Logout</button>
               </>
             ) : (

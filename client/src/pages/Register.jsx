@@ -30,11 +30,6 @@ export default function Register() {
               <div style={choiceTitleStyle}>Player</div>
               <p style={choiceDescStyle}>Register as an individual player to take part in the tournament.</p>
             </Link>
-            <Link to="/register/fan" className="card" style={choiceCardStyle}>
-              <div style={{ fontSize: '2.4rem', marginBottom: 10 }}>🎟️</div>
-              <div style={choiceTitleStyle}>Fan / Ticket Account</div>
-              <p style={choiceDescStyle}>Pick your team, choose a ticket category and pay securely online.</p>
-            </Link>
           </div>
 
           <p style={{ textAlign: 'center', marginTop: 24, fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)' }}>
