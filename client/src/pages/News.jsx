@@ -35,7 +35,9 @@ export default function News() {
         </section>
         <section className="section">
           <div className="container" style={{maxWidth:800}}>
-            <div className="card" style={{height:300,background:'linear-gradient(135deg,var(--burgundy),var(--red-primary))',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'5rem',marginBottom:32,borderRadius:20,border:'none'}}>⚽</div>
+            <div className="card" style={{height:300,background:'linear-gradient(135deg,var(--burgundy),var(--red-primary))',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:32,borderRadius:20,border:'none'}}>
+              <img src="/starcraft-logo-full.png" alt="StarCraft Cup" style={{height:'260px',width:'260px',objectFit:'contain',filter:'drop-shadow(0 8px 32px rgba(0,0,0,0.5))'}} />
+            </div>
             <div style={{lineHeight:1.9,fontSize:'1.05rem',color:'rgba(255,255,255,0.85)'}}>
               <p style={{fontSize:'1.15rem',fontWeight:500,marginBottom:24}}>{article.summary}</p>
               <p style={{marginBottom:20}}>The StarCraft Cup 2027 continues to captivate audiences across Edo State and beyond, as the tournament maintains its impressive standard of football and organization. With each passing matchday, the excitement builds towards what promises to be an unforgettable final.</p>
