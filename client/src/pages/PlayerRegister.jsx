@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const EDO_LGAS = ['Akoko-Edo','Egor','Esan Central','Esan North-East','Esan South-East','Esan West','Etsako Central','Etsako East','Etsako West','Igueben','Ikpoba-Okha','Orhionmwon','Oredo','Ovia North-East','Ovia South-West','Owan East','Owan West','Uhunmwonde']
 const KIT_SIZES = ['XS','S','M','L','XL','XXL']
 const FEET = ['Left', 'Right', 'Both']
+const FOOT_SIZES = ['35','36','37','38','39','40','41','42','43','44','45','46','47','48']
 
 function calcAge(dob) {
   if (!dob) return ''
@@ -18,7 +19,7 @@ function calcAge(dob) {
 
 export default function PlayerRegister() {
   const [form, setForm] = useState({
-    name: '', lga: '', dob: '', height: '', jerseySize: '', preferredFoot: '',
+    name: '', lga: '', dob: '', height: '', jerseySize: '', preferredFoot: '', footSize: '',
     phone: '', email: '', password: '', confirmPassword: '',
   })
   const [error, setError] = useState('')
@@ -38,6 +39,7 @@ export default function PlayerRegister() {
     if (!Number.isFinite(heightNum) || heightNum < 100 || heightNum > 230) { setError('Height must be between 100 and 230 cm.'); return }
     if (!form.jerseySize) { setError('Please select a jersey size.'); return }
     if (!form.preferredFoot) { setError('Please select your preferred foot.'); return }
+    if (!form.footSize) { setError('Please select your foot size.'); return }
     if (!form.phone.trim()) { setError('Phone number is required.'); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters.'); return }
     if (form.password !== form.confirmPassword) { setError('Passwords do not match.'); return }
@@ -115,12 +117,21 @@ export default function PlayerRegister() {
                 </select>
               </div>
             </div>
-            <div className="form-group">
-              <label>Preferred Foot *</label>
-              <select className="form-control" value={form.preferredFoot} onChange={set('preferredFoot')}>
-                <option value="">Select preferred foot</option>
-                {FEET.map(f => <option key={f}>{f}</option>)}
-              </select>
+            <div className="grid-2" style={{ gap: 16 }}>
+              <div className="form-group">
+                <label>Preferred Foot *</label>
+                <select className="form-control" value={form.preferredFoot} onChange={set('preferredFoot')}>
+                  <option value="">Select preferred foot</option>
+                  {FEET.map(f => <option key={f}>{f}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Foot Size (EU) *</label>
+                <select className="form-control" value={form.footSize} onChange={set('footSize')}>
+                  <option value="">Select size</option>
+                  {FOOT_SIZES.map(s => <option key={s}>{s}</option>)}
+                </select>
+              </div>
             </div>
             <div className="form-group">
               <label>Phone Number *</label>
