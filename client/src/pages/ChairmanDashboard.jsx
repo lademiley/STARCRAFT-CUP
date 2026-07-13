@@ -96,7 +96,7 @@ export default function ChairmanDashboard() {
     return (
       <div style={s.page}>
         <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', paddingTop: 80 }}>
-          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🏛️</div>
+          <img src="/starcraft-logo-full.png" alt="StarCraft Cup" style={{ width: 56, height: 56, objectFit: 'contain', marginBottom: 16 }} />
           <div>Loading your dashboard…</div>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function ChairmanDashboard() {
     <div style={s.page}>
       <div style={s.topbar}>
         <div style={s.topbarLeft}>
-          <span style={{ fontSize: '1.4rem' }}>🏛️</span>
+          <img src="/starcraft-logo-full.png" alt="StarCraft Cup" style={{ width: 40, height: 40, objectFit: 'contain' }} />
           <div>
             <div style={s.brand}>STARCRAFT CUP 2026</div>
             <div style={s.brandSub}>Chairman Dashboard</div>
