@@ -62,6 +62,26 @@ export default function ChairmanLogin() {
           <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)' }}>
             Don't have an account? <Link to="/register/chairman" style={{ color: 'var(--gold)', fontWeight: 700 }}>Register →</Link>
           </p>
+
+          <div style={{ marginTop: 20, textAlign: 'center' }}>
+            <Link to="/" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 24px',
+              background: 'rgba(212,175,55,0.08)',
+              border: '1px solid rgba(212,175,55,0.3)',
+              borderRadius: 10,
+              color: 'var(--gold)',
+              fontFamily: 'var(--font-heading)',
+              fontSize: '0.8rem', fontWeight: 700, letterSpacing: 1,
+              textDecoration: 'none',
+              transition: 'all 200ms ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,55,0.18)'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,175,55,0.08)'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.3)' }}
+            >
+              🏠 Back to Home
+            </Link>
+          </div>
         </div>
       </div>
 
