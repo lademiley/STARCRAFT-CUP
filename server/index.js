@@ -8,6 +8,56 @@ import fs from 'fs'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// ---------- File-based persistence (keeps all data across server restarts) ----------
+// All in-memory Maps are mirrored to JSON files in server/data/ so that accounts,
+// registrations, and approvals survive Replit restarts or workflow bounces.
+const DATA_DIR = path.join(__dirname, 'data')
+fs.mkdirSync(DATA_DIR, { recursive: true })
+
+function persistMap(name, map) {
+  try {
+    fs.writeFileSync(
+      path.join(DATA_DIR, `${name}.json`),
+      JSON.stringify([...map.entries()], null, 2)
+    )
+  } catch (e) {
+    console.error(`[Persist] Failed to save ${name}:`, e.message)
+  }
+}
+
+function loadMap(name) {
+  try {
+    const file = path.join(DATA_DIR, `${name}.json`)
+    if (!fs.existsSync(file)) return new Map()
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8'))
+    if (!Array.isArray(parsed)) return new Map()
+    return new Map(parsed)
+  } catch (e) {
+    console.error(`[Persist] Failed to load ${name}:`, e.message)
+    return new Map()
+  }
+}
+
+function persistObj(name, obj) {
+  try {
+    fs.writeFileSync(path.join(DATA_DIR, `${name}.json`), JSON.stringify(obj, null, 2))
+  } catch (e) {
+    console.error(`[Persist] Failed to save ${name}:`, e.message)
+  }
+}
+
+function loadObj(name, defaultVal) {
+  try {
+    const file = path.join(DATA_DIR, `${name}.json`)
+    if (!fs.existsSync(file)) return defaultVal
+    return JSON.parse(fs.readFileSync(file, 'utf8'))
+  } catch (e) {
+    console.error(`[Persist] Failed to load ${name}:`, e.message)
+    return defaultVal
+  }
+}
+
 const app = express()
 const PORT = 3001
 const isProd = process.env.NODE_ENV === 'production'
@@ -69,9 +119,9 @@ app.use('/api', (req, res, next) => {
   next()
 })
 
-// ---------- In-memory user store (replace with a real DB in production) ----------
+// ---------- User store (persisted to disk) ----------
 // Passwords are stored as SHA-256 hashes (use bcrypt in production)
-const users = new Map() // email → { id, email, name, mode, passwordHash, createdAt }
+const users = loadMap('users') // email → { id, email, name, mode, passwordHash, createdAt }
 
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex')
@@ -135,6 +185,7 @@ app.post('/api/auth/register', (req, res) => {
     createdAt: new Date().toISOString()
   }
   users.set(email, user)
+  persistMap('users', users)
   req.session.userId = user.id
   req.session.userEmail = user.email
 
@@ -245,8 +296,8 @@ app.post('/api/volunteers', (req, res) => {
   res.json({ success: true, reference: `VOL-${Date.now()}` })
 })
 
-// ---------- Team registration ----------
-const teamRegistrations = new Map() // refId -> registration object
+// ---------- Team registration (persisted to disk) ----------
+const teamRegistrations = loadMap('teamRegistrations') // id -> registration object
 
 app.post('/api/teams/register', (req, res) => {
   const { teamName, city, yearFounded, coach, homeColors, competitionHistory,
@@ -272,6 +323,7 @@ app.post('/api/teams/register', (req, res) => {
     reviewNote: '',
   }
   teamRegistrations.set(registration.id, registration)
+  persistMap('teamRegistrations', teamRegistrations)
   console.log('[TeamReg]', { ref, teamName, repEmail })
   res.status(201).json({ success: true, reference: ref, dashboardToken })
 })
@@ -325,6 +377,7 @@ app.patch('/api/teams/registrations/by-ref/:ref/players', (req, res) => {
   const newPlayer = { id: crypto.randomBytes(6).toString('hex'), name: player.name, age: player.age || '', position: player.position || '', jersey: player.jersey || '', photoUrl: '' }
   reg.players = [...reg.players, newPlayer]
   teamRegistrations.set(reg.id, reg)
+  persistMap('teamRegistrations', teamRegistrations)
   console.log('[TeamReg AddPlayer]', reg.ref, player.name)
   const { dashboardToken: _t, ...safe } = reg
   res.json({ success: true, registration: safe })
@@ -348,6 +401,7 @@ app.patch('/api/teams/registrations/by-ref/:ref/players/:playerId', (req, res) =
     jersey: player.jersey || '',
   }
   teamRegistrations.set(reg.id, reg)
+  persistMap('teamRegistrations', teamRegistrations)
   console.log('[TeamReg EditPlayer]', reg.ref, player.name)
   const { dashboardToken: _t, ...safe } = reg
   res.json({ success: true, registration: safe })
@@ -367,6 +421,7 @@ app.delete('/api/teams/registrations/by-ref/:ref/players/:playerId', (req, res) 
     fs.unlink(path.join(playerUploadsDir, path.basename(removed.photoUrl)), () => {})
   }
   teamRegistrations.set(reg.id, reg)
+  persistMap('teamRegistrations', teamRegistrations)
   console.log('[TeamReg RemovePlayer]', reg.ref, removed.name)
   const { dashboardToken: _t, ...safe } = reg
   res.json({ success: true, registration: safe })
@@ -402,6 +457,7 @@ app.post('/api/teams/registrations/by-ref/:ref/players/:playerId/photo', (req, r
     fs.writeFileSync(path.join(playerUploadsDir, filename), req.file.buffer)
     reg.players[idx] = { ...reg.players[idx], photoUrl: `/uploads/players/${filename}` }
     teamRegistrations.set(reg.id, reg)
+    persistMap('teamRegistrations', teamRegistrations)
     if (oldUrl) fs.unlink(path.join(playerUploadsDir, path.basename(oldUrl)), () => {})
     console.log('[TeamReg PlayerPhoto]', reg.ref, reg.players[idx].name)
     const { dashboardToken: _t, ...safe } = reg
@@ -424,6 +480,7 @@ app.patch('/api/teams/registrations/:id/approve', requireAdmin, (req, res) => {
   reg.reviewedAt = new Date().toISOString()
   reg.reviewNote = req.body.note || ''
   teamRegistrations.set(reg.id, reg)
+  persistMap('teamRegistrations', teamRegistrations)
   console.log('[TeamReg Approved]', reg.ref, reg.teamName)
   res.json({ success: true, registration: reg })
 })
@@ -436,6 +493,7 @@ app.patch('/api/teams/registrations/:id/reject', requireAdmin, (req, res) => {
   reg.reviewedAt = new Date().toISOString()
   reg.reviewNote = req.body.note || ''
   teamRegistrations.set(reg.id, reg)
+  persistMap('teamRegistrations', teamRegistrations)
   console.log('[TeamReg Rejected]', reg.ref, reg.teamName)
   res.json({ success: true, registration: reg })
 })
@@ -472,6 +530,7 @@ app.patch('/api/admin/chairmen/:id/approve', requireAdmin, (req, res) => {
   chairman.reviewNote = (req.body.note || '').trim()
   chairman.reviewedAt = new Date().toISOString()
   chairmen.set(chairman.email, chairman)
+  persistMap('chairmen', chairmen)
   res.json({ success: true, chairman: safeChairman(chairman) })
 })
 
@@ -483,6 +542,7 @@ app.patch('/api/admin/chairmen/:id/reject', requireAdmin, (req, res) => {
   chairman.reviewNote = req.body.note.trim()
   chairman.reviewedAt = new Date().toISOString()
   chairmen.set(chairman.email, chairman)
+  persistMap('chairmen', chairmen)
   res.json({ success: true, chairman: safeChairman(chairman) })
 })
 
@@ -501,6 +561,7 @@ app.patch('/api/admin/players/:id/approve', requireAdmin, (req, res) => {
   player.reviewNote = (req.body.note || '').trim()
   player.reviewedAt = new Date().toISOString()
   players.set(player.id, player)
+  persistMap('players', players)
   res.json({ success: true, player: safePlayer(player) })
 })
 
@@ -512,11 +573,12 @@ app.patch('/api/admin/players/:id/reject', requireAdmin, (req, res) => {
   player.reviewNote = req.body.note.trim()
   player.reviewedAt = new Date().toISOString()
   players.set(player.id, player)
+  persistMap('players', players)
   res.json({ success: true, player: safePlayer(player) })
 })
 
-// ---------- In-memory orders store ----------
-const orders = new Map() // orderId -> { id, userId, userEmail, userName, items, total, ref, status, createdAt, confirmedAt }
+// ---------- Orders store (persisted to disk) ----------
+const orders = loadMap('orders') // orderId -> { id, userId, userEmail, userName, items, total, ref, status, createdAt, confirmedAt }
 
 // Create order (fan submits after bank transfer)
 app.post('/api/orders', requireAuth, (req, res) => {
@@ -538,6 +600,7 @@ app.post('/api/orders', requireAuth, (req, res) => {
     confirmedAt: null,
   }
   orders.set(order.id, order)
+  persistMap('orders', orders)
   console.log('[Order]', { ref, total, email: order.userEmail })
   res.status(201).json({ success: true, order })
 })
@@ -563,6 +626,7 @@ app.patch('/api/orders/:id/confirm', requireAdmin, (req, res) => {
   order.status = 'confirmed'
   order.confirmedAt = new Date().toISOString()
   orders.set(order.id, order)
+  persistMap('orders', orders)
   console.log('[Order Confirmed]', order.ref, '->', order.userEmail)
   res.json({ success: true, order })
 })
@@ -573,6 +637,7 @@ app.patch('/api/orders/:id/reject', requireAdmin, (req, res) => {
   if (!order) return res.status(404).json({ error: 'Order not found' })
   order.status = 'rejected'
   orders.set(order.id, order)
+  persistMap('orders', orders)
   res.json({ success: true, order })
 })
 
@@ -582,11 +647,11 @@ app.get('/api/users', requireAdmin, (req, res) => {
   res.json({ users: allUsers })
 })
 
-// ---------- LGA Chairman registration & dashboard ----------
+// ---------- LGA Chairman registration & dashboard (persisted to disk) ----------
 // Separate identity space from the `users` map (fan/individual/admin) and from
 // the older team-registration flow — chairmen authenticate with their own
 // session key so logging in as a chairman never collides with a fan/admin session.
-const chairmen = new Map() // email -> { id, name, lga, email, phone, passwordHash, photoUrl, createdAt }
+const chairmen = loadMap('chairmen') // email -> { id, name, lga, email, phone, passwordHash, photoUrl, createdAt }
 const chairmanUploadsDir = path.join(__dirname, 'uploads', 'chairmen')
 fs.mkdirSync(chairmanUploadsDir, { recursive: true })
 app.use('/uploads/chairmen', express.static(chairmanUploadsDir, {
@@ -628,6 +693,7 @@ app.post('/api/chairman/register', (req, res) => {
     createdAt: new Date().toISOString(),
   }
   chairmen.set(email, chairman)
+  persistMap('chairmen', chairmen)
   req.session.chairmanEmail = email
   console.log('[ChairmanReg]', { lga, email })
   res.status(201).json({ success: true, chairman: safeChairman(chairman) })
@@ -669,6 +735,7 @@ app.patch('/api/chairman/profile', requireChairman, (req, res) => {
   }
   if (phone !== undefined) chairman.phone = phone.trim()
   chairmen.set(chairman.email, chairman)
+  persistMap('chairmen', chairmen)
   res.json({ success: true, chairman: safeChairman(chairman) })
 })
 
@@ -684,6 +751,7 @@ app.post('/api/chairman/photo', requireChairman, (req, res) => {
     fs.writeFileSync(path.join(chairmanUploadsDir, filename), req.file.buffer)
     chairman.photoUrl = `/uploads/chairmen/${filename}`
     chairmen.set(chairman.email, chairman)
+    persistMap('chairmen', chairmen)
     if (oldUrl) fs.unlink(path.join(chairmanUploadsDir, path.basename(oldUrl)), () => {})
     res.json({ success: true, chairman: safeChairman(chairman) })
   })
@@ -713,13 +781,18 @@ app.get('/api/chairman/stats', requireChairman, (req, res) => {
   })
 })
 
-// ---------- Individual player registration & dashboard ----------
-const players = new Map() // accountKey (id) -> { id, name, lga, dob, age, height, jerseySize, preferredFoot, phone, email, passwordHash, photoUrl, status, createdAt }
+// ---------- Individual player registration & dashboard (persisted to disk) ----------
+const players = loadMap('players') // id -> { id, name, lga, dob, age, height, jerseySize, preferredFoot, phone, email, passwordHash, photoUrl, status, createdAt }
 // Players may log in with either their email or phone number, so both are
-// indexed to the same player id — a single Map keyed by only one field would
-// make the other field unusable for login and wouldn't enforce uniqueness on it.
+// indexed to the same player id. These indexes are derived from `players` and
+// rebuilt on startup so they don't need their own persistence file.
 const playersByPhone = new Map() // phone -> player id
 const playersByEmail = new Map() // email -> player id
+// Rebuild indexes from the persisted players map on startup
+for (const p of players.values()) {
+  if (p.phone) playersByPhone.set(p.phone, p.id)
+  if (p.email) playersByEmail.set(p.email, p.id)
+}
 const PREFERRED_FEET = ['Left', 'Right', 'Both']
 const playerProfileUploadsDir = path.join(__dirname, 'uploads', 'player-profiles')
 fs.mkdirSync(playerProfileUploadsDir, { recursive: true })
@@ -788,6 +861,7 @@ app.post('/api/player/register', (req, res) => {
   players.set(id, player)
   playersByPhone.set(cleanPhone, id)
   if (cleanEmail) playersByEmail.set(cleanEmail, id)
+  persistMap('players', players)
   req.session.playerId = id
   console.log('[PlayerReg]', { lga, id, cleanPhone })
   res.status(201).json({ success: true, player: safePlayer(player) })
@@ -846,6 +920,7 @@ app.patch('/api/player/profile', requirePlayer, (req, res) => {
     player.preferredFoot = preferredFoot
   }
   players.set(player.id, player)
+  persistMap('players', players)
   res.json({ success: true, player: safePlayer(player) })
 })
 
@@ -861,6 +936,7 @@ app.post('/api/player/photo', requirePlayer, (req, res) => {
     fs.writeFileSync(path.join(playerProfileUploadsDir, filename), req.file.buffer)
     player.photoUrl = `/uploads/player-profiles/${filename}`
     players.set(player.id, player)
+    persistMap('players', players)
     if (oldUrl) fs.unlink(path.join(playerProfileUploadsDir, path.basename(oldUrl)), () => {})
     res.json({ success: true, player: safePlayer(player) })
   })
@@ -887,7 +963,7 @@ function getTicketPrice(team, category) {
   return table[category]
 }
 
-const fans = new Map() // email -> { id, name, lga, email, phone, preferredTeam, ticketCategory, ticketPrice, passwordHash, photoUrl, status, payment, ticket, notifications, createdAt }
+const fans = loadMap('fans') // email -> { id, name, lga, email, phone, preferredTeam, ticketCategory, ticketPrice, passwordHash, photoUrl, status, payment, ticket, notifications, createdAt }
 const fanUploadsDir = path.join(__dirname, 'uploads', 'fans')
 fs.mkdirSync(fanUploadsDir, { recursive: true })
 app.use('/uploads/fans', express.static(fanUploadsDir, {
@@ -951,6 +1027,7 @@ app.post('/api/fan/register', (req, res) => {
   }
   addFanNotification(fan, 'Account created', 'Complete secure checkout to submit your ticket for approval.')
   fans.set(fan.email, fan)
+  persistMap('fans', fans)
   req.session.fanEmail = fan.email
   console.log('[FanReg]', { lga, email: fan.email, preferredTeam, ticketCategory })
   res.status(201).json({ success: true, fan: safeFan(fan) })
@@ -1023,6 +1100,7 @@ app.post('/api/fan/pay', requireFan, (req, res) => {
   fan.status = 'pending_approval'
   addFanNotification(fan, 'Payment received', `Your payment of ₦${fan.ticketPrice.toLocaleString()} was received. Awaiting admin approval.`)
   fans.set(fan.email, fan)
+  persistMap('fans', fans)
   res.json({ success: true, fan: safeFan(fan) })
 })
 
@@ -1041,6 +1119,7 @@ app.patch('/api/fan/profile', requireFan, (req, res) => {
     fan.phone = phone.trim()
   }
   fans.set(fan.email, fan)
+  persistMap('fans', fans)
   res.json({ success: true, fan: safeFan(fan) })
 })
 
@@ -1056,6 +1135,7 @@ app.post('/api/fan/photo', requireFan, (req, res) => {
     fs.writeFileSync(path.join(fanUploadsDir, filename), req.file.buffer)
     fan.photoUrl = `/uploads/fans/${filename}`
     fans.set(fan.email, fan)
+    persistMap('fans', fans)
     if (oldUrl) fs.unlink(path.join(fanUploadsDir, path.basename(oldUrl)), () => {})
     res.json({ success: true, fan: safeFan(fan) })
   })
@@ -1067,6 +1147,7 @@ app.patch('/api/fan/notifications/:id/read', requireFan, (req, res) => {
   if (!n) return res.status(404).json({ error: 'Notification not found' })
   n.read = true
   fans.set(fan.email, fan)
+  persistMap('fans', fans)
   res.json({ success: true })
 })
 
@@ -1101,6 +1182,7 @@ app.patch('/api/admin/fans/:id/approve', requireAdmin, (req, res) => {
   }
   addFanNotification(fan, 'Ticket approved 🎉', `Your ${fan.ticketCategory} ticket for ${fan.preferredTeam} has been approved. Ticket ID: ${ticketId}.`)
   fans.set(fan.email, fan)
+  persistMap('fans', fans)
   res.json({ success: true, fan: safeFan(fan) })
 })
 
@@ -1111,6 +1193,7 @@ app.patch('/api/admin/fans/:id/reject', requireAdmin, (req, res) => {
   fan.status = 'rejected'
   addFanNotification(fan, 'Payment not approved', req.body?.note || 'Your payment could not be verified. Please contact support.')
   fans.set(fan.email, fan)
+  persistMap('fans', fans)
   res.json({ success: true, fan: safeFan(fan) })
 })
 
@@ -1351,6 +1434,8 @@ let siteContent = {
     ],
   },
 }
+// Override defaults with any admin-edited content saved to disk
+siteContent = loadObj('siteContent', siteContent)
 
 // Public: anyone can fetch a page's content (public site renders from this)
 app.get('/api/content/:page', (req, res) => {
@@ -1461,13 +1546,14 @@ app.put('/api/content/:page', requireAdmin, (req, res) => {
   const validationError = validateContent(key, content)
   if (validationError) return res.status(400).json({ error: validationError })
   siteContent[key] = content
+  persistObj('siteContent', siteContent)
   console.log(`[SiteContent] "${key}" page updated by admin`)
   res.json({ success: true, page: key, content: siteContent[key] })
 })
 
-// ---------- Payment Settings ----------
+// ---------- Payment Settings (persisted to disk) ----------
 // Stores admin-configurable payment methods shown to fans on the Tickets page
-let paymentSettings = {
+let paymentSettings = loadObj('paymentSettings', {
   methods: [
     {
       id: 'bank1',
@@ -1482,7 +1568,7 @@ let paymentSettings = {
     }
   ],
   footerNote: 'QR code tickets will be activated on your profile once payment is confirmed by our team.',
-}
+})
 
 // Public: anyone can fetch payment methods (fans need it during checkout)
 app.get('/api/settings/payment', (req, res) => {
@@ -1505,6 +1591,7 @@ app.put('/api/settings/payment', requireAdmin, (req, res) => {
     }),
     footerNote: typeof footerNote === 'string' ? footerNote : paymentSettings.footerNote,
   }
+  persistObj('paymentSettings', paymentSettings)
   console.log('[PaymentSettings] Updated by admin')
   res.json({ success: true, settings: paymentSettings })
 })
