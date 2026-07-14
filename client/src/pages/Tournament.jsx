@@ -73,6 +73,7 @@ const typeStyle = {
 export default function Tournament() {
   const [activeTab, setActiveTab] = useState('format')
   const [activeEdition, setActiveEdition] = useState(2026)
+  const [selectedAward, setSelectedAward] = useState(null)
 
   return (
     <div>
@@ -375,7 +376,15 @@ export default function Tournament() {
             <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>🏆 Team Placement Prizes</h3>
             <div style={{maxWidth:700,margin:'0 auto',display:'flex',flexDirection:'column',gap:12,marginBottom:56}}>
               {placementPrizes.map((p,i) => (
-                <div key={i} className={`card prize-row ${i<3?'top-prize':''}`} style={{padding:'20px 28px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:i===0?'rgba(212,175,55,0.6)':i===1?'rgba(192,192,192,0.3)':i===2?'rgba(158,91,40,0.4)':'rgba(212,175,55,0.15)'}}>
+                <div
+                  key={i}
+                  className={`card prize-row clickable-card ${i<3?'top-prize':''}`}
+                  onClick={() => setSelectedAward({ title: p.position, description: p.additional, prize: p.prize, image: p.image })}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e)=>{if(e.key==='Enter'||e.key===' '){setSelectedAward({ title: p.position, description: p.additional, prize: p.prize, image: p.image })}}}
+                  style={{padding:'20px 28px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:i===0?'rgba(212,175,55,0.6)':i===1?'rgba(192,192,192,0.3)':i===2?'rgba(158,91,40,0.4)':'rgba(212,175,55,0.15)',cursor:'pointer'}}
+                >
                   <div>
                     <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.95rem',marginBottom:4}}>{p.position}</div>
                     <div style={{fontSize:'0.8rem',color:'rgba(255,255,255,0.5)'}}>{p.additional}</div>
@@ -389,7 +398,15 @@ export default function Tournament() {
             <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>🎖️ Individual & Special Awards</h3>
             <div className="grid-3" style={{marginBottom:56}}>
               {specialAwards.map((a,i) => (
-                <div key={i} className="card" style={{padding:'22px 24px',display:'flex',gap:16,alignItems:'flex-start'}}>
+                <div
+                  key={i}
+                  className="card clickable-card"
+                  onClick={() => setSelectedAward(a)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e)=>{if(e.key==='Enter'||e.key===' '){setSelectedAward(a)}}}
+                  style={{padding:'22px 24px',display:'flex',gap:16,alignItems:'flex-start',cursor:'pointer'}}
+                >
                   {a.image ? (
                     <img
                       src={a.image}
@@ -411,7 +428,14 @@ export default function Tournament() {
             {/* Match Bonuses & Discipline */}
             <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>💵 Match Bonuses & Discipline</h3>
             <div style={{maxWidth:700,margin:'0 auto'}}>
-              <div className="card" style={{padding:'24px 28px',marginBottom:16,display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:'rgba(212,175,55,0.3)'}}>
+              <div
+                className="card clickable-card"
+                onClick={() => setSelectedAward({ title: 'Match Bonus', description: matchBonus.perLabel, prize: matchBonus.amount })}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e)=>{if(e.key==='Enter'||e.key===' '){setSelectedAward({ title: 'Match Bonus', description: matchBonus.perLabel, prize: matchBonus.amount })}}}
+                style={{padding:'24px 28px',marginBottom:16,display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:'rgba(212,175,55,0.3)',cursor:'pointer'}}
+              >
                 <div>
                   <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.95rem',marginBottom:4}}>Match Bonus</div>
                   <div style={{fontSize:'0.8rem',color:'rgba(255,255,255,0.5)'}}>{matchBonus.perLabel}</div>
@@ -419,7 +443,15 @@ export default function Tournament() {
                 <div style={{fontFamily:'var(--font-heading)',fontSize:'1.5rem',fontWeight:900,color:'var(--gold)',flexShrink:0}}>{matchBonus.amount}</div>
               </div>
               {matchBonus.deductions.map((d,i) => (
-                <div key={i} className="card" style={{padding:'16px 28px',marginBottom:12,display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:'rgba(239,68,68,0.2)'}}>
+                <div
+                  key={i}
+                  className="card clickable-card"
+                  onClick={() => setSelectedAward({ title: d.card, description: d.note, prize: `-${d.amount}` })}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e)=>{if(e.key==='Enter'||e.key===' '){setSelectedAward({ title: d.card, description: d.note, prize: `-${d.amount}` })}}}
+                  style={{padding:'16px 28px',marginBottom:12,display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:'rgba(239,68,68,0.2)',cursor:'pointer'}}
+                >
                   <div>
                     <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.88rem',marginBottom:4}}>{d.card}</div>
                     <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.5)'}}>{d.note}</div>
@@ -430,6 +462,25 @@ export default function Tournament() {
             </div>
           </div>
         </section>
+      )}
+
+      {selectedAward && (
+        <div className="award-modal-overlay" onClick={() => setSelectedAward(null)}>
+          <div className="award-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="award-modal-close" onClick={() => setSelectedAward(null)} aria-label="Close">✕</button>
+            {selectedAward.image && (
+              <img src={selectedAward.image} alt={selectedAward.title} className="award-modal-image" />
+            )}
+            {!selectedAward.image && selectedAward.icon && (
+              <div className="award-modal-icon">{selectedAward.icon}</div>
+            )}
+            <h3 style={{color:'var(--gold)',marginBottom:10}}>{selectedAward.title}</h3>
+            {selectedAward.description && <p style={{color:'rgba(255,255,255,0.7)',marginBottom:14}}>{selectedAward.description}</p>}
+            {selectedAward.prize && (
+              <div style={{fontFamily:'var(--font-heading)',fontSize:'1.8rem',fontWeight:900,color:'var(--gold)'}}>{selectedAward.prize}</div>
+            )}
+          </div>
+        </div>
       )}
 
       <style>{`
@@ -447,6 +498,15 @@ export default function Tournament() {
         .bracket-vs { font-family: var(--font-heading); font-size: 0.7rem; color: rgba(255,255,255,0.3); padding: 3px 0; }
         .bracket-arrow { font-size: 1.5rem; color: rgba(212,175,55,0.4); flex-shrink: 0; margin-top: 80px; }
         .final-match { border-color: rgba(212,175,55,0.5); }
+        .clickable-card { transition: transform 200ms, border-color 200ms, box-shadow 200ms; }
+        .clickable-card:hover, .clickable-card:focus-visible { transform: translateY(-3px); border-color: rgba(212,175,55,0.5); box-shadow: 0 8px 24px rgba(0,0,0,0.4); outline: none; }
+        .award-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 150ms ease; }
+        .award-modal { position: relative; background: linear-gradient(160deg, #1a0505, #0a0202); border: 1px solid rgba(212,175,55,0.35); border-radius: 18px; padding: 36px 32px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        .award-modal-close { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.08); border: none; color: var(--white); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; }
+        .award-modal-close:hover { background: rgba(212,175,55,0.3); }
+        .award-modal-image { width: 160px; height: 200px; object-fit: contain; object-position: top; margin: 0 auto 18px; display: block; background: #0a0202; border-radius: 10px; border: 1px solid rgba(212,175,55,0.25); }
+        .award-modal-icon { font-size: 4rem; margin-bottom: 14px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
     </div>
   )
