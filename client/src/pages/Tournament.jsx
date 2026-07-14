@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fixtures, prizeStructure, teams, editions } from '../data/mockData'
+import { fixtures, placementPrizes, specialAwards, matchBonus, teams, editions } from '../data/mockData'
 
 // Day-by-day schedule Dec 1–20, 2026
 const schedule = [
@@ -367,17 +367,56 @@ export default function Tournament() {
             <div className="section-header">
               <span className="eyebrow">Rewards</span>
               <h2>Prize Structure</h2>
-              <p>Total prize pool of ₦10,000,000+</p>
+              <p>Team placement prizes, individual honours, and match-day bonuses</p>
               <div className="divider" />
             </div>
-            <div style={{maxWidth:700,margin:'0 auto',display:'flex',flexDirection:'column',gap:12}}>
-              {prizeStructure.map((p,i) => (
+
+            {/* Team Placement Prizes */}
+            <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>🏆 Team Placement Prizes</h3>
+            <div style={{maxWidth:700,margin:'0 auto',display:'flex',flexDirection:'column',gap:12,marginBottom:56}}>
+              {placementPrizes.map((p,i) => (
                 <div key={i} className={`card prize-row ${i<3?'top-prize':''}`} style={{padding:'20px 28px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:i===0?'rgba(212,175,55,0.6)':i===1?'rgba(192,192,192,0.3)':i===2?'rgba(158,91,40,0.4)':'rgba(212,175,55,0.15)'}}>
                   <div>
                     <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.95rem',marginBottom:4}}>{p.position}</div>
                     <div style={{fontSize:'0.8rem',color:'rgba(255,255,255,0.5)'}}>{p.additional}</div>
                   </div>
                   <div style={{fontFamily:'var(--font-heading)',fontSize:'1.5rem',fontWeight:900,color:i===0?'var(--gold)':i===1?'#c0c0c0':i===2?'var(--bronze)':'var(--white)',flexShrink:0}}>{p.prize}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Individual & Special Awards */}
+            <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>🎖️ Individual & Special Awards</h3>
+            <div className="grid-3" style={{marginBottom:56}}>
+              {specialAwards.map((a,i) => (
+                <div key={i} className="card" style={{padding:'22px 24px',display:'flex',gap:14,alignItems:'flex-start'}}>
+                  <span style={{fontSize:'1.6rem',flexShrink:0}}>{a.icon}</span>
+                  <div>
+                    <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.9rem',marginBottom:4,color:'var(--white)'}}>{a.title}</div>
+                    <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.55)',marginBottom:a.prize?6:0}}>{a.description}</div>
+                    {a.prize && <div style={{fontFamily:'var(--font-heading)',fontWeight:900,color:'var(--gold)',fontSize:'1rem'}}>{a.prize}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Match Bonuses & Discipline */}
+            <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>💵 Match Bonuses & Discipline</h3>
+            <div style={{maxWidth:700,margin:'0 auto'}}>
+              <div className="card" style={{padding:'24px 28px',marginBottom:16,display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:'rgba(212,175,55,0.3)'}}>
+                <div>
+                  <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.95rem',marginBottom:4}}>Match Bonus</div>
+                  <div style={{fontSize:'0.8rem',color:'rgba(255,255,255,0.5)'}}>{matchBonus.perLabel}</div>
+                </div>
+                <div style={{fontFamily:'var(--font-heading)',fontSize:'1.5rem',fontWeight:900,color:'var(--gold)',flexShrink:0}}>{matchBonus.amount}</div>
+              </div>
+              {matchBonus.deductions.map((d,i) => (
+                <div key={i} className="card" style={{padding:'16px 28px',marginBottom:12,display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,borderColor:'rgba(239,68,68,0.2)'}}>
+                  <div>
+                    <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.88rem',marginBottom:4}}>{d.card}</div>
+                    <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.5)'}}>{d.note}</div>
+                  </div>
+                  <div style={{fontFamily:'var(--font-heading)',fontSize:'1.2rem',fontWeight:900,color:'#F87171',flexShrink:0}}>-{d.amount}</div>
                 </div>
               ))}
             </div>

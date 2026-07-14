@@ -181,16 +181,53 @@ export const committeeMembers = [
 ]
 
 // ── Prize Structure ───────────────────────────
-export const prizeStructure = [
-  { position: '🥇 Champion',         prize: '₦5,000,000', additional: 'Trophy + Medals + Promotion Pathway' },
-  { position: '🥈 Runner-Up',        prize: '₦2,500,000', additional: 'Trophy + Medals' },
-  { position: '🥉 Third Place',      prize: '₦1,000,000', additional: 'Medal + Certificate' },
-  { position: '4th Place',           prize: '₦500,000',   additional: 'Certificate' },
-  { position: '🥅 Golden Boot',      prize: '₦300,000',   additional: 'Golden Boot Trophy' },
-  { position: '🧤 Golden Glove',     prize: '₦200,000',   additional: 'Golden Glove Trophy' },
-  { position: '⭐ Best Player',      prize: '₦250,000',   additional: 'MVP Trophy' },
-  { position: '🌟 Best Young Player',prize: '₦150,000',   additional: 'Rising Star Award' },
+// Team placement prizes (1st – 8th)
+export const placementPrizes = [
+  { position: '🥇 Champion',    prize: '₦5,000,000', additional: 'Trophy + Medals + Promotion Pathway' },
+  { position: '🥈 Runner-Up',   prize: '₦2,500,000', additional: 'Trophy + Medals' },
+  { position: '🥉 Third Place', prize: '₦1,000,000', additional: 'Medal + Certificate' },
+  { position: '4th Place',      prize: '₦500,000',   additional: 'Certificate' },
+  { position: '5th Place',      prize: '₦500,000',   additional: 'Certificate' },
+  { position: '6th Place',      prize: '₦500,000',   additional: 'Certificate' },
+  { position: '7th Place',      prize: '₦500,000',   additional: 'Certificate' },
+  { position: '8th Place',      prize: '₦500,000',   additional: 'Certificate' },
 ]
+
+// Individual & special recognition awards
+export const specialAwards = [
+  { icon: '🏛️', title: 'Winning LGA Chairmen Award',           description: 'Presented to the Chairman of the champion LGA.' },
+  { icon: '🤝', title: 'Best Supporting LGA Chairmen Award',    description: "Recognises the LGA Chairman with the most outstanding support for the tournament." },
+  { icon: '🎖️', title: 'Award for the Governor',                description: 'Special recognition presented to His Excellency, the Governor of Edo State.' },
+  { icon: '⭐', title: 'Best Player',                            prize: '₦250,000', description: 'Most valuable player of the Premier Edition.' },
+  { icon: '⚽', title: 'Top Ball — Gold',                        description: "Awarded to the tournament's top goal scorer." },
+  { icon: '⚽', title: 'Top Ball — Silver',                      description: "Awarded to the tournament's second-highest goal scorer." },
+  { icon: '⚽', title: 'Top Ball — Bronze',                      description: "Awarded to the tournament's third-highest goal scorer." },
+  { icon: '🧤', title: 'Golden Gloves',                          description: 'Best goalkeeper of the tournament.' },
+  { icon: '🚩', title: 'Best Referee',                           description: 'Recognises the most consistent and fair match official.' },
+  { icon: '🤝', title: 'Best Team / Fair Play Award',            description: 'Awarded to the team with the best disciplinary record and sportsmanship.' },
+  { icon: '📋', title: 'Best Coach — First',                     description: 'Top-ranked coach of the Premier Edition.' },
+  { icon: '📋', title: 'Best Coach — Second',                    description: 'Second-ranked coach of the Premier Edition.' },
+  { icon: '📋', title: 'Best Coach — Third',                     description: 'Third-ranked coach of the Premier Edition.' },
+  { icon: '🏅', title: 'Man of the Match',                       description: 'Awarded after every match to the standout performer.' },
+  { icon: '🔥', title: 'Best Attacker',                          description: 'Best attacking player of the tournament.' },
+  { icon: '🌟', title: 'Best Young Player Award',                prize: '₦150,000', description: 'Best-performing player in the U17–U20 age bracket.' },
+  { icon: '🎯', title: 'Best Midfielder',                        description: 'Best midfield performer of the tournament.' },
+  { icon: '🛡️', title: 'Best Defender',                          description: 'Best defensive player of the tournament.' },
+  { icon: '👑', title: 'Patron Award',                           description: 'Presented to notable Benin indigenes, beginning with the Oba of Benin.' },
+]
+
+// Match bonus & disciplinary deductions
+export const matchBonus = {
+  amount: '₦50,000',
+  perLabel: 'per match, for a squad/entourage of up to 600 people',
+  deductions: [
+    { card: '🟨 Yellow Card', amount: '₦5,000',  note: 'Withdrawable from the match bonus' },
+    { card: '🟥 Red Card',    amount: '₦10,000', note: 'Withdrawable from the match bonus' },
+  ],
+}
+
+// Backward-compatible flat export (kept in case other code still imports it)
+export const prizeStructure = placementPrizes
 
 // ── Tournament Stats ──────────────────────────
 export const tournamentStats = {
