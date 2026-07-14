@@ -389,8 +389,16 @@ export default function Tournament() {
             <h3 style={{color:'var(--gold)',marginBottom:20,textAlign:'center'}}>🎖️ Individual & Special Awards</h3>
             <div className="grid-3" style={{marginBottom:56}}>
               {specialAwards.map((a,i) => (
-                <div key={i} className="card" style={{padding:'22px 24px',display:'flex',gap:14,alignItems:'flex-start'}}>
-                  <span style={{fontSize:'1.6rem',flexShrink:0}}>{a.icon}</span>
+                <div key={i} className="card" style={{padding:'22px 24px',display:'flex',gap:16,alignItems:'flex-start'}}>
+                  {a.image ? (
+                    <img
+                      src={a.image}
+                      alt={a.title}
+                      style={{width:64,height:80,objectFit:'contain',objectPosition:'top',flexShrink:0,background:'#0a0202',borderRadius:8,border:'1px solid rgba(212,175,55,0.2)'}}
+                    />
+                  ) : (
+                    <span style={{fontSize:'1.6rem',flexShrink:0,width:64,textAlign:'center'}}>{a.icon}</span>
+                  )}
                   <div>
                     <div style={{fontFamily:'var(--font-secondary)',fontWeight:700,fontSize:'0.9rem',marginBottom:4,color:'var(--white)'}}>{a.title}</div>
                     <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.55)',marginBottom:a.prize?6:0}}>{a.description}</div>
